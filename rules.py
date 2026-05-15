@@ -2,7 +2,10 @@ RULES_PRIMER = """
 === DIPLOMACY: RULES AND STRATEGIC PRINCIPLES ===
 
 OBJECTIVE
-Win by controlling 18 of 34 supply centres (SCs). In this 3-player game, your goal is to control more SCs than either opponent by game end.
+Standard Diplomacy is a 7-player game won by controlling 18 of 34 supply centres (SCs).
+In a reduced-player game, your goal is to control more SCs than any other ACTIVE
+opponent at game end. The active-player count and identities are listed in your
+identity block; uncontested neutral powers auto-hold every turn and cannot negotiate.
 
 PHASES EACH YEAR
 1. Spring Movement — all players submit orders simultaneously, then they resolve

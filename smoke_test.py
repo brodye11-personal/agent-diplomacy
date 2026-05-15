@@ -25,7 +25,11 @@ PASS = "OK "
 FAIL = "XX "
 
 
-def _ctx(power, game, commitment_log, message_log, outbound, possible_orders, turn="S1901M"):
+_DEFAULT_ACTIVES = ["ENGLAND", "FRANCE", "GERMANY"]
+
+
+def _ctx(power, game, commitment_log, message_log, outbound, possible_orders,
+         turn="S1901M", active_powers=None):
     return ToolContext(
         power=power,
         game=game,
@@ -35,6 +39,7 @@ def _ctx(power, game, commitment_log, message_log, outbound, possible_orders, tu
         commitment_log=commitment_log,
         message_log=message_log,
         outbound_messages=outbound,
+        active_powers=active_powers if active_powers is not None else list(_DEFAULT_ACTIVES),
         fact_world=None,
     )
 
@@ -104,6 +109,44 @@ def test_negotiation_tools(game, possible_orders):
 
     r, terminal = dispatch("pass_turn", {}, ctx_fr)
     assert terminal is True
+
+
+def test_neutral_recipient_rejected(game, possible_orders):
+    """In a 3-player game (ENG/FRA/GER), messaging or committing to RUSSIA must
+    return a clear error, not silently succeed."""
+    commitment_log, message_log = [], []
+    outbound = []
+    ctx_fr = _ctx("FRANCE", game, commitment_log, message_log, outbound, possible_orders,
+                  active_powers=["ENGLAND", "FRANCE", "GERMANY"])
+
+    r, _ = dispatch("send_message", {"to": "RUSSIA", "content": "hi"}, ctx_fr)
+    assert "error" in r and "NEUTRAL" in r["error"], r
+    assert len(outbound) == 0, "neutral message must not be recorded as sent"
+    assert len(message_log) == 0, "neutral message must not be in message_log"
+
+    r, _ = dispatch("record_commitment",
+                    {"to": "ITALY", "text": "won't attack"}, ctx_fr)
+    assert "error" in r and "NEUTRAL" in r["error"], r
+    assert len(commitment_log) == 0, "neutral commitment must not be recorded"
+
+    # All-7-active config: RUSSIA is now valid
+    ctx_fr_full = _ctx("FRANCE", game, commitment_log, message_log, outbound, possible_orders,
+                       active_powers=["ENGLAND", "FRANCE", "GERMANY", "AUSTRIA",
+                                      "ITALY", "RUSSIA", "TURKEY"])
+    r, _ = dispatch("send_message", {"to": "RUSSIA", "content": "hi"}, ctx_fr_full)
+    assert r.get("status") == "sent", r
+
+
+def test_board_tools_annotate_neutrals(game, possible_orders):
+    ctx = _ctx("FRANCE", game, [], [], [], possible_orders,
+               active_powers=["ENGLAND", "FRANCE", "GERMANY"])
+    r, _ = dispatch("get_board_state", {}, ctx)
+    assert r["active_powers"] == ["ENGLAND", "FRANCE", "GERMANY"]
+    assert set(r["neutral_powers"]) == {"AUSTRIA", "ITALY", "RUSSIA", "TURKEY"}
+
+    r, _ = dispatch("get_power_summary", {}, ctx)
+    assert r["powers"]["FRANCE"]["status"] == "active"
+    assert r["powers"]["RUSSIA"]["status"] == "neutral"
 
 
 def test_history_tools_filter_by_power(game, possible_orders):
@@ -218,16 +261,49 @@ def test_build_system_prompt_factworld_optional():
     assert "DIPLOMACY" in sp.upper()
 
 
+def test_build_system_prompt_player_block():
+    """System prompt must include explicit active/neutral listing so the agent
+    doesn't waste tokens negotiating with neutrals."""
+    sp_3p = build_system_prompt(
+        power="FRANCE",
+        framework="baseline",
+        condition="blind",
+        all_assignments={"ENGLAND": "baseline", "FRANCE": "baseline", "GERMANY": "baseline"},
+        active_powers=["ENGLAND", "FRANCE", "GERMANY"],
+    )
+    assert "PLAYERS IN THIS GAME" in sp_3p
+    assert "Active players (3)" in sp_3p
+    assert "Neutral powers (4)" in sp_3p
+    for n in ("AUSTRIA", "ITALY", "RUSSIA", "TURKEY"):
+        assert n in sp_3p
+    assert "auto-hold" in sp_3p
+
+    # 7-active config has no neutrals -> no neutrals block
+    sp_7p = build_system_prompt(
+        power="FRANCE",
+        framework="baseline",
+        condition="blind",
+        all_assignments={p: "baseline" for p in
+                         ["ENGLAND", "FRANCE", "GERMANY", "AUSTRIA", "ITALY", "RUSSIA", "TURKEY"]},
+        active_powers=["ENGLAND", "FRANCE", "GERMANY", "AUSTRIA", "ITALY", "RUSSIA", "TURKEY"],
+    )
+    assert "Active players (7)" in sp_7p
+    assert "Neutral powers" not in sp_7p
+
+
 TESTS = [
     ("board tools",                test_board_tools),
     ("reference tool",              test_reference_tool),
     ("negotiation tools",           test_negotiation_tools),
+    ("neutral recipient rejected",  test_neutral_recipient_rejected),
+    ("board tools annotate neutrals", test_board_tools_annotate_neutrals),
     ("history tool filtering",      test_history_tools_filter_by_power),
     ("orders tool",                 test_orders_tool),
     ("step tool sets",              test_step_tool_sets),
     ("unknown tool",                test_unknown_tool),
     ("agent compaction",            test_agent_compaction),
     ("build_system_prompt(facts=None)", test_build_system_prompt_factworld_optional),
+    ("build_system_prompt(player_block)", test_build_system_prompt_player_block),
 ]
 
 

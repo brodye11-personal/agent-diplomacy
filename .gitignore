@@ -14,6 +14,7 @@ venv/
 
 # Game run output (large, regenerable)
 logs/
+*.log
 
 # Claude Code per-user state
 .claude/settings.local.json

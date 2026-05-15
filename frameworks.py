@@ -42,14 +42,54 @@ FRAMEWORK_NAMES = {
 }
 
 
+ALL_POWERS_ORDERED = ["ENGLAND", "FRANCE", "GERMANY", "AUSTRIA", "ITALY", "RUSSIA", "TURKEY"]
+
+
+def _build_players_block(power: str, active_powers: list[str]) -> str:
+    """Render the PLAYERS-IN-THIS-GAME identity block that opens every prompt.
+
+    Critical: this is how agents learn who is human-controlled vs neutral.
+    Without it, the agent sees all 7 powers on the board and assumes a full
+    7-player game; it then wastes tokens negotiating with neutrals.
+    """
+    actives = sorted(active_powers)
+    neutrals = sorted(p for p in ALL_POWERS_ORDERED if p not in actives)
+    n = len(actives)
+
+    lines = [
+        "=== PLAYERS IN THIS GAME ===",
+        f"Active players ({n}): {', '.join(actives)}",
+    ]
+    if neutrals:
+        lines.append(
+            f"Neutral powers ({len(neutrals)}): {', '.join(neutrals)}"
+        )
+        lines.append(
+            "Neutral powers auto-hold every turn. They DO NOT negotiate, DO NOT "
+            "respond to messages, and CANNOT be parties to commitments. Treat "
+            "their units as fixed obstacles, not opponents to bargain with."
+        )
+    lines.append(f"You are {power}.")
+    return "\n".join(lines)
+
+
 def build_system_prompt(
     power: str,
     framework: str,
     condition: str,
     all_assignments: dict[str, str],
+    active_powers: list[str] | None = None,
     fact_world=None,
 ) -> str:
-    base = FRAMEWORKS[framework].format(power=power)
+    # active_powers defaults to the keys of all_assignments — the powers actually
+    # being assigned a framework are by definition the human-controlled ones.
+    if active_powers is None:
+        active_powers = list(all_assignments.keys())
+
+    players_block = _build_players_block(power, active_powers)
+    framework_block = FRAMEWORKS[framework].format(power=power)
+
+    base = players_block + "\n\n" + framework_block
 
     if condition == "transparent":
         others = {

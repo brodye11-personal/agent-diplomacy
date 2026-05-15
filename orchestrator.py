@@ -57,6 +57,7 @@ def _make_ctx(
     message_log: list,
     outbound_messages: list,
     fact_world: FactWorld | None,
+    active_powers: list[str],
 ) -> ToolContext:
     return ToolContext(
         power=power,
@@ -67,6 +68,7 @@ def _make_ctx(
         commitment_log=commitment_log,
         message_log=message_log,
         outbound_messages=outbound_messages,
+        active_powers=active_powers,
         fact_world=fact_world,
     )
 
@@ -104,7 +106,11 @@ def run_game(
     agents: dict[str, DiplomacyAgent] = {}
     for power in active_powers:
         fw = framework_assignment[power]
-        sp = build_system_prompt(power, fw, condition, framework_assignment, fact_world=fact_world)
+        sp = build_system_prompt(
+            power, fw, condition, framework_assignment,
+            active_powers=active_powers,
+            fact_world=fact_world,
+        )
         agents[power] = DiplomacyAgent(
             power=power,
             framework=fw,
@@ -155,7 +161,8 @@ def run_game(
 
             def _plan(power):
                 ctx = _make_ctx(power, game, possible_orders, turn, phase_type,
-                                commitment_log, message_log, [], fact_world)
+                                commitment_log, message_log, [], fact_world,
+                                active_powers)
                 return power, agents[power].step(planning_prompt, ctx, "planning")
 
             with ThreadPoolExecutor(max_workers=len(alive)) as ex:
@@ -173,7 +180,7 @@ def run_game(
                     outbound = []
                     ctx = _make_ctx(power, game, possible_orders, turn, phase_type,
                                     commitment_log, message_log,
-                                    outbound, fact_world)
+                                    outbound, fact_world, active_powers)
                     result = agents[power].step(neg_prompt, ctx, "negotiation")
                     return power, outbound, result
 
@@ -206,7 +213,8 @@ def run_game(
             def _submit(power):
                 outbound = []  # orders step shouldn't send messages but ctx needs the list
                 ctx = _make_ctx(power, game, possible_orders, turn, phase_type,
-                                commitment_log, message_log, outbound, fact_world)
+                                commitment_log, message_log, outbound, fact_world,
+                                active_powers)
                 result = agents[power].step(_ORDERS_PROMPT, ctx, "orders")
                 orders_list = result.data.get("orders", []) if result.terminal == "submit_orders" else []
                 return power, orders_list, result
@@ -261,7 +269,8 @@ def run_game(
                 )
                 outbound = []
                 ctx = _make_ctx(power, game, {}, turn, phase_type,
-                                commitment_log, message_log, outbound, fact_world)
+                                commitment_log, message_log, outbound, fact_world,
+                                active_powers)
                 result = agents[power].step(prompt, ctx, "compaction")
                 summary = result.data.get("text", "")
                 agents[power].compact(summary, turn)
@@ -306,7 +315,8 @@ def run_game(
                 prompt = f"Phase {turn} ({step_type}). Submit your orders via submit_orders."
                 outbound = []
                 ctx = _make_ctx(power, game, possible_orders, turn, phase_type,
-                                commitment_log, message_log, outbound, fact_world)
+                                commitment_log, message_log, outbound, fact_world,
+                                active_powers)
                 result = agents[power].step(prompt, ctx, step_type)
                 orders_list = result.data.get("orders", []) if result.terminal == "submit_orders" else []
                 return power, orders_list

@@ -13,4 +13,9 @@ class ToolContext:
     commitment_log: list       # [{power, to, text, turn, outcome}] — orchestrator-owned
     message_log: list          # [{from, to, content, round, turn}] — orchestrator-owned
     outbound_messages: list    # [{to, content}] — reset per negotiation step by orchestrator
+    active_powers: list = None  # human-controlled powers; others auto-hold as neutrals
     fact_world: Any = None     # FactWorld placeholder (v3)
+
+    def __post_init__(self):
+        if self.active_powers is None:
+            self.active_powers = []

@@ -4,14 +4,32 @@ from .context import ToolContext
 ALL_POWERS = {"ENGLAND", "FRANCE", "GERMANY", "AUSTRIA", "ITALY", "RUSSIA", "TURKEY"}
 
 
+def _validate_recipient(to: str, ctx: ToolContext) -> dict | None:
+    """Return an error dict if `to` is not a valid recipient, else None."""
+    if not to:
+        return {"error": "Recipient ('to') is required."}
+    if to not in ALL_POWERS:
+        return {"error": f"Unknown power '{to}'. Must be one of {sorted(ALL_POWERS)}."}
+    if to == ctx.power:
+        return {"error": "Cannot target yourself."}
+    if ctx.active_powers and to not in ctx.active_powers:
+        return {
+            "error": (
+                f"'{to}' is a NEUTRAL country in this game (not human-controlled). "
+                f"It will auto-hold every turn and cannot negotiate or be bound by commitments. "
+                f"Active players: {sorted(ctx.active_powers)}."
+            )
+        }
+    return None
+
+
 def send_message(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
     to = (args.get("to") or "").strip().upper()
     content = (args.get("content") or "").strip()
 
-    if not to or to not in ALL_POWERS:
-        return {"error": f"Invalid power '{to}'. Must be one of {sorted(ALL_POWERS)}."}, False
-    if to == ctx.power:
-        return {"error": "Cannot send a message to yourself."}, False
+    err = _validate_recipient(to, ctx)
+    if err:
+        return err, False
     if not content:
         return {"error": "Message content cannot be empty."}, False
 
@@ -29,10 +47,9 @@ def record_commitment(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
     to = (args.get("to") or "").strip().upper()
     text = (args.get("text") or "").strip()
 
-    if not to or to not in ALL_POWERS:
-        return {"error": f"Invalid power '{to}'."}, False
-    if to == ctx.power:
-        return {"error": "Cannot make a commitment to yourself."}, False
+    err = _validate_recipient(to, ctx)
+    if err:
+        return err, False
     if not text:
         return {"error": "Commitment text cannot be empty."}, False
 

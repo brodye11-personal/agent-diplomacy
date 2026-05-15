@@ -4,10 +4,14 @@ from .context import ToolContext
 
 def get_board_state(args: dict, ctx: ToolContext) -> dict:
     game = ctx.game
+    actives = set(ctx.active_powers or [])
+    all_powers = list(game.powers.keys())
     return {
         "phase": game.get_current_phase(),
         "all_units": game.get_units(),
         "all_centers": game.get_centers(),
+        "active_powers": sorted(actives) if actives else all_powers,
+        "neutral_powers": sorted([p for p in all_powers if actives and p not in actives]),
     }
 
 
@@ -47,6 +51,7 @@ def get_power_summary(args: dict, ctx: ToolContext) -> dict:
     power_filter = (args.get("power") or "").strip().upper()
     all_powers = list(game.powers.keys())
     targets = [power_filter] if power_filter else all_powers
+    actives = set(ctx.active_powers or [])
 
     summaries = {}
     for p in targets:
@@ -54,12 +59,17 @@ def get_power_summary(args: dict, ctx: ToolContext) -> dict:
             continue
         centers = game.get_centers(p)
         units = game.get_units(p)
+        if actives:
+            status = "active" if p in actives else "neutral"
+        else:
+            status = "active"  # no filter set => everyone is active
         summaries[p] = {
             "supply_centers": len(centers),
             "center_names": centers,
             "units": len(units),
             "unit_list": units,
             "eliminated": game.powers[p].is_eliminated(),
+            "status": status,
         }
     return {"powers": summaries}
 

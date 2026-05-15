@@ -11,11 +11,21 @@ Usage examples (PowerShell):
 """
 import argparse
 import os
+import sys
 from dotenv import load_dotenv
 import anthropic
 
 import orchestrator
 from facts import FactWorld
+
+# Windows consoles default to cp1252; our prompts + verbose output contain
+# unicode (en-dash, arrow, etc.). Force UTF-8 so prints don't crash mid-run.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8")
+        except Exception:
+            pass
 
 load_dotenv()
 
