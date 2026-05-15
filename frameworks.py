@@ -47,6 +47,7 @@ def build_system_prompt(
     framework: str,
     condition: str,
     all_assignments: dict[str, str],
+    fact_world=None,
 ) -> str:
     base = FRAMEWORKS[framework].format(power=power)
 
@@ -65,6 +66,13 @@ def build_system_prompt(
                 "\n\nYour opponents' constitutions are known to you:\n" + "\n".join(lines)
             )
             base += opponent_info
+
+    # FactWorld extensibility hook (v3): inject this power's ~60% fact subset.
+    # Returns "" when FactWorld is disabled, so this is a no-op in v2.
+    if fact_world is not None:
+        fact_context = fact_world.get_context(power)
+        if fact_context:
+            base += fact_context
 
     base += "\n\n" + get_rules_primer()
     return base

@@ -1,22 +1,21 @@
 """
-Full experiment runner. Loops over conditions and rotates framework assignments
-across runs to control for positional advantage.
+Full experiment runner for the agentic architecture.
+Rotates framework assignments across runs to control for positional advantage.
 
-Usage:
-  python run_experiment.py --players 3 --runs 6 --condition blind transparent --model google/gemini-2.5-flash
-  python run_experiment.py --players 7 --runs 20 --model google/gemini-2.5-flash
+Usage (PowerShell):
+  python run_experiment.py --players 3 --runs 6 --condition blind transparent
+  python run_experiment.py --players 7 --runs 20 --model claude-sonnet-4-5-20250929
 """
 import argparse
-import os
 from dotenv import load_dotenv
 
-from main import run_game, make_client, PLAYER_CONFIGS
+import orchestrator
+from main import make_client, PLAYER_CONFIGS, DEFAULT_AGENT_MODEL, DEFAULT_JUDGE_MODEL
 from facts import FactWorld
 
 load_dotenv()
 
-# Framework rotation sets — cycle through so each position gets each framework
-# across runs. Add more sets or increase --runs for better counterbalancing.
+# Framework rotation sets — same positional-counterbalancing scheme as v1.
 FRAMEWORKS_3 = [
     ["utilitarian", "deontological", "hhh"],
     ["deontological", "hhh", "utilitarian"],
@@ -37,7 +36,7 @@ FRAMEWORKS_7 = [
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run full Diplomacy experiment")
+    parser = argparse.ArgumentParser(description="Run a full agentic-Diplomacy experiment")
     parser.add_argument("--players", type=int, choices=[3, 7], default=3,
                         help="Number of active players: 3=ENG/FRA/GER, 7=all powers")
     parser.add_argument("--runs", type=int, default=6, help="Runs per condition")
@@ -46,19 +45,15 @@ def main():
         default=["blind", "transparent"],
     )
     parser.add_argument("--turns", type=int, default=5)
-    parser.add_argument("--model", default="openai/gpt-4o")
-    parser.add_argument("--judge-model", default=None, dest="judge_model",
-                        help="Model for commitment judge (defaults to --model if not set)")
+    parser.add_argument("--model", default=DEFAULT_AGENT_MODEL)
+    parser.add_argument("--judge-model", default=DEFAULT_JUDGE_MODEL, dest="judge_model")
+    parser.add_argument("--negotiation-rounds", type=int, default=3, dest="n_negotiation_rounds")
     parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("--fast-parallel", action="store_true", dest="fast_parallel")
-    parser.add_argument("--neighbor-only", action="store_true", dest="neighbor_only")
-    parser.add_argument("--exchanges", type=int, default=2)
     parser.add_argument("--facts", action="store_true")
     args = parser.parse_args()
 
     active_powers = PLAYER_CONFIGS[args.players]
     framework_sets = FRAMEWORKS_3 if args.players == 3 else FRAMEWORKS_7
-    judge_model = args.judge_model or args.model
 
     client = make_client()
     fact_world = FactWorld(enabled=args.facts)
@@ -76,22 +71,20 @@ def main():
 
             print(f"\n[{run_counter}/{total_runs}] condition={condition} | frameworks={framework_assignment}")
 
-            summary = run_game(
+            summary = orchestrator.run_game(
                 run_index=run_counter,
                 condition=condition,
                 framework_assignment=framework_assignment,
                 model=args.model,
-                judge_model=judge_model,
+                judge_model=args.judge_model,
                 max_years=args.turns,
                 verbose=args.verbose,
                 fact_world=fact_world,
                 client=client,
                 active_powers=active_powers,
-                parallel_negotiation=args.fast_parallel,
-                neighbor_only=args.neighbor_only,
-                exchanges=args.exchanges,
+                n_negotiation_rounds=args.n_negotiation_rounds,
             )
-            print(f"  → Winner: {summary['winner']} | SC: {summary['final_sc_counts']}")
+            print(f"  -> Winner: {summary['winner']} | SC: {summary['final_sc_counts']}")
 
     print(f"\nAll {total_runs} runs complete. Run `python analysis.py` to summarise results.")
 
