@@ -20,6 +20,9 @@ logs/
 .claude/scheduled_tasks.lock
 .claude/worktrees/
 
+# Linked git worktrees (one folder per branch for parallel Cursor windows)
+worktrees/
+
 # Editor / OS
 .vscode/
 .idea/

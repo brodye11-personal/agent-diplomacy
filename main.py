@@ -1,13 +1,13 @@
 """
 Entry point for a single agentic-Diplomacy game.
 
-Wires up CLI args → Anthropic client → orchestrator.run_game.
-The actual game loop lives in orchestrator.py; everything here is glue.
+Wires up CLI args -> Anthropic-format client (routed via OpenRouter) ->
+orchestrator.run_game. The actual game loop lives in orchestrator.py.
 
 Usage examples (PowerShell):
   python main.py --players 3 --turns 2 --verbose
   python main.py --players 7 --turns 5 --frameworks utilitarian deontological hhh baseline utilitarian deontological hhh
-  python main.py --condition transparent --players 3 --model claude-sonnet-4-5-20250929
+  python main.py --condition transparent --players 3 --model anthropic/claude-sonnet-4.5
 """
 import argparse
 import os
@@ -26,19 +26,36 @@ PLAYER_CONFIGS = {
     7: ALL_POWERS,
 }
 
+# OpenRouter's Anthropic-compatible Messages endpoint.
+# The Anthropic SDK accepts base_url + auth_token (bearer auth) directly.
+OPENROUTER_BASE_URL = "https://openrouter.ai/api"
+
 # Defaults: cheap + fast for iteration; promote to Sonnet once tool-use is reliable.
-DEFAULT_AGENT_MODEL = "claude-haiku-4-5-20251001"
-DEFAULT_JUDGE_MODEL = "claude-sonnet-4-5-20250929"
+# OpenRouter slug format = "<provider>/<model>".
+DEFAULT_AGENT_MODEL = "anthropic/claude-haiku-4.5"
+DEFAULT_JUDGE_MODEL = "anthropic/claude-sonnet-4.5"
 
 
 def make_client() -> anthropic.Anthropic:
-    """Anthropic client. Requires ANTHROPIC_API_KEY (no fallback)."""
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    """
+    Build an anthropic.Anthropic client that talks to OpenRouter's
+    Anthropic-Messages endpoint.
+
+    Why OpenRouter: cross-provider routing, sticky-routing for prompt
+    caching, single billing surface for any future model comparison.
+    Why the Anthropic SDK against it: zero changes to our tool-use loop
+    -- the request/response shape is identical to Anthropic-direct.
+    Auth uses the bearer token (auth_token=), not x-api-key (api_key=).
+    """
+    api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
         raise RuntimeError(
-            "ANTHROPIC_API_KEY not set. Copy .env.example to .env and add your key."
+            "OPENROUTER_API_KEY not set. Copy .env.example to .env and add your key."
         )
-    return anthropic.Anthropic(api_key=api_key)
+    return anthropic.Anthropic(
+        base_url=OPENROUTER_BASE_URL,
+        auth_token=api_key,
+    )
 
 
 def main():

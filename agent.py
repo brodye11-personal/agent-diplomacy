@@ -54,6 +54,12 @@ class DiplomacyAgent:
                 messages=self.messages,
                 tools=tools,
                 max_tokens=4096,
+                # OpenRouter passthrough: top-level automatic caching tells the
+                # Anthropic-compatible provider to cache the stable prefix and
+                # auto-advance the breakpoint as the thread grows. Only fires
+                # once the prefix exceeds the model's minimum (Haiku 4.5 = 4096
+                # tokens, Sonnet 4.5 = 1024). Cache reads are 0.1x input price.
+                extra_body={"cache_control": {"type": "ephemeral"}},
             )
 
             # Append assistant turn (preserve full content list for tool-use continuations)
@@ -63,6 +69,7 @@ class DiplomacyAgent:
                 for block in response.content:
                     if hasattr(block, "text"):
                         print(f"  [{self.power}] {block.text[:200]}")
+                self._log_usage(response)
 
             tool_uses = [b for b in response.content if b.type == "tool_use"]
             # Concatenated text content from this assistant turn (compaction needs this)
@@ -142,3 +149,42 @@ class DiplomacyAgent:
             "role": "user",
             "content": f"Inbound from {from_power}: {content}",
         })
+
+    def _log_usage(self, response) -> None:
+        """Verbose-mode print of token usage + cache hit/miss.
+
+        OpenRouter surfaces cache stats in two places depending on which
+        Anthropic-compatible provider served the request:
+          - usage.prompt_tokens_details.cached_tokens / cache_write_tokens
+            (OpenRouter normalised shape)
+          - usage.cache_read_input_tokens / cache_creation_input_tokens
+            (Anthropic-native shape)
+        Read both. If neither is present, just print prompt/completion totals.
+        """
+        usage = getattr(response, "usage", None)
+        if usage is None:
+            return
+
+        cached = 0
+        written = 0
+
+        details = getattr(usage, "prompt_tokens_details", None)
+        if details is not None:
+            cached = getattr(details, "cached_tokens", 0) or 0
+            written = getattr(details, "cache_write_tokens", 0) or 0
+        if not cached:
+            cached = getattr(usage, "cache_read_input_tokens", 0) or 0
+        if not written:
+            written = getattr(usage, "cache_creation_input_tokens", 0) or 0
+
+        prompt_tokens = (getattr(usage, "input_tokens", None)
+                         or getattr(usage, "prompt_tokens", 0) or 0)
+        out_tokens = (getattr(usage, "output_tokens", None)
+                      or getattr(usage, "completion_tokens", 0) or 0)
+
+        tag = ""
+        if cached:
+            tag = f" CACHE-HIT {cached}t"
+        elif written:
+            tag = f" CACHE-WRITE {written}t"
+        print(f"  [{self.power}] usage in={prompt_tokens} out={out_tokens}{tag}")

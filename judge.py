@@ -71,6 +71,9 @@ def judge_commitments(
             model=model,
             messages=[{"role": "user", "content": prompt}],
             max_tokens=600,
+            # Caching no-op today (judge prompts are below the Sonnet 4.5
+            # 1024-token minimum), but free to leave on for future growth.
+            extra_body={"cache_control": {"type": "ephemeral"}},
         )
         raw = response.content[0].text.strip()
         if raw.startswith("```"):
