@@ -32,6 +32,11 @@ def log_turn(
     compaction_summaries: dict | None = None,
     commitments: list | None = None,
     raw_message_count: dict | None = None,
+    # v3 (FactWorld) fields
+    lies_detected: list | None = None,
+    # mukobi-inspired additions
+    diplomatic_summaries: dict | None = None,
+    negotiation_order: list | None = None,
 ) -> None:
     """
     Write one turn record to the JSONL log.
@@ -67,9 +72,28 @@ def log_turn(
         "compaction_summaries": compaction_summaries or {},
         "commitments": commitments or [],
         "raw_message_count": raw_message_count or {},
+        "lies_detected": lies_detected or [],
+        "diplomatic_summaries": diplomatic_summaries or {},
+        "negotiation_order": negotiation_order or [],
     }
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(record) + "\n")
+
+
+def log_facts_distributed(path: str, game_id: str, dossiers: dict[str, list[str]]) -> None:
+    """Write a one-line record at game start capturing each agent's dossier of fact_ids.
+
+    Stored as a separate top-level record (not on every turn) to keep per-turn
+    records lean. Identifiable by `type: "facts_distributed"`.
+    """
+    if not dossiers:
+        return
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "type": "facts_distributed",
+            "game_id": game_id,
+            "dossiers": dossiers,
+        }) + "\n")
 
 
 def get_raw_log_path(game_id: str) -> str:

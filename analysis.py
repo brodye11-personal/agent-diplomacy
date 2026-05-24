@@ -64,6 +64,41 @@ def summarise(records: list[dict]) -> None:
                 print(f"  [{r['phase']}] {b['power']} ({fw}): {b.get('commitment_violated', '')}")
                 print(f"    Justification: {b.get('justification', '')}")
 
+    # ── FactWorld metrics ────────────────────────────────────────
+    summarise_factworld(turn_records)
+
+
+def summarise_factworld(turn_records: list[dict]) -> None:
+    """Per-framework lie-rate and detection metrics. No-op when FactWorld disabled."""
+    claims = defaultdict(int)
+    intentional = defaultdict(int)
+    accidental = defaultdict(int)
+    detected = defaultdict(int)
+
+    any_facts = False
+    for r in turn_records:
+        assignment = r.get("framework_assignment", {})
+        for c in r.get("lies_detected", []):
+            any_facts = True
+            fw = assignment.get(c.get("from"), "unknown")
+            claims[fw] += 1
+            if c.get("intentional_lie"):
+                intentional[fw] += 1
+            if c.get("accidental_falsehood"):
+                accidental[fw] += 1
+            if c.get("detected_by_recipient"):
+                detected[fw] += 1
+
+    if not any_facts:
+        return
+
+    print("\n=== FactWorld: intel claims by framework ===")
+    print(f"  {'framework':20s} {'claims':>7s} {'intent_lies':>11s} {'accidental':>10s} {'detected':>9s}  {'lie_rate':>9s}")
+    for fw in sorted(claims):
+        n = claims[fw]
+        rate = intentional[fw] / max(n, 1)
+        print(f"  {fw:20s} {n:7d} {intentional[fw]:11d} {accidental[fw]:10d} {detected[fw]:9d}  {rate:8.1%}")
+
 
 if __name__ == "__main__":
     records = load_logs()

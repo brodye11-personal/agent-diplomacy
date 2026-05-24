@@ -15,6 +15,7 @@ _HANDLERS: dict[str, tuple] = {
     "get_message_history": (history.get_message_history,   False),
     "send_message":        (negotiation.send_message,      False),
     "record_commitment":   (negotiation.record_commitment, False),
+    "cite_intel":          (negotiation.cite_intel,        False),
     "pass_turn":           (negotiation.pass_turn,         True),
     "submit_orders":       (orders.submit_orders,          True),
 }
@@ -35,7 +36,7 @@ _STEP_TOOLS = {
                     "get_message_history", "pass_turn"},
     "negotiation": {"get_board_state", "get_my_units", "get_commitment_log",
                     "get_message_history", "get_power_summary",
-                    "send_message", "record_commitment", "pass_turn"},
+                    "send_message", "record_commitment", "cite_intel", "pass_turn"},
     "orders":      {"get_board_state", "get_my_units", "get_valid_orders", "get_adjacency",
                     "get_rules", "get_commitment_log", "get_message_history",
                     "submit_orders"},

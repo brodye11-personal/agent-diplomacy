@@ -1,5 +1,6 @@
 """DiplomacyAgent: a persistent conversation thread per power."""
 import json
+import time
 import anthropic
 from dataclasses import dataclass
 from typing import Any
@@ -8,6 +9,39 @@ from tools import dispatch, get_tools_for_step
 from tools.context import ToolContext
 
 MAX_TOOL_ROUNDS = 20  # hard cap on tool-use iterations per step
+
+# Retry policy for transient SDK errors. The Anthropic SDK does its own retries
+# but they're conservative; via OpenRouter we see occasional 5xx / connection
+# drops that propagate. A single un-retried error here crashes the whole game,
+# so we add a thin retry layer with exponential backoff. NON-transient errors
+# (auth, bad request) re-raise immediately.
+_RETRY_WAITS = [2, 8, 24]  # seconds between attempts; total ~34s max
+_RETRYABLE = (
+    anthropic.APIConnectionError,
+    anthropic.APITimeoutError,
+    anthropic.RateLimitError,
+    anthropic.InternalServerError,
+)
+
+
+def _create_with_retry(client, *, power: str, verbose: bool, **kwargs):
+    """Call client.messages.create with bounded retry on transient errors."""
+    last_exc: Exception | None = None
+    for attempt in range(len(_RETRY_WAITS) + 1):
+        try:
+            return client.messages.create(**kwargs)
+        except _RETRYABLE as exc:
+            last_exc = exc
+            if attempt >= len(_RETRY_WAITS):
+                break
+            wait = _RETRY_WAITS[attempt]
+            if verbose:
+                print(f"  !! [{power}] API {type(exc).__name__} "
+                      f"(attempt {attempt + 1}/{len(_RETRY_WAITS) + 1}): "
+                      f"sleeping {wait}s")
+            time.sleep(wait)
+    assert last_exc is not None
+    raise last_exc
 
 
 @dataclass
@@ -48,7 +82,10 @@ class DiplomacyAgent:
         tool_call_log: list[dict] = []
 
         for _iteration in range(MAX_TOOL_ROUNDS):
-            response = self.client.messages.create(
+            response = _create_with_retry(
+                self.client,
+                power=self.power,
+                verbose=self.verbose,
                 model=self.model,
                 system=self.system_prompt,
                 messages=self.messages,
@@ -148,6 +185,21 @@ class DiplomacyAgent:
         self.messages.append({
             "role": "user",
             "content": f"Inbound from {from_power}: {content}",
+        })
+
+    def inject_diplomatic_record(self, summary: str, turn: str) -> None:
+        """
+        Inject external neutral message digest after compaction.
+
+        Adapted from mukobi/welfare-diplomacy: unlike inject_inbound (which is
+        stripped by the next compact()), this is appended *after* compact() so
+        it remains visible for the full next turn before being cleaned up by
+        the following compact(). Gives agents an objective third-party record
+        of what was communicated — separate from their own strategic summary.
+        """
+        self.messages.append({
+            "role": "user",
+            "content": f"[DIPLOMATIC RECORD {turn}]\n{summary}",
         })
 
     def _log_usage(self, response) -> None:

@@ -1,3 +1,4 @@
+import threading
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -15,7 +16,12 @@ class ToolContext:
     outbound_messages: list    # [{to, content}] — reset per negotiation step by orchestrator
     active_powers: list = None  # human-controlled powers; others auto-hold as neutrals
     fact_world: Any = None     # FactWorld placeholder (v3)
+    # One lock per game, shared across threads. Protects commitment_log and
+    # message_log from interleaved appends/reads when agents run in parallel.
+    log_lock: Any = None
 
     def __post_init__(self):
         if self.active_powers is None:
             self.active_powers = []
+        if self.log_lock is None:
+            self.log_lock = threading.Lock()

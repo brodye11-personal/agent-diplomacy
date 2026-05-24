@@ -40,9 +40,12 @@ PLAYER_CONFIGS = {
 # The Anthropic SDK accepts base_url + auth_token (bearer auth) directly.
 OPENROUTER_BASE_URL = "https://openrouter.ai/api"
 
-# Defaults: cheap + fast for iteration; promote to Sonnet once tool-use is reliable.
+# Defaults: cheap iteration model. DeepSeek V3 is ~5x cheaper than Haiku 4.5
+# on input and ~5x cheaper on output, with strong agentic tool-use. Override
+# with --model anthropic/claude-haiku-4.5 (or sonnet) for production runs
+# once tool-use behaviour is confirmed on this game shape.
 # OpenRouter slug format = "<provider>/<model>".
-DEFAULT_AGENT_MODEL = "anthropic/claude-haiku-4.5"
+DEFAULT_AGENT_MODEL = "deepseek/deepseek-chat"
 DEFAULT_JUDGE_MODEL = "anthropic/claude-sonnet-4.5"
 
 
@@ -103,11 +106,15 @@ def main():
     framework_assignment = dict(zip(active_powers, frameworks_list))
 
     client = make_client()
-    fact_world = FactWorld(enabled=args.facts)
-    if args.facts:
-        fact_world.generate(active_powers)
 
     for run_index in range(1, args.runs + 1):
+        # Per-run FactWorld so each run gets an independent dossier distribution.
+        # Without this every run uses seed=42 and the morally-loaded intel is
+        # identical across runs, confounding any framework effect on lying.
+        fact_world = FactWorld(enabled=args.facts, seed=run_index)
+        if args.facts:
+            fact_world.generate(active_powers)
+
         print(f"\nStarting run {run_index}/{args.runs} ({args.players}-player)...")
         summary = orchestrator.run_game(
             run_index=run_index,
