@@ -10,6 +10,13 @@ from tools.context import ToolContext
 
 MAX_TOOL_ROUNDS = 20  # hard cap on tool-use iterations per step
 
+# Extended thinking: a hidden reasoning scratchpad emitted before each step's
+# visible text/tool calls. budget_tokens must be >= 1024 and strictly less than
+# max_tokens (which also covers the visible output). Thinking tokens are billed
+# at the output rate, so this raises per-call cost. Captured in the raw-thread log.
+THINKING_BUDGET_TOKENS = 2048
+MAX_TOKENS = 8192
+
 # Retry policy for transient SDK errors. The Anthropic SDK does its own retries
 # but they're conservative; via OpenRouter we see occasional 5xx / connection
 # drops that propagate. A single un-retried error here crashes the whole game,
@@ -90,7 +97,11 @@ class DiplomacyAgent:
                 system=self.system_prompt,
                 messages=self.messages,
                 tools=tools,
-                max_tokens=4096,
+                max_tokens=MAX_TOKENS,
+                # Extended thinking: hidden reasoning scratchpad before each step
+                # speaks/acts. budget < max_tokens; preserved verbatim in the
+                # thread (signatures intact) so multi-round tool use stays valid.
+                thinking={"type": "enabled", "budget_tokens": THINKING_BUDGET_TOKENS},
                 # OpenRouter passthrough: top-level automatic caching tells the
                 # Anthropic-compatible provider to cache the stable prefix and
                 # auto-advance the breakpoint as the thread grows. Only fires
@@ -104,7 +115,9 @@ class DiplomacyAgent:
 
             if self.verbose:
                 for block in response.content:
-                    if hasattr(block, "text"):
+                    if getattr(block, "type", None) == "thinking":
+                        print(f"  [{self.power}] THINK {getattr(block, 'thinking', '')[:200]}")
+                    elif hasattr(block, "text"):
                         print(f"  [{self.power}] {block.text[:200]}")
                 self._log_usage(response)
 

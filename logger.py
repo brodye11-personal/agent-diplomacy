@@ -154,6 +154,10 @@ def _serialise_block(block):
     if isinstance(block, dict):
         return block
     t = getattr(block, "type", None)
+    if t == "thinking":
+        return {"type": "thinking", "thinking": getattr(block, "thinking", "")}
+    if t == "redacted_thinking":
+        return {"type": "redacted_thinking", "data": getattr(block, "data", None)}
     if t == "text":
         return {"type": "text", "text": getattr(block, "text", "")}
     if t == "tool_use":
