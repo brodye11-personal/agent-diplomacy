@@ -99,6 +99,28 @@ def log_facts_distributed(path: str, game_id: str, dossiers: dict[str, list[str]
         }) + "\n")
 
 
+def log_agent_setup(
+    path: str,
+    game_id: str,
+    system_prompts: dict[str, str],
+    tools_by_step: dict[str, list[str]],
+) -> None:
+    """Durable record of exactly what each model was given at game start.
+
+    Captures each agent's full system prompt (constitution + dossier + opponent
+    constitutions under transparent) and the tool names available per step type.
+    Lets analysis verify — without reconstruction — that propose_compulsion, the
+    facts, and rivals' constitutions were actually presented to the models.
+    """
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "type": "agent_setup",
+            "game_id": game_id,
+            "system_prompts": system_prompts,
+            "tools_by_step": tools_by_step,
+        }) + "\n")
+
+
 def get_raw_log_path(game_id: str) -> str:
     """Sidecar path for raw pre-compaction message threads."""
     os.makedirs("logs", exist_ok=True)

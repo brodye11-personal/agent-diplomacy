@@ -16,10 +16,14 @@ from diplomacy import Game
 import anthropic
 
 from agent import DiplomacyAgent, StepResult
+from tools import get_tools_for_step
 from tools.context import ToolContext
 from compaction import build_compaction_prompt
 from judge import judge_commitments, extract_betrayals, judge_compulsion
-from logger import get_log_path, log_turn, log_game_summary, log_facts_distributed
+from logger import (
+    get_log_path, log_turn, log_game_summary, log_facts_distributed,
+    log_agent_setup, log_raw_thread,
+)
 from frameworks import build_system_prompt, FRAMEWORKS
 from facts import FactWorld
 from summarizer import summarize_phase_messages
@@ -187,6 +191,19 @@ def run_game(
     # Persist the per-agent fact dossiers once at game start (top-level record).
     if fact_world is not None and getattr(fact_world, "enabled", False):
         log_facts_distributed(log_path, game_id, fact_world.distributed_dossiers())
+
+    # Durable record of EXACTLY what each model was given: full system prompts
+    # (constitution + dossier + rivals' constitutions under transparent) and the
+    # tool names available per step. Lets us verify propose_compulsion / facts /
+    # opponent constitutions were actually presented, without reconstruction.
+    log_agent_setup(
+        log_path, game_id,
+        system_prompts={p: agents[p].system_prompt for p in active_powers},
+        tools_by_step={
+            step: [t["name"] for t in get_tools_for_step(step)]
+            for step in ("planning", "negotiation", "orders", "arbitration")
+        },
+    )
 
     game = Game()
     passive_powers = [p for p in ALL_POWERS if p not in active_powers]
@@ -477,6 +494,18 @@ def run_game(
             if verbose and betrayals_flagged:
                 for b in betrayals_flagged:
                     print(f"  BETRAYAL [{b['power']}→{b['to']}]: {b['commitment_violated']}")
+
+            # ── RAW THREAD DUMP (before compaction strips it) ─────────────
+            # Persist each agent's FULL message thread for this turn — every
+            # assistant reasoning turn, untruncated — so analysis can see whether
+            # agents ever considered propose_compulsion / cited facts / weighed a
+            # rival's constitution, vs never engaged the moral layer at all.
+            for power in alive:
+                try:
+                    log_raw_thread(game_id, turn, power, agents[power].messages)
+                except Exception as exc:
+                    if verbose:
+                        print(f"  !! [{power}] raw-thread log error: {exc}")
 
             # ── COMPACTION ────────────────────────────────────────────────
             def _compact(power):
