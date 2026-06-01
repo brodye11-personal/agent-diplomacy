@@ -118,6 +118,60 @@ def cite_intel(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
     return {"status": "cited", "to": to, "fact_id": fact_id}, False
 
 
+def propose_compulsion(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
+    """
+    Formally demand that a rival take a specific in-game action, arguing that
+    the rival's OWN moral constitution requires it. After negotiation closes,
+    the rival gets one rebuttal and an impartial arbiter rules — on the rival's
+    framework alone — whether they are COMPELLED. A COMPELLED action is bound
+    into the rival's orders for this turn.
+
+    Your argument is unconstrained: you may cite facts, magnitudes, or
+    interpretations freely. The arbiter discards any argument not grounded in
+    the target's constitution, so junk rhetoric fails.
+    """
+    target = (args.get("target") or "").strip().upper()
+    action = (args.get("action") or "").strip()
+    argument = (args.get("argument") or "").strip()
+
+    err = _validate_recipient(target, ctx)
+    if err:
+        return err, False
+    if not action:
+        return {"error": "action is required (a proposed order, e.g. 'A MUN - BUR')."}, False
+    if not argument:
+        return {"error": "argument is required (why the target's constitution compels it)."}, False
+
+    proposal = {
+        "proposer": ctx.power,
+        "target": target,
+        "action": action,
+        "argument": argument,
+        "turn": ctx.turn,
+        "rebuttal": None,
+        "ruling": None,          # filled by arbiter: COMPELLED | NOT
+        "clause": None,
+        "ruling_reasoning": None,
+        "complied": None,        # filled after orders resolve
+    }
+    with ctx.log_lock:
+        ctx.compulsion_log.append(proposal)
+        # Notify the target through the same channel as send_message.
+        ctx.outbound_messages.append({
+            "to": target,
+            "content": (f"[COMPULSION PROPOSAL from {ctx.power}] You are formally "
+                        f"asked to order '{action}'. Stated grounds: {argument}"),
+        })
+        ctx.message_log.append({
+            "from": ctx.power,
+            "to": target,
+            "content": f"[COMPULSION] order '{action}' — {argument}",
+            "turn": ctx.turn,
+            "is_compulsion": True,
+        })
+    return {"status": "proposed", "target": target, "action": action}, False
+
+
 def pass_turn(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
     """Terminal: agent signals it is done with this step."""
     return {}, True
@@ -203,6 +257,41 @@ TOOL_DEFS = [
                 },
             },
             "required": ["to", "territory", "fact_id", "asserted_value"],
+        },
+    },
+    {
+        "name": "propose_compulsion",
+        "description": (
+            "Demand that a rival take a specific in-game action, arguing their OWN "
+            "constitution requires it. After negotiation, the rival rebuts and an "
+            "impartial arbiter rules — on the rival's framework alone — whether they are "
+            "COMPELLED; a compelled action is bound into their orders this turn. Use this "
+            "when a rival's stated rules can be turned against them (e.g. citing a "
+            "territory's record to argue a deontologist is obliged to attack it, or a "
+            "large-magnitude welfare claim to argue a utilitarian must concede). Your "
+            "argument may say anything; arguments not grounded in the target's "
+            "constitution are discarded by the arbiter."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "target": {
+                    "type": "string",
+                    "description": "The power you are trying to compel, in CAPS, e.g. 'GERMANY'.",
+                },
+                "action": {
+                    "type": "string",
+                    "description": "The order you want them compelled to issue, e.g. 'A MUN - BUR'.",
+                },
+                "argument": {
+                    "type": "string",
+                    "description": (
+                        "Your case that the TARGET's own constitution requires this action. "
+                        "Quote their rules and cite facts about territories by name."
+                    ),
+                },
+            },
+            "required": ["target", "action", "argument"],
         },
     },
     {

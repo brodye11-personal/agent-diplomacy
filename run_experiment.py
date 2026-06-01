@@ -19,21 +19,21 @@ load_dotenv()
 
 # Framework rotation sets — same positional-counterbalancing scheme as v1.
 FRAMEWORKS_3 = [
-    ["utilitarian", "deontological", "hhh"],
-    ["deontological", "hhh", "utilitarian"],
-    ["hhh", "utilitarian", "deontological"],
+    ["utilitarian", "deontological", "rawlsian"],
+    ["deontological", "rawlsian", "utilitarian"],
+    ["rawlsian", "utilitarian", "deontological"],
     ["baseline", "utilitarian", "deontological"],
-    ["utilitarian", "baseline", "hhh"],
-    ["deontological", "hhh", "baseline"],
+    ["utilitarian", "baseline", "rawlsian"],
+    ["deontological", "rawlsian", "baseline"],
 ]
 
 FRAMEWORKS_7 = [
-    ["utilitarian", "deontological", "hhh", "baseline", "utilitarian", "deontological", "hhh"],
-    ["deontological", "hhh", "utilitarian", "utilitarian", "baseline", "hhh", "deontological"],
-    ["hhh", "utilitarian", "deontological", "deontological", "hhh", "baseline", "utilitarian"],
-    ["baseline", "utilitarian", "hhh", "deontological", "utilitarian", "hhh", "baseline"],
-    ["utilitarian", "baseline", "deontological", "hhh", "deontological", "utilitarian", "baseline"],
-    ["deontological", "hhh", "baseline", "utilitarian", "baseline", "deontological", "hhh"],
+    ["utilitarian", "deontological", "rawlsian", "baseline", "utilitarian", "deontological", "rawlsian"],
+    ["deontological", "rawlsian", "utilitarian", "utilitarian", "baseline", "rawlsian", "deontological"],
+    ["rawlsian", "utilitarian", "deontological", "deontological", "rawlsian", "baseline", "utilitarian"],
+    ["baseline", "utilitarian", "rawlsian", "deontological", "utilitarian", "rawlsian", "baseline"],
+    ["utilitarian", "baseline", "deontological", "rawlsian", "deontological", "utilitarian", "baseline"],
+    ["deontological", "rawlsian", "baseline", "utilitarian", "baseline", "deontological", "rawlsian"],
 ]
 
 # mukobi-inspired defector condition: one power is a guaranteed defector.
@@ -41,20 +41,20 @@ FRAMEWORKS_7 = [
 # confounded with starting position. Use with --defector flag.
 FRAMEWORKS_3_DEFECTOR = [
     ["defector", "utilitarian", "deontological"],
-    ["utilitarian", "defector", "hhh"],
-    ["deontological", "hhh", "defector"],
-    ["defector", "hhh", "utilitarian"],
+    ["utilitarian", "defector", "rawlsian"],
+    ["deontological", "rawlsian", "defector"],
+    ["defector", "rawlsian", "utilitarian"],
     ["utilitarian", "deontological", "defector"],
-    ["defector", "baseline", "hhh"],
+    ["defector", "baseline", "rawlsian"],
 ]
 
 FRAMEWORKS_7_DEFECTOR = [
-    ["defector", "utilitarian", "deontological", "hhh", "baseline", "utilitarian", "deontological"],
-    ["utilitarian", "defector", "hhh", "utilitarian", "baseline", "hhh", "deontological"],
-    ["hhh", "utilitarian", "defector", "deontological", "hhh", "baseline", "utilitarian"],
-    ["baseline", "utilitarian", "hhh", "defector", "utilitarian", "hhh", "baseline"],
-    ["utilitarian", "baseline", "deontological", "hhh", "defector", "utilitarian", "baseline"],
-    ["deontological", "hhh", "baseline", "utilitarian", "baseline", "defector", "hhh"],
+    ["defector", "utilitarian", "deontological", "rawlsian", "baseline", "utilitarian", "deontological"],
+    ["utilitarian", "defector", "rawlsian", "utilitarian", "baseline", "rawlsian", "deontological"],
+    ["rawlsian", "utilitarian", "defector", "deontological", "rawlsian", "baseline", "utilitarian"],
+    ["baseline", "utilitarian", "rawlsian", "defector", "utilitarian", "rawlsian", "baseline"],
+    ["utilitarian", "baseline", "deontological", "rawlsian", "defector", "utilitarian", "baseline"],
+    ["deontological", "rawlsian", "baseline", "utilitarian", "baseline", "defector", "rawlsian"],
 ]
 
 

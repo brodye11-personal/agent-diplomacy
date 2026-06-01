@@ -16,6 +16,7 @@ _HANDLERS: dict[str, tuple] = {
     "send_message":        (negotiation.send_message,      False),
     "record_commitment":   (negotiation.record_commitment, False),
     "cite_intel":          (negotiation.cite_intel,        False),
+    "propose_compulsion":  (negotiation.propose_compulsion, False),
     "pass_turn":           (negotiation.pass_turn,         True),
     "submit_orders":       (orders.submit_orders,          True),
 }
@@ -36,7 +37,11 @@ _STEP_TOOLS = {
                     "get_message_history", "pass_turn"},
     "negotiation": {"get_board_state", "get_my_units", "get_commitment_log",
                     "get_message_history", "get_power_summary",
-                    "send_message", "record_commitment", "cite_intel", "pass_turn"},
+                    "send_message", "record_commitment", "cite_intel",
+                    "propose_compulsion", "pass_turn"},
+    # Arbitration: the defender writes a free-text rebuttal to compulsion
+    # proposals. Text-only — no game-state actions (mirrors the compaction step).
+    "arbitration": {"pass_turn"},
     "orders":      {"get_board_state", "get_my_units", "get_valid_orders", "get_adjacency",
                     "get_rules", "get_commitment_log", "get_message_history",
                     "submit_orders"},

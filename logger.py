@@ -37,6 +37,8 @@ def log_turn(
     # mukobi-inspired additions
     diplomatic_summaries: dict | None = None,
     negotiation_order: list | None = None,
+    # constitutional-compulsion experiment
+    compulsions: list | None = None,
 ) -> None:
     """
     Write one turn record to the JSONL log.
@@ -75,6 +77,7 @@ def log_turn(
         "lies_detected": lies_detected or [],
         "diplomatic_summaries": diplomatic_summaries or {},
         "negotiation_order": negotiation_order or [],
+        "compulsions": compulsions or [],
     }
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(record) + "\n")

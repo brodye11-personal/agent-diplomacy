@@ -73,7 +73,9 @@ def make_client() -> anthropic.Anthropic:
 
 def main():
     parser = argparse.ArgumentParser(description="Agentic Diplomacy: moral frameworks under negotiation pressure")
-    parser.add_argument("--condition", choices=["blind", "transparent"], default="blind")
+    parser.add_argument("--condition", choices=["blind", "transparent"], default="transparent",
+                        help="transparent (default) = rivals' full constitutions are known "
+                             "(the thesis condition); blind = the R4 baseline.")
     parser.add_argument("--players", type=int, choices=[3, 7], default=3,
                         help="Number of active players: 3=ENG/FRA/GER, 7=all powers")
     parser.add_argument("--frameworks", nargs="*", default=None,
@@ -88,7 +90,9 @@ def main():
                         help="Negotiation rounds per movement turn (default: 3)")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--facts", action="store_true",
-                        help="Enable FactWorld (v3 — not yet implemented)")
+                        help="Enable FactWorld: shared morally-loaded facts about territories "
+                             "(common knowledge by default). The substrate the compulsion "
+                             "arbiter reasons over — recommended ON for compulsion runs.")
     args = parser.parse_args()
 
     active_powers = PLAYER_CONFIGS[args.players]
