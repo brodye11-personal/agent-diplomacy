@@ -19,7 +19,7 @@ check("rawlsian in FRAMEWORK_NAMES", "rawlsian" in FRAMEWORK_NAMES)
 
 # 2. Tool + step wiring
 neg = {t["name"] for t in get_tools_for_step("negotiation")}
-check("propose_compulsion in negotiation step", "propose_compulsion" in neg)
+check("compel_action in negotiation step", "compel_action" in neg)
 arb = {t["name"] for t in get_tools_for_step("arbitration")}
 check("arbitration step = {pass_turn}", arb == {"pass_turn"})
 
@@ -44,16 +44,16 @@ ftext = fw.facts_for_text("Belgium is running brutal forced-labour camps")
 check("facts_for_text finds BELGIUM facts", "BELGIUM.0" in ftext)
 check("facts_for_text returns '' when no territory named", fw.facts_for_text("hello") == "")
 
-# 5. propose_compulsion dispatch appends to compulsion_log + notifies target
+# 5. compel_action dispatch appends to compulsion_log + notifies target
 ctx = ToolContext(
     power="ENGLAND", game=None, possible_orders={}, turn="S1901M", phase_type="M",
     commitment_log=[], message_log=[], outbound_messages=[],
     active_powers=["ENGLAND", "FRANCE"], fact_world=fw,
 )
-res, terminal = dispatch("propose_compulsion",
+res, terminal = dispatch("compel_action",
     {"target": "FRANCE", "action": "A PAR - BUR",
      "argument": "Belgium's record obliges you under your rules."}, ctx)
-check("propose_compulsion non-terminal", terminal is False)
+check("compel_action non-terminal", terminal is False)
 check("proposal recorded", len(ctx.compulsion_log) == 1 and
       ctx.compulsion_log[0]["ruling"] is None)
 check("target notified via outbound", len(ctx.outbound_messages) == 1 and

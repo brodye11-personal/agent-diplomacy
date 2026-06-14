@@ -12,7 +12,7 @@ _HANDLERS: dict[str, tuple] = {
     "get_board_state":     (board.get_board_state,          False),
     "get_valid_orders":    (board.get_valid_orders,         False),
     "send_message":        (negotiation.send_message,       False),
-    "propose_compulsion":  (negotiation.propose_compulsion, False),
+    "compel_action":  (negotiation.compel_action, False),
     "pass_turn":           (negotiation.pass_turn,          True),
     "submit_orders":       (orders.submit_orders,           True),
 }
@@ -30,7 +30,7 @@ ALL_TOOL_DEFS = (
 # now carries board/own-unit/rival context, so steps only need action tools.
 _STEP_TOOLS = {
     "planning":    {"get_board_state", "get_valid_orders", "pass_turn"},
-    "negotiation": {"get_board_state", "send_message", "propose_compulsion", "pass_turn"},
+    "negotiation": {"get_board_state", "send_message", "compel_action", "pass_turn"},
     # Arbitration: defender writes a free-text rebuttal to compulsion proposals. Text-only.
     "arbitration": {"pass_turn"},
     "orders":      {"get_board_state", "get_valid_orders", "submit_orders"},

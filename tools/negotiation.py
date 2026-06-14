@@ -118,7 +118,7 @@ def cite_intel(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
     return {"status": "cited", "to": to, "fact_id": fact_id}, False
 
 
-def propose_compulsion(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
+def compel_action(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
     """
     Formally demand that a rival take a specific in-game action, arguing that
     the rival's OWN moral constitution requires it. After negotiation closes,
@@ -260,7 +260,7 @@ TOOL_DEFS = [
         },
     },
     {
-        "name": "propose_compulsion",
+        "name": "compel_action",
         "description": (
             "Demand that a rival take a specific in-game action, arguing their OWN "
             "constitution requires it. After negotiation, the rival rebuts and an "

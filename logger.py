@@ -109,7 +109,7 @@ def log_agent_setup(
 
     Captures each agent's full system prompt (constitution + dossier + opponent
     constitutions under transparent) and the tool names available per step type.
-    Lets analysis verify — without reconstruction — that propose_compulsion, the
+    Lets analysis verify — without reconstruction — that compel_action, the
     facts, and rivals' constitutions were actually presented to the models.
     """
     with open(path, "a", encoding="utf-8") as f:

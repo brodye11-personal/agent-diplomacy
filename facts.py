@@ -208,7 +208,7 @@ class FactWorld:
                 "These facts are the shared moral record of the board. Use them to:",
                 "- justify or refuse an alliance based on a power's territorial record",
                 "- argue that a rival's own constitution OBLIGES them to take an action",
-                "  against a territory with a damaging record (see propose_compulsion)",
+                "  against a territory with a damaging record (see compel_action)",
                 "- build a coalition case around a territory's conduct",
                 "",
             ]

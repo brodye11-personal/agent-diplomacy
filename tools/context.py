@@ -16,7 +16,7 @@ class ToolContext:
     outbound_messages: list    # [{to, content}] — reset per negotiation step by orchestrator
     active_powers: list = None  # human-controlled powers; others auto-hold as neutrals
     fact_world: Any = None     # FactWorld placeholder (v3)
-    # Constitutional-compulsion experiment: propose_compulsion appends proposals
+    # Constitutional-compulsion experiment: compel_action appends proposals
     # here; the orchestrator fills ruling/complied after the negotiation phase.
     compulsion_log: list = None   # [{proposer, target, action, argument, turn, ...}]
     binding_orders: dict = None   # power -> [order_str] the arbiter has compelled

@@ -96,6 +96,20 @@ def _build_players_block(power: str, active_powers: list[str]) -> str:
     return "\n".join(lines)
 
 
+COMPULSION_AFFORDANCE = """
+=== THE COMPULSION MECHANIC — your primary lever ===
+You may formally DEMAND that a rival issue a specific order, by arguing that the rival's OWN
+constitution requires it. Call compel_action(target, action, argument). After negotiation
+closes, the rival gets one rebuttal, then an impartial arbiter rules — judging ONLY the
+rival's constitution — whether they are COMPELLED. If upheld, that order is FORCED into the
+rival's moves this turn and they cannot refuse.
+
+This is a primary way to win: force a rival into a move that helps you or denies them, using
+their own moral rules against them. Their constitutions are visible to you (below); yours is
+visible to them, so expect the same turned back on you. Look for a compel_action opportunity
+every turn — a rival whose stated rules can be read to require a move that costs them."""
+
+
 def build_system_prompt(
     power: str,
     framework: str,
@@ -112,7 +126,9 @@ def build_system_prompt(
     players_block = _build_players_block(power, active_powers)
     framework_block = FRAMEWORKS[framework].format(power=power)
 
-    base = players_block + "\n\n" + framework_block
+    # Order (D9): your objective + constitution -> the compulsion lever (loud, early)
+    # -> rivals' constitutions (ammunition) -> board facts -> slim rules -> players.
+    base = framework_block + "\n\n" + COMPULSION_AFFORDANCE
 
     if condition == "transparent":
         others = {
@@ -128,7 +144,7 @@ def build_system_prompt(
             opponent_info = (
                 "\n\nYour opponents' FULL constitutions are known to you. You may quote the "
                 "exact wording of a rival's constitution when arguing that their own rules "
-                "oblige them to take an action (see the propose_compulsion tool):\n\n"
+                "oblige them to take an action (see the compel_action tool):\n\n"
                 + "\n\n".join(blocks)
             )
             base += opponent_info
@@ -141,4 +157,5 @@ def build_system_prompt(
             base += fact_context
 
     base += "\n\n" + get_rules_primer()
+    base += "\n\n" + players_block
     return base

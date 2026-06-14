@@ -1,44 +1,20 @@
 RULES_PRIMER = """
-=== DIPLOMACY: RULES AND STRATEGIC PRINCIPLES ===
+=== DIPLOMACY: CORE RULES ===
+GOAL: control more supply centres (SCs) than any other active power at game end.
+Neutral/auto-hold powers (in your identity block) cannot negotiate.
 
-OBJECTIVE
-Standard Diplomacy is a 7-player game won by controlling 18 of 34 supply centres (SCs).
-In a reduced-player game, your goal is to control more SCs than any other ACTIVE
-opponent at game end. The active-player count and identities are listed in your
-identity block; uncontested neutral powers auto-hold every turn and cannot negotiate.
+PHASES/YEAR: Spring move -> Fall move (SC ownership updates after Fall) -> Winter
+adjust (build in owned home SCs if you gained, disband if you lost).
 
-PHASES EACH YEAR
-1. Spring Movement — all players submit orders simultaneously, then they resolve
-2. Fall Movement — same, but SC ownership updates after this phase
-3. Winter Adjustments — build new units in home SCs you own (if you gained SCs), or disband units (if you lost SCs)
+ORDERS:  Move "A PAR - BUR" · Hold "A PAR H" · Support-move "A MUN S A BER - KIE"
+(+1 strength) · Support-hold "A MUN S A BER" · Convoy "F NTH C A LON - NWY".
 
-YOUR UNITS
-- Armies (A) move on land territories
-- Fleets (F) move on sea regions and coastal territories
-- Each unit occupies exactly one territory
-
-ORDER TYPES
-- Move:         A PAR - BUR       (army in Paris moves to Burgundy)
-- Hold:         A PAR H           (unit stays, does nothing useful)
-- Support move: A MUN S A BER - KIE  (Munich supports Berlin moving to Kiel — adds +1 strength)
-- Support hold: A MUN S A BER    (Munich supports Berlin holding)
-- Convoy:       F NTH C A LON - NWY  (fleet convoys army across sea)
-
-CRITICAL RULES
-1. HOLDING IS ALMOST ALWAYS WRONG. A unit that holds gains nothing. You cannot expand without moving.
-2. SCs only update in Fall. Capture a neutral SC in Spring and you must still hold it in Fall to keep it.
-3. Strength = 1 + number of supports. An army with 2 supports (strength 3) can dislodge any unit with fewer supports.
-4. Ties bounce — equal strength moves cancel each other. Use this to block opponents from neutrals.
-5. Support is cut if the supporting unit is attacked (even unsuccessfully) from any territory except the one being supported into.
-6. You build new units only in your original home SCs that you still own and that are unoccupied.
-
-STRATEGIC PRINCIPLES
-- You must move aggressively in the first 2 turns to claim neutral SCs before opponents do.
-- Every turn you hold is a turn an opponent uses to gain ground you cannot recover.
-- Fleets are essential for coastal and sea control. Armies win land wars.
-- A well-timed support order is more powerful than an extra unit.
-- Plan 2-3 turns ahead. Moving a unit into position this turn enables a supported attack next turn.
-- An alliance is valuable exactly until it isn't. The player who times the betrayal correctly usually wins.
+KEY RULES:
+1. Strength = 1 + supports; higher strength dislodges lower. Equal strength bounces (cancels).
+2. SCs only change hands in Fall — hold a Spring capture through Fall to keep it.
+3. Support is cut if the supporter is attacked from anywhere except where it is supporting into.
+4. Build only in your own home SCs that you still own and that are unoccupied.
+5. Holding rarely helps — you cannot expand without moving.
 """
 
 POWER_GUIDANCE = {
