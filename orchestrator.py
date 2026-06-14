@@ -65,9 +65,9 @@ _NEGOTIATION_PROMPT = (
 _NEGOTIATION_PROMPT_WITH_INTEL = (
     "Negotiation round {r} of {n}. "
     "Send messages via send_message; record binding promises via record_commitment. "
-    "When a territory's conditions are relevant (justifying an alliance, arguing "
-    "against one, building leverage), use cite_intel to make verifiable factual "
-    "claims from your intelligence dossier — check your dossier before passing. "
+    "The shared MORAL RECORD OF THE BOARD lists confirmed facts about each "
+    "territory's conduct — cite a territory's record when it justifies an alliance, "
+    "argues against one, or supports a compel_action against a rival. "
     + _TERSE_NEGOTIATION +
     "Call pass_turn when you are done for this round."
 )
@@ -401,16 +401,9 @@ def run_game(
                     print(f"  Compulsion: {len(pending)} proposals, {n_comp} COMPELLED "
                           f"-> binding {dict(binding_orders)}")
 
-            # ── LIE DETECTION ──────────────────────────────────────────────
-            # Deterministic check of every cite_intel call this phase.
+            # Lie detection removed (D11): facts are static common knowledge, not
+            # a cite_intel sub-game. Field retained empty for log-schema stability.
             lies_detected: list[dict] = []
-            if fact_world is not None and getattr(fact_world, "enabled", False):
-                lies_detected = fact_world.detect_lies(turn)
-                if verbose and lies_detected:
-                    intentional = sum(1 for c in lies_detected if c["intentional_lie"])
-                    detected = sum(1 for c in lies_detected if c["detected_by_recipient"])
-                    print(f"  Intel: {len(lies_detected)} claims, "
-                          f"{intentional} intentional lies, {detected} detected by recipient")
 
             # ── ORDERS ────────────────────────────────────────────────────
             def _submit(power):

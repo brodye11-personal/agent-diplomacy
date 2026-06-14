@@ -140,6 +140,35 @@ Model is configurable per role. **Haiku 4.5** for offline smoke/iteration; **Son
 (Sonnet 4.6 or Opus 4.8 — the ruling is the crux). Pilot 1 game on Opus 4.8 to prove the
 mechanic *can* fire post-redesign before committing to a batch.
 
+### 2026-06-14 — D13. FactWorld shrunk to a curated, framework-balanced static pool (executes D11/D3 for P3b)
+P3 split into P3a (frameworks, done) and **P3b (facts)**. P3b implements D11's "lean static
+moral-record block":
+- **Curated `FACT_POOL`** (~24 facts, down from ~80): scoped to the 6 active powers' home
+  centres (D5/D6 — Turkey's neutralised centres dropped) plus the most-contested neutrals
+  (Belgium, Norway, Sweden, Spain, Serbia). Each fact is comment-tagged with the framework
+  it primarily bites — **[RET]** established guilt/atrocity, **[UTIL]** large-magnitude
+  welfare/suffering, **[DEON]** sworn treaty/ratified convention, **[MULTI]** contested —
+  so the pool is balanced across the triad (D3) rather than favouring one framework by
+  sheer volume. The canonical Belgium atrocity fact is retained as the worked compulsion
+  example.
+- **Cut the cite_intel / lie-detection / dossier machinery** (D11): removed `record_claim`,
+  `detect_lies`, the `_claims` log, `_normalise`, and the asymmetric-info (`common_knowledge=
+  False`) sampling path from `facts.py`; deleted the dead `cite_intel` tool (function +
+  TOOL_DEF) from `tools/negotiation.py`; removed the orchestrator's lie-detection block and
+  the cite_intel nudge in the intel negotiation prompt. Facts are now delivered as one
+  **static shared common-knowledge block** ("MORAL RECORD OF THE BOARD") and an arbiter
+  lookup (`facts_for_text`) — no tool-driven sub-game.
+- **Kept for call-site compat:** `FactWorld(seed, enabled, common_knowledge)` signature
+  (params retained but facts are always shared); `get_context`, `facts_for_text`,
+  `known_fact_ids`, `distributed_dossiers`.
+- **Why:** the cite_intel sub-game fired in only 3/27 pilot games and added an asymmetric-
+  info confound; under the constitutional-compulsion thesis a compulsion must turn on
+  framework *interpretation* of shared facts, not on who happens to hold a fact.
+- **Verified:** `_smoke_compulsion.py` 17/17. (Legacy `smoke_test.py` is stale since P1/P3a —
+  references removed `baseline`/`record_commitment`/old registry; unchanged by P3b, slated
+  for the P5 orchestrator strip / test rewrite.) The residual `record_commitment` dead tool
+  and the orchestrator's commitment/summarizer/compaction paths remain for P5.
+
 ---
 
 ## Build plan (ordered)
@@ -158,6 +187,9 @@ before the first validation run. Run `_smoke_compulsion.py` after each structura
 - **P3 — Frameworks & facts** (D2, D11): drop baseline + rawlsian, add **retributive**;
   shrink `facts.py` to a curated, framework-balanced pool + static render (no `cite_intel`,
   no lie-detection). `frameworks.py`, `facts.py`, `run_experiment.py` rotations.
+  - **P3a ✅** — frameworks: triad as constitution-only rule-sets; rotations (028eafa).
+  - **P3b ✅** — facts: curated framework-balanced `FACT_POOL` + static shared block;
+    cite_intel/lie-detection/dossier machinery removed (D13).
 - **P4 — Deterministic context** (D10): `build_state_block()` + `inject_state_block()`;
   remove the LLM compaction step and `summarizer.py`. `agent.py`, new `state.py`,
   `orchestrator.py`.

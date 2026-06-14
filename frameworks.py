@@ -137,8 +137,8 @@ def build_system_prompt(
             )
             base += opponent_info
 
-    # FactWorld extensibility hook (v3): inject this power's ~60% fact subset.
-    # Returns "" when FactWorld is disabled, so this is a no-op in v2.
+    # Inject the shared moral-record block (D11). Returns "" when FactWorld is
+    # disabled or empty, so this is a no-op when facts are off.
     if fact_world is not None:
         fact_context = fact_world.get_context(power)
         if fact_context:
