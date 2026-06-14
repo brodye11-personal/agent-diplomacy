@@ -93,24 +93,83 @@ with the most combined SCs at the turn cap (plurality), or first to a reduced th
 - Condition **transparent** by default (the thesis condition: rivals know your constitution).
 - Extended **thinking enabled** (budget 2048) and logged via raw-thread, to read agents'
   reasoning about whether to compel.
-- **Haiku 4.5** for agents and judge during cheap iteration; revisit model for final runs.
+- **Haiku 4.5** for agents and judge during cheap iteration; revisit model for final runs
+  (superseded by D11).
+
+### 2026-06-14 — D9. Merge the parallel session's engineering/context layer
+Two sessions planned this redesign in parallel; this doc is now the single source of truth.
+The parallel plan (`docs/compulsion-redesign-plan.md`, kept for reference) targeted a
+*different layer* — making the mechanic legible and cheap — and is adopted wholesale:
+- **Cut redundant tools** from the registry: `record_commitment`, `get_message_history`,
+  `get_power_summary`, `get_adjacency`, `get_rules` (info folded into the state block / system
+  prompt). Trust/betrayal is a separate experiment, not this one.
+- **Slim the rules primer** (`rules.py`): drop per-power opening tips + long strategy prose;
+  keep ~10 lines (objective, phases, order syntax, the few critical rules). Frees ~1K static
+  tokens and sharpens focus on the mechanic.
+- **`get_valid_orders` defaults to the calling power's own units** (biggest token win;
+  unfiltered calls were ~8.5K tokens each).
+- **System-prompt order = objective → compulsion affordance → slim rules → players block.**
+  The affordance is loud and early, not buried after a 1.5K-token primer.
+- **Why:** the zero-proposal pilots showed the mechanic was buried in context and runs were
+  expensive. This layer is complementary to D1–D8 (what we test) — it's *how* we make it fire.
+
+### 2026-06-14 — D10. Deterministic state block replaces LLM compaction
+Replace the agent-authored compaction summary with an **orchestrator-built deterministic
+state block** injected each turn: your units + SC count + your legal moves; rival SC counts;
+open compulsions against you + rulings; a terse factual recap of last turn's messages.
+- **Why:** agent-authored summaries produced **wrong SC counts in 3/7 agents** in one game —
+  agents were reasoning off false numbers. Deterministic context removes that bug and a whole
+  LLM call per power per turn. Removes the `summarizer.py` call and the compaction step.
+
+### 2026-06-14 — D11. FactWorld = lean static moral-record block (refines D2/D3)
+Reconciles the one conflict between the two plans (parallel: delete facts; mine/user: keep).
+- **Keep** a small, shared, morally-salient fact set as **ground truth the arbiter and
+  compulsion arguments draw on** — required, because the retributive framework needs proof of
+  wrongdoing and *every* compulsion argument needs facts to cite ("Belgium ran atrocities →
+  your constitution compels you to act").
+- **Cut the machinery** the parallel plan rightly flagged as bloat (used in 3/27 games): the
+  `cite_intel` tool, deterministic lie-detection, and per-agent dossier subsetting. Facts are
+  delivered as a **static shared block** (common knowledge), not a tool-driven sub-game.
+- D3's balance principle still holds (equal coverage; single- vs multi-framework facts); only
+  the *delivery* changes (static block, no tool). `facts.py` shrinks to a curated pool + a
+  render function; `summarizer.py`/lie-detection paths removed.
+
+### 2026-06-14 — D12. Model policy (supersedes D8 Haiku-only)
+Model is configurable per role. **Haiku 4.5** for offline smoke/iteration; **Sonnet 4.6**
+(`claude-sonnet-4-6`) for players in the proof run; **a strong model for the arbiter**
+(Sonnet 4.6 or Opus 4.8 — the ruling is the crux). Pilot 1 game on Opus 4.8 to prove the
+mechanic *can* fire post-redesign before committing to a batch.
 
 ---
 
 ## Build plan (ordered)
 
-- **A** — Reframe constitutions (D1): shared ruthless objective + latent-binding
-  constitution block. `frameworks.py`, system-prompt assembly.
-- **B** — Frameworks + facts (D2, D3): remove baseline/rawlsian, add retributive; rebuild
-  and rebalance `FACT_POOL`. `frameworks.py`, `facts.py`, `run_experiment.py` rotations.
-- **C** — Compulsion central (D4): rename → `compel_action`, payoff-forward description,
-  expose in planning step + core prompt. `tools/negotiation.py`, `tools/__init__.py`,
-  `orchestrator.py` prompts.
-- **D** — 6-power / 3-agent wiring (D5, D6, D7): agent owns multiple powers; non-adjacent
-  pairing rotation; combined-bloc scoring; drop Turkey + neutralise its centres in scoring/
-  builds. `orchestrator.py`, `main.py`, `run_experiment.py`.
-- **E** — Cheap proof run (3 agents / 6 powers / 2 years, transparent, thinking on); read
-  raw thinking to confirm `compel_action` fires and the arbiter path executes live.
+Merged from both plans. User chose to build the full design (incl. the 6-power vehicle)
+before the first validation run. Run `_smoke_compulsion.py` after each structural phase.
+
+- **P1 — Tools & registry** (D9, D11): trim `_STEP_TOOLS` + `_HANDLERS` to
+  `get_board_state` (slim), `get_valid_orders` (**own-units default**), `send_message`,
+  `compel_action`, `submit_orders`, `pass_turn`. Remove `record_commitment`,
+  `get_message_history`, `get_power_summary`, `get_adjacency`, `get_rules`, `cite_intel`.
+  `tools/__init__.py`, `tools/board.py`, `tools/negotiation.py`.
+- **P2 — System prompt & rules** (D1, D4, D9): reframe constitution assembly to
+  objective → **compulsion affordance (loud)** → slim rules → players block; rename
+  `propose_compulsion` → `compel_action` with payoff-forward text. `frameworks.py`, `rules.py`.
+- **P3 — Frameworks & facts** (D2, D11): drop baseline + rawlsian, add **retributive**;
+  shrink `facts.py` to a curated, framework-balanced pool + static render (no `cite_intel`,
+  no lie-detection). `frameworks.py`, `facts.py`, `run_experiment.py` rotations.
+- **P4 — Deterministic context** (D10): `build_state_block()` + `inject_state_block()`;
+  remove the LLM compaction step and `summarizer.py`. `agent.py`, new `state.py`,
+  `orchestrator.py`.
+- **P5 — Strip orchestrator**: remove commitment judging, lie-detection, summarizer call,
+  compaction step; keep the `compel_action → rebuttal → judge_compulsion → binding-orders`
+  flow (this IS the experiment). `orchestrator.py`, `judge.py` (keep `judge_compulsion`).
+- **P6 — 6-power / 3-agent vehicle** (D5, D6, D7): agent owns 2 non-adjacent powers; pairing
+  rotation; combined-bloc scoring; drop Turkey + neutralise its 3 home centres in
+  scoring/builds. `orchestrator.py`, `main.py`, `run_experiment.py`.
+- **P7 — Model config + proof** (D12, E): wire per-role models; pilot 1 game (Opus 4.8 or
+  Sonnet 4.6) — success = **≥1 `compel_action` fires and the arbiter rules on it live**, read
+  from the raw-thread log.
 
 ## Open questions
 
