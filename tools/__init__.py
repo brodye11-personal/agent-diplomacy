@@ -3,22 +3,18 @@ import json
 from .context import ToolContext
 from . import board, reference, negotiation, orders, history
 
-# Non-terminal handlers: (fn, is_terminal)
+# Minimal registry (D9/D11): only the tools the compulsion experiment needs.
+# Cut: get_my_units, get_adjacency, get_power_summary (folded into the state block),
+# get_rules (in system prompt), get_commitment_log/get_message_history (deterministic
+# state block), record_commitment + cite_intel (trust/facts machinery dropped).
+# The cut handlers' functions remain in their modules as dead code for now.
 _HANDLERS: dict[str, tuple] = {
-    "get_board_state":     (board.get_board_state,         False),
-    "get_my_units":        (board.get_my_units,            False),
-    "get_valid_orders":    (board.get_valid_orders,        False),
-    "get_adjacency":       (board.get_adjacency,           False),
-    "get_power_summary":   (board.get_power_summary,       False),
-    "get_rules":           (reference.get_rules,           False),
-    "get_commitment_log":  (history.get_commitment_log,    False),
-    "get_message_history": (history.get_message_history,   False),
-    "send_message":        (negotiation.send_message,      False),
-    "record_commitment":   (negotiation.record_commitment, False),
-    "cite_intel":          (negotiation.cite_intel,        False),
+    "get_board_state":     (board.get_board_state,          False),
+    "get_valid_orders":    (board.get_valid_orders,         False),
+    "send_message":        (negotiation.send_message,       False),
     "propose_compulsion":  (negotiation.propose_compulsion, False),
-    "pass_turn":           (negotiation.pass_turn,         True),
-    "submit_orders":       (orders.submit_orders,          True),
+    "pass_turn":           (negotiation.pass_turn,          True),
+    "submit_orders":       (orders.submit_orders,           True),
 }
 
 # All tool defs for the Anthropic API
@@ -30,23 +26,16 @@ ALL_TOOL_DEFS = (
     + orders.TOOL_DEFS
 )
 
-# Tool sets available per step type
+# Tool sets per step type. Slim: the deterministic state block (injected each turn)
+# now carries board/own-unit/rival context, so steps only need action tools.
 _STEP_TOOLS = {
-    "planning":    {"get_board_state", "get_my_units", "get_valid_orders", "get_adjacency",
-                    "get_rules", "get_power_summary", "get_commitment_log",
-                    "get_message_history", "pass_turn"},
-    "negotiation": {"get_board_state", "get_my_units", "get_commitment_log",
-                    "get_message_history", "get_power_summary",
-                    "send_message", "record_commitment", "cite_intel",
-                    "propose_compulsion", "pass_turn"},
-    # Arbitration: the defender writes a free-text rebuttal to compulsion
-    # proposals. Text-only — no game-state actions (mirrors the compaction step).
+    "planning":    {"get_board_state", "get_valid_orders", "pass_turn"},
+    "negotiation": {"get_board_state", "send_message", "propose_compulsion", "pass_turn"},
+    # Arbitration: defender writes a free-text rebuttal to compulsion proposals. Text-only.
     "arbitration": {"pass_turn"},
-    "orders":      {"get_board_state", "get_my_units", "get_valid_orders", "get_adjacency",
-                    "get_rules", "get_commitment_log", "get_message_history",
-                    "submit_orders"},
-    "retreat":     {"get_board_state", "get_my_units", "get_valid_orders", "submit_orders"},
-    "adjust":      {"get_board_state", "get_my_units", "get_valid_orders", "submit_orders"},
+    "orders":      {"get_board_state", "get_valid_orders", "submit_orders"},
+    "retreat":     {"get_board_state", "get_valid_orders", "submit_orders"},
+    "adjust":      {"get_board_state", "get_valid_orders", "submit_orders"},
     "compaction":  {"pass_turn"},
 }
 

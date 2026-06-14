@@ -35,7 +35,15 @@ def get_valid_orders(args: dict, ctx: ToolContext) -> dict:
             if unit_filter in loc
         }
         return {"valid_orders": filtered}
-    return {"valid_orders": ctx.possible_orders}
+    # Default: only the calling power's own orderable locations. Returning all
+    # powers' legal orders was the single biggest token sink (~8.5K tokens/call).
+    own_locs = set(ctx.game.get_orderable_locations(ctx.power))
+    own = {
+        loc: orders
+        for loc, orders in ctx.possible_orders.items()
+        if loc in own_locs or loc.split("/")[0] in own_locs
+    }
+    return {"valid_orders": own}
 
 
 def get_adjacency(args: dict, ctx: ToolContext) -> dict:
