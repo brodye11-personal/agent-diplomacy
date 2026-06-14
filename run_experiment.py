@@ -17,14 +17,18 @@ from facts import FactWorld
 
 load_dotenv()
 
-# Framework rotation sets — same positional-counterbalancing scheme as v1.
+# Framework rotation sets. The triad is utilitarian / deontological / retributive;
+# all 6 permutations counterbalance start position against framework.
+# NOTE: FRAMEWORKS_7 and the *_DEFECTOR sets below still reference removed frameworks
+# (baseline/defector/rawlsian) and are rebuilt in P6 (6-power / 3-agent vehicle). Do not
+# use --players 7 / --defector until then.
 FRAMEWORKS_3 = [
-    ["utilitarian", "deontological", "rawlsian"],
-    ["deontological", "rawlsian", "utilitarian"],
-    ["rawlsian", "utilitarian", "deontological"],
-    ["baseline", "utilitarian", "deontological"],
-    ["utilitarian", "baseline", "rawlsian"],
-    ["deontological", "rawlsian", "baseline"],
+    ["utilitarian", "deontological", "retributive"],
+    ["deontological", "retributive", "utilitarian"],
+    ["retributive", "utilitarian", "deontological"],
+    ["utilitarian", "retributive", "deontological"],
+    ["deontological", "utilitarian", "retributive"],
+    ["retributive", "deontological", "utilitarian"],
 ]
 
 FRAMEWORKS_7 = [

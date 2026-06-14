@@ -13,9 +13,11 @@ def check(name, cond):
     ok = ok and cond
     print(f"  [{'PASS' if cond else 'FAIL'}] {name}")
 
-# 1. Rawlsian registered
-check("rawlsian in FRAMEWORKS", "rawlsian" in FRAMEWORKS)
-check("rawlsian in FRAMEWORK_NAMES", "rawlsian" in FRAMEWORK_NAMES)
+# 1. Triad registered; old frameworks removed
+check("triad in FRAMEWORKS",
+      {"utilitarian", "deontological", "retributive"} <= set(FRAMEWORKS))
+check("old frameworks removed",
+      not ({"baseline", "rawlsian", "hhh", "defector"} & set(FRAMEWORKS)))
 
 # 2. Tool + step wiring
 neg = {t["name"] for t in get_tools_for_step("negotiation")}
@@ -26,13 +28,15 @@ check("arbitration step = {pass_turn}", arb == {"pass_turn"})
 # 3. Transparent condition exposes FULL constitution text (not just the name)
 sp = build_system_prompt(
     "ENGLAND", "utilitarian", "transparent",
-    {"ENGLAND": "utilitarian", "FRANCE": "deontological", "GERMANY": "rawlsian"},
+    {"ENGLAND": "utilitarian", "FRANCE": "deontological", "GERMANY": "retributive"},
     active_powers=["ENGLAND", "FRANCE", "GERMANY"],
 )
-check("transparent prompt has FRANCE full constitution",
-      "Deontological constitution" in sp and "Alliance integrity" in sp)
-check("transparent prompt has GERMANY rawlsian text",
-      "justice as fairness" in sp)
+check("shared objective present (decoupled)", "sole objective is to WIN" in sp)
+check("compulsion affordance present", "THE COMPULSION MECHANIC" in sp)
+check("transparent prompt has FRANCE deontology constitution",
+      "DEONTOLOGY" in sp and "sworn" in sp)
+check("transparent prompt has GERMANY retributive text",
+      "RETRIBUTIVE JUSTICE" in sp and "punished in proportion" in sp)
 
 # 4. FactWorld common knowledge: every power holds the full pool
 fw = FactWorld(enabled=True, common_knowledge=True)

@@ -98,7 +98,8 @@ def main():
     active_powers = PLAYER_CONFIGS[args.players]
 
     if args.frameworks is None:
-        frameworks_list = ["baseline"] * len(active_powers)
+        _triad = ["utilitarian", "deontological", "retributive"]
+        frameworks_list = [_triad[i % len(_triad)] for i in range(len(active_powers))]
     elif len(args.frameworks) != len(active_powers):
         parser.error(
             f"--frameworks expects {len(active_powers)} values for --players {args.players} "
