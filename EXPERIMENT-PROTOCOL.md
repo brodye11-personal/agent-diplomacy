@@ -74,14 +74,12 @@ Costs NZD. Basis: 1yr/2rd ≈ NZD 4; each extra year ≈ +NZD 4 (at 2 rounds). T
 year-by-year extend means the *actual* cost is measured as you go — the gates, not the
 estimates, control spend.
 
-### Stage 0 — Freeze + prep (NZD 0)
-1. Confirm the affordance is the D33 version (strategic-payoff gate) and the round count (2,
-   or 3 for richer showcase — locks at Stage 1a).
-2. Append a design-FREEZE marker to `design-choices.md` (locks D25/D26/D33; labels prior runs
-   exploratory).
-3. `python _smoke_compulsion.py` → 18/18.
-4. Board/replay logging (D32) — already in.
-- **GATE:** smoke passes; freeze logged. → proceed.
+### Stage 0 — Pre-flight (NZD 0)
+The design freeze is already committed + pushed to GitHub main (commit b5855eb): D25/D26/D33
+rubric+facts+affordance, board logging (D32), all locked. So Stage 0 is now just a pre-flight:
+1. Confirm the round count (2, or 3 for a richer showcase — it locks at Stage 1a).
+2. `python _smoke_compulsion.py` → 18/18 (confirms the env loads cleanly before any spend).
+- **GATE:** smoke passes. → proceed. (No commit needed — freeze already banked.)
 
 ### Stage 1 — Build ONE showcase game to 5 years, gated at each step ← THE CORE BET
 Same `--game-id showcase1` throughout; each step resumes the previous via D31 and pays only

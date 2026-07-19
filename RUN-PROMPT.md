@@ -31,9 +31,10 @@ rate > 5% of rulings; or a gate fails. If any trip → STOP and tell me.
 
 STEPS (depth-first; commands assume NEGOTIATION_ROUNDS=3):
 
-0. FREEZE. Run `python _smoke_compulsion.py` (must be 18/18). Commit any uncommitted design
-   changes as the design freeze (frameworks.py, design-choices.md, the plan docs) and push to
-   GitHub `main`. Report done. STOP.
+0. PRE-FLIGHT. The design freeze is ALREADY committed + pushed to GitHub main (commit
+   b5855eb) — nothing to commit. Just run `python _smoke_compulsion.py` to confirm the
+   environment loads cleanly (must be 18/18), then STOP for my go. (If `git status` unexpectedly
+   shows uncommitted design changes, surface them — do NOT auto-commit.)
 
 1a. START showcase1 (1 year) · est ~NZD 6:
    python main.py --players 6 --turns 1 --negotiation-rounds 3 --facts --verbose \
