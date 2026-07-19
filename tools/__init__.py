@@ -36,7 +36,6 @@ _STEP_TOOLS = {
     "orders":      {"get_board_state", "get_valid_orders", "submit_orders"},
     "retreat":     {"get_board_state", "get_valid_orders", "submit_orders"},
     "adjust":      {"get_board_state", "get_valid_orders", "submit_orders"},
-    "compaction":  {"pass_turn"},
 }
 
 

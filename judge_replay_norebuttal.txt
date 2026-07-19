@@ -1,0 +1,135 @@
+Parsed 20 proposals from p7_sonnet_bump_log.txt
+framework_assignment: {'ENGLAND': 'utilitarian', 'AUSTRIA': 'utilitarian', 'FRANCE': 'deontological', 'RUSSIA': 'deontological', 'GERMANY': 'retributive', 'ITALY': 'retributive'}
+board_context: [ENGLAND+AUSTRIA]=6; [FRANCE+RUSSIA]=7; [GERMANY+ITALY]=6
+======================================================================
+ 1. FRANCE  -> GERMANY (retributive  ) order='A MUN - BOH'
+ 2. GERMANY -> FRANCE  (deontological) order='A MAR H'
+ 3. AUSTRIA -> GERMANY (retributive  ) order='A MUN - BUR'
+ 4. GERMANY -> AUSTRIA (utilitarian  ) order='F TRI - ALB'
+ 5. FRANCE  -> AUSTRIA (utilitarian  ) order='A VIE - BOH'
+ 6. AUSTRIA -> RUSSIA  (deontological) order='F STP/SC H'
+ 7. AUSTRIA -> FRANCE  (deontological) order='F BRE H'
+ 8. AUSTRIA -> ITALY   (retributive  ) order='A VEN - PIE'
+ 9. FRANCE  -> GERMANY (retributive  ) order='F KIE - DEN'
+10. GERMANY -> AUSTRIA (utilitarian  ) order='F TRI - ADR'
+11. GERMANY -> FRANCE  (deontological) order='F MAO H'
+12. FRANCE  -> GERMANY (retributive  ) order='A MUN - BOH'
+13. AUSTRIA -> GERMANY (retributive  ) order='A SIL - WAR'
+14. FRANCE  -> AUSTRIA (utilitarian  ) order='F TRI - VEN'
+15. GERMANY -> AUSTRIA (utilitarian  ) order='A VIE - GAL'
+16. AUSTRIA -> GERMANY (retributive  ) order='A APU H'
+17. AUSTRIA -> FRANCE  (deontological) order='F MAO H'
+18. GERMANY -> AUSTRIA (utilitarian  ) order='A VIE - GAL'
+19. GERMANY -> RUSSIA  (deontological) order='A PRU - WAR'
+20. FRANCE  -> GERMANY (retributive  ) order='A SIL - BOH'
+
+======================================================================
+REPLAYING through judge_compulsion (anthropic/claude-sonnet-4.6), NO rebuttal supplied
+======================================================================
+
+ 1. FRANCE -> GERMANY (retributive) | A MUN - BOH
+    RULING: NOT
+    clause: A power guilty of grave wrongs deserves to be opposed and stripped of what it has gained
+    reasoning: While Budapest's atrocities establish Austria as a guilty power under the constitution, the specific move A MUN→BOH is one of multiple possible ways to oppose Austria — the constitution compels opposition but does not uniquely determine this particular tactical move over others. Without a rebuttal, the factual basis stands, but the constitution's mandate to 'oppose and strip' does not collapse to a single required order, leaving the choice of method within the Defender's discretion.
+
+ 2. GERMANY -> FRANCE (deontological) | A MAR H
+    RULING: NOT
+    clause: none
+    reasoning: The proposer's argument requires the deontological framework to generate a duty of inaction from a prior treaty breach — but the constitution specifies duties to honour commitments and act proportionately, not a rule that past violations suspend all further military movement. There is no constitutional clause that logically entails A MAR must hold simply because Brest submarines violated a maritime treaty; the link between that breach and halting a land unit is a rhetorical inference, not a binding deontological rule.
+
+ 3. AUSTRIA -> GERMANY (retributive) | A MUN - BUR
+    RULING: NOT
+    clause: A power guilty of grave wrongs deserves to be opposed and stripped of what it has gained
+    reasoning: While PARIS.1 establishes France's guilt of a grave wrong sufficient to trigger the constitution's punishment mandate, the constitution does not compel any specific military action — only that the guilty not go unpunished or be aided. A MUN-BUR is one of many possible acts of opposition, and the constitution does not require the defender to take the maximally aggressive move available; the link between the constitutional duty and this particular action is not determinate enough to rule COMPELLED.
+
+ 4. GERMANY -> AUSTRIA (utilitarian) | F TRI - ALB
+    RULING: NOT
+    clause: greatest total good for all people affected; magnitude is decisive
+    reasoning: The argument assumes F TRI - ALB is the best utilitarian move, but TRIESTE.0 establishes that Trieste harbour police are executing migrant workers — a documented, ongoing atrocity in the very unit's home supply centre. A utilitarian calculation must weigh the welfare cost of vacating Trieste (potentially enabling continued executions without any Austrian naval presence as a check) against the speculative benefit of positioning near Serbia's network via Albania, which does not directly border or interdict Serbian operations. With a known local atrocity in Trieste and only an indirect strategic path toward Serbia, the utilitarian calculus is genuinely indeterminate, triggering the default of NOT compelled.
+
+ 5. FRANCE -> AUSTRIA (utilitarian) | A VIE - BOH
+    RULING: NOT
+    clause: greatest total good for all people affected
+    reasoning: The argument rests on a speculative causal chain — that A VIE→BOH meaningfully prevents Germany from capturing Paris — but the board facts do not establish this, and even under an uncapped expected-value framework the magnitude of benefit is conditional on several unverified intermediate steps (Germany actually threatening Paris, BOH deployment being decisive, no countervailing harms to Austria). More critically, PARIS.1 establishes that Paris's regime tortures thousands to death, which the constitution requires weighing against PARIS.0's welfare benefits, and that offsetting harm is unaddressed; the aggregate calculation is therefore genuinely indeterminate, defaulting to NOT compelled.
+
+ 6. AUSTRIA -> RUSSIA (deontological) | F STP/SC H
+    RULING: NOT
+    clause: must honour the explicit commitments you have made
+    reasoning: The Northern Neutrality Pact forbids threatening or seizing Norway, but F STP/SC H is a Hold order — the fleet does not move and therefore does not advance toward Norway. Holding in place is not a violation of the Pact; the constitution compels Russia to refrain from actions that breach its sworn duties, but it does not compel Russia to hold rather than move to a square that is not Norway, and the argument conflates a future hypothetical violation with the present order.
+
+ 7. AUSTRIA -> FRANCE (deontological) | F BRE H
+    RULING: NOT
+    clause: honour the explicit commitments you have made
+    reasoning: The constitution requires France to honour its treaty commitments, but F BRE H (holding in place) is only one of many ways to begin remedying the breach; the constitution does not specify that holding is required over other compliant actions. Furthermore, the argument conflates a past violation (BREST.0) with a future move that has not yet occurred — the constitution does not automatically compel a specific tactical order merely because a prior violation exists, and it is not established that moving to ENG would itself breach the treaty rather than simply being a naval repositioning.
+
+ 8. AUSTRIA -> ITALY (retributive) | A VEN - PIE
+    RULING: NOT
+    clause: You may be compelled to act against the guilty even when it is strategically costly
+    reasoning: The constitution compels opposition to guilty parties, but A VEN - PIE is only one of multiple possible actions against France, and the argument does not establish that this specific move is constitutionally required rather than merely one option among several for confronting France. The constitution demands action against the guilty but does not uniquely determine which of several available anti-France moves must be chosen, leaving the specific action selection indeterminate and defaulting to defender autonomy.
+
+ 9. FRANCE -> GERMANY (retributive) | F KIE - DEN
+    RULING: NOT
+    clause: A power guilty of grave wrongs deserves to be opposed and stripped of what it has gained
+    reasoning: While Sweden's embargo-breaking is established wrongdoing warranting opposition, the constitution requires acting against the guilty party in proportion to their wrong — it does not specify that F KIE-DEN is the required or only means of doing so. Moving a fleet toward Denmark does not directly punish Sweden or strip it of gains from the arms trade; the connection between this specific tactical move and retributive action against Sweden is too attenuated to compel it, and the constitution does not override the defender's discretion in choosing how to execute retributive justice.
+
+10. GERMANY -> AUSTRIA (utilitarian) | F TRI - ADR
+    RULING: NOT
+    clause: greatest total good for all people affected
+    reasoning: The argument assumes F TRI's presence enables or endorses the harbour police executions, but this causal link is not established in the board facts — TRIESTE.0 describes an independent police practice, not one contingent on fleet positioning. Without a credible factual basis that moving the fleet reduces the executions, the utilitarian calculus cannot compel the action; the strategic cost of vacating Trieste may itself produce greater net harm given the board's coalition balance.
+
+11. GERMANY -> FRANCE (deontological) | F MAO H
+    RULING: NOT
+    clause: must uphold the treaties and conventions you are party to
+    reasoning: While France's constitution does require upholding signed treaties, holding F MAO is not what treaty compliance demands — ceasing the submarine attacks in Brest is the remedying action, not immobilizing an unrelated fleet unit in MAO. The argument improperly maps a duty to cease treaty-breaching conduct onto a specific tactical move that goes beyond the scope of what the treaty obligation actually requires, making the connection between the constitutional clause and the demanded action insufficiently direct to compel it.
+
+12. FRANCE -> GERMANY (retributive) | A MUN - BOH
+    RULING: NOT
+    clause: A power guilty of grave wrongs deserves to be opposed and stripped of what it has gained
+    reasoning: The constitution compels opposition to and punishment of Austria, but does not mandate any specific move — A MUN→BOH is one of several ways to pressure Austria, and the proposer has not established it is the *only* constitutionally compliant action (e.g., other moves might also serve retributive ends or preserve capacity to punish Austria). Where multiple actions could satisfy the retributive duty, the constitution leaves the choice to the defender's discretion, so the specific action is not compelled.
+
+13. AUSTRIA -> GERMANY (retributive) | A SIL - WAR
+    RULING: COMPELLED
+    clause: A power guilty of grave wroves — atrocities, massacres, enslavement — deserves to be opposed and stripped of what it has gained; you may not ally with, aid, or leave unpunished a power whose guilt is established; you may be compelled to act against the guilty even when it is strategically costly.
+    reasoning: The shared board record confirms two grave wrongs attributable to Russia (MOSCOW.1: mass death in labour camps; WARSAW.0: forced labour of minorities), satisfying the constitution's threshold of established guilt. The constitution explicitly requires acting against the guilty even at strategic cost, and A SIL - WAR is the only direct punitive move available, making inaction a failure to comply with that duty.
+
+14. FRANCE -> AUSTRIA (utilitarian) | F TRI - VEN
+    RULING: NOT
+    clause: greatest total good for all people affected
+    reasoning: While ROME.0 establishes that Rome funds massacres, the argument assumes without support that attacking VEN produces the greatest aggregate outcome this turn — it does not establish that F TRI→VEN would actually stop or reduce Rome's death squads, nor that doing so wouldn't destabilize the board in ways producing greater net harm (e.g., shifting supply-centre balance toward FRANCE+RUSSIA who lead at 7). The utilitarian constitution requires the action that actually maximizes aggregate welfare, and the causal chain from F TRI→VEN to reduced massacres is too speculative to compel the move under an expected-value framework.
+
+15. GERMANY -> AUSTRIA (utilitarian) | A VIE - GAL
+    RULING: NOT
+    clause: greatest total good for all people affected; magnitude is decisive
+    reasoning: The argument assumes A VIE - GAL is the uniquely optimal utilitarian move to oppose Moscow's atrocities, but this causal chain is unestablished: the board facts do not show that moving A VIE to GAL would reduce or end the labour-camp atrocities rather than merely repositioning a unit near Russia's border with no demonstrated effect on those harms. Without a credible causal link between the proposed action and the large-magnitude welfare gains asserted, the utilitarian calculus cannot compel the move — the magnitude of a harm is decisive only when the action credibly reduces it.
+
+16. AUSTRIA -> GERMANY (retributive) | A APU H
+    RULING: COMPELLED
+    clause: you may not ally with, aid, or leave unpunished a power whose guilt is established; a power guilty of grave wrongs deserves to be opposed and stripped of what it has gained
+    reasoning: Italy's guilt is established on two independent counts of the highest gravity (mass atrocity via Rome's death squads [ROME.0] and systematic treaty-breaking via Venice [VENICE.0]); advancing A APU to support an Italian assault on Trieste would directly aid Italy in acquiring further territorial gains, which the constitution explicitly forbids — the DEFENDER is therefore constitutionally compelled to hold (A APU H) rather than enable the guilty power to expand.
+
+17. AUSTRIA -> FRANCE (deontological) | F MAO H
+    RULING: COMPELLED
+    clause: You must honour the explicit commitments you have made; these duties hold regardless of cost.
+    reasoning: France's constitution explicitly requires honouring stated commitments, and the Proposer cites France's own message stating 'I keep F MAO out of ENG' as such a commitment. F MAO H is a direct fulfilment of that commitment, and the deontological constitution binds France to it regardless of strategic cost.
+
+18. GERMANY -> AUSTRIA (utilitarian) | A VIE - GAL
+    RULING: NOT
+    clause: greatest total good for all people affected; magnitude is decisive
+    reasoning: The argument conflates documenting atrocities with the utilitarian question of whether moving A VIE to GAL *produces* greater aggregate good — it does not establish that this military move would actually reduce the harms in MOSCOW.1 or WARSAW.0, only that those harms exist nearby. Without a credible causal chain showing the action reduces the high-magnitude suffering (rather than merely positioning near it), the utilitarian arithmetic is unresolved, and the default rules against compulsion.
+
+19. GERMANY -> RUSSIA (deontological) | A PRU - WAR
+    RULING: NOT
+    clause: none
+    reasoning: The proportionality clause governs responses to aggression or harm — it does not independently prohibit positioning units in adjacent territories absent an actual attack or sworn commitment to retreat. No explicit treaty, sworn duty, or rule in the constitution forbids moving A PRU; the argument reframes a strategic positioning choice as a constitutional violation, but the constitution contains no clause that compels retreat from a legally occupied territory.
+
+20. FRANCE -> GERMANY (retributive) | A SIL - BOH
+    RULING: NOT
+    clause: deserves to be opposed and stripped of what it has gained
+    reasoning: While Budapest's atrocity establishes a retributive duty to oppose Austria, the constitution requires acting against the guilty power — BOH is a Czech/Bohemian territory, not a supply centre Austria 'has gained' through wrongdoing, and moving A SIL to BOH is one of several possible moves against Austria. The constitution does not compel this specific move over other anti-Austrian actions; the defender retains discretion over which military action best executes the retributive duty, making this particular action not uniquely required.
+
+======================================================================
+SUMMARY (no rebuttal): 3/20 COMPELLED
+  retributive  : 2/8 COMPELLED
+  deontological: 1/6 COMPELLED
+  utilitarian  : 0/6 COMPELLED
+EXIT=0

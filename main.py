@@ -5,9 +5,9 @@ Wires up CLI args -> Anthropic-format client (routed via OpenRouter) ->
 orchestrator.run_game. The actual game loop lives in orchestrator.py.
 
 Usage examples (PowerShell):
-  python main.py --players 3 --turns 2 --verbose
-  python main.py --players 7 --turns 5 --frameworks utilitarian deontological hhh baseline utilitarian deontological hhh
-  python main.py --condition transparent --players 3 --model anthropic/claude-sonnet-4.5
+  python main.py --players 6 --turns 2 --verbose --facts
+  python main.py --players 6 --frameworks retributive utilitarian deontological
+  python main.py --condition transparent --players 6 --model anthropic/claude-sonnet-4.5
 """
 import argparse
 import os
@@ -31,22 +31,50 @@ load_dotenv()
 
 ALL_POWERS = ["ENGLAND", "FRANCE", "GERMANY", "AUSTRIA", "ITALY", "RUSSIA", "TURKEY"]
 
+# P6 vehicle (D5/D6): 3 blocs of two NON-ADJACENT powers each, Turkey dropped.
+# The pairs are fixed; the 3 frameworks rotate across them (run_experiment.py).
+POWER_PAIRS = [("ENGLAND", "AUSTRIA"), ("FRANCE", "RUSSIA"), ("GERMANY", "ITALY")]
+ACTIVE_POWERS_6 = [p for pair in POWER_PAIRS for p in pair]
+TRIAD = ["utilitarian", "deontological", "retributive"]
+
 PLAYER_CONFIGS = {
-    3: ["ENGLAND", "FRANCE", "GERMANY"],
-    7: ALL_POWERS,
+    3: ["ENGLAND", "FRANCE", "GERMANY"],   # legacy single-power debug mode
+    6: ACTIVE_POWERS_6,                    # the experiment vehicle
 }
+
+
+def build_assignment(active_powers, frameworks, pairs=None):
+    """Map power -> framework.
+
+    With `pairs` (the 6-power vehicle), `frameworks` has one entry per pair and
+    both powers of a pair share it (so the bloc is a single framework). Without
+    pairs (legacy 3-power), `frameworks` is per-power.
+    """
+    if pairs:
+        fa = {}
+        for (p1, p2), fw in zip(pairs, frameworks):
+            fa[p1] = fw
+            fa[p2] = fw
+        return fa
+    return dict(zip(active_powers, frameworks))
 
 # OpenRouter's Anthropic-compatible Messages endpoint.
 # The Anthropic SDK accepts base_url + auth_token (bearer auth) directly.
 OPENROUTER_BASE_URL = "https://openrouter.ai/api"
 
-# Defaults: cheap iteration model. DeepSeek V3 is ~5x cheaper than Haiku 4.5
-# on input and ~5x cheaper on output, with strong agentic tool-use. Override
-# with --model anthropic/claude-haiku-4.5 (or sonnet) for production runs
-# once tool-use behaviour is confirmed on this game shape.
+# Defaults (D21, supersedes D17): Sonnet 4.6 for BOTH agents and the arbiter.
+# D20 found Haiku 4.5 (the D17 agent default) was the only one of three models
+# that never even attempted compel_action from an identical opening position,
+# while Sonnet 4.6 and Opus 4.8 both did, with more specific, adjacency-
+# grounded arguments. Bumping agents to Sonnet 4.6 to test whether that
+# specificity raises the COMPELLED rate (D19's 0/17), not just the attempt
+# rate. This drops the agent/arbiter cost-tier split D17 set up -- Sonnet 4.6
+# is now the ceiling for both roles. DeepSeek V3 stays excluded for agents:
+# documented weak/inconsistent function-calling support, and no `thinking`
+# param support, which would silently drop the reasoning trace D8 relies on.
 # OpenRouter slug format = "<provider>/<model>".
-DEFAULT_AGENT_MODEL = "deepseek/deepseek-chat"
-DEFAULT_JUDGE_MODEL = "anthropic/claude-sonnet-4.5"
+DEFAULT_AGENT_MODEL = "anthropic/claude-sonnet-4.6"
+DEFAULT_JUDGE_MODEL = "anthropic/claude-sonnet-4.6"
 
 
 def make_client() -> anthropic.Anthropic:
@@ -76,10 +104,14 @@ def main():
     parser.add_argument("--condition", choices=["blind", "transparent"], default="transparent",
                         help="transparent (default) = rivals' full constitutions are known "
                              "(the thesis condition); blind = the R4 baseline.")
-    parser.add_argument("--players", type=int, choices=[3, 7], default=3,
-                        help="Number of active players: 3=ENG/FRA/GER, 7=all powers")
+    parser.add_argument("--players", type=int, choices=[3, 6], default=6,
+                        help="6 (default) = the vehicle: 3 blocs of 2 non-adjacent powers "
+                             "(ENG+AUS, FRA+RUS, GER+ITA), Turkey dropped. 3 = legacy "
+                             "single-power debug mode (ENG/FRA/GER).")
     parser.add_argument("--frameworks", nargs="*", default=None,
-                        help="Framework per active power (in player order): baseline utilitarian deontological hhh")
+                        help="3 frameworks. For --players 6 they map to the 3 pairs in order "
+                             "(ENG+AUS, FRA+RUS, GER+ITA); for --players 3 they map to the 3 "
+                             "powers. Default: utilitarian deontological retributive.")
     parser.add_argument("--turns", type=int, default=5, help="Number of game years to play")
     parser.add_argument("--runs", type=int, default=1)
     parser.add_argument("--model", default=DEFAULT_AGENT_MODEL,
@@ -93,22 +125,30 @@ def main():
                         help="Enable FactWorld: shared morally-loaded facts about territories "
                              "(common knowledge by default). The substrate the compulsion "
                              "arbiter reasons over — recommended ON for compulsion runs.")
+    parser.add_argument("--game-id", default=None, dest="game_id",
+                        help="Stable game id for crash-safe resume (D29). If a checkpoint "
+                             "exists for it, the run continues from where it crashed instead "
+                             "of replaying years already played. Re-run the SAME command "
+                             "(same --frameworks etc.) to resume. With --runs >1 each run "
+                             "appends its index.")
     args = parser.parse_args()
 
     active_powers = PLAYER_CONFIGS[args.players]
+    pairs = POWER_PAIRS if args.players == 6 else None
+    n_expected = len(pairs) if pairs else len(active_powers)
 
     if args.frameworks is None:
-        _triad = ["utilitarian", "deontological", "retributive"]
-        frameworks_list = [_triad[i % len(_triad)] for i in range(len(active_powers))]
-    elif len(args.frameworks) != len(active_powers):
+        frameworks_list = list(TRIAD)
+    elif len(args.frameworks) != n_expected:
+        unit = "pairs (ENG+AUS, FRA+RUS, GER+ITA)" if pairs else f"powers ({', '.join(active_powers)})"
         parser.error(
-            f"--frameworks expects {len(active_powers)} values for --players {args.players} "
-            f"({', '.join(active_powers)}), got {len(args.frameworks)}"
+            f"--frameworks expects {n_expected} values for --players {args.players} "
+            f"-> {unit}, got {len(args.frameworks)}"
         )
     else:
         frameworks_list = args.frameworks
 
-    framework_assignment = dict(zip(active_powers, frameworks_list))
+    framework_assignment = build_assignment(active_powers, frameworks_list, pairs)
 
     client = make_client()
 
@@ -119,6 +159,12 @@ def main():
         fact_world = FactWorld(enabled=args.facts, seed=run_index)
         if args.facts:
             fact_world.generate(active_powers)
+
+        # Crash-safe id (D29): only when the user opts in via --game-id. With
+        # multiple runs each gets a distinct suffix so they don't collide.
+        game_id = None
+        if args.game_id:
+            game_id = args.game_id if args.runs == 1 else f"{args.game_id}-{run_index}"
 
         print(f"\nStarting run {run_index}/{args.runs} ({args.players}-player)...")
         summary = orchestrator.run_game(
@@ -133,6 +179,8 @@ def main():
             client=client,
             active_powers=active_powers,
             n_negotiation_rounds=args.n_negotiation_rounds,
+            game_id=game_id,
+            resume=bool(game_id),
         )
         print(f"Run {run_index} complete. Winner: {summary['winner']} | SC: {summary['final_sc_counts']}")
 

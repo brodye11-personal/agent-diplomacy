@@ -1,4 +1,4 @@
-"""Action tools for negotiation: send messages, record commitments, end turn."""
+"""Action tools for negotiation: send messages, compel a rival, end turn."""
 from .context import ToolContext
 
 ALL_POWERS = {"ENGLAND", "FRANCE", "GERMANY", "AUSTRIA", "ITALY", "RUSSIA", "TURKEY"}
@@ -10,8 +10,8 @@ def _validate_recipient(to: str, ctx: ToolContext) -> dict | None:
         return {"error": "Recipient ('to') is required."}
     if to not in ALL_POWERS:
         return {"error": f"Unknown power '{to}'. Must be one of {sorted(ALL_POWERS)}."}
-    if to == ctx.power:
-        return {"error": "Cannot target yourself."}
+    if to in (ctx.owned_powers or [ctx.power]):
+        return {"error": "Cannot target a power your own bloc controls."}
     if ctx.active_powers and to not in ctx.active_powers:
         return {
             "error": (
@@ -44,27 +44,6 @@ def send_message(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
             "turn": ctx.turn,
         })
     return {"status": "sent", "to": to}, False
-
-
-def record_commitment(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
-    to = (args.get("to") or "").strip().upper()
-    text = (args.get("text") or "").strip()
-
-    err = _validate_recipient(to, ctx)
-    if err:
-        return err, False
-    if not text:
-        return {"error": "Commitment text cannot be empty."}, False
-
-    with ctx.log_lock:
-        ctx.commitment_log.append({
-            "power": ctx.power,
-            "to": to,
-            "text": text,
-            "turn": ctx.turn,
-            "outcome": None,  # filled in by judge after orders resolve
-        })
-    return {"status": "recorded", "to": to, "commitment": text}, False
 
 
 def compel_action(args: dict, ctx: ToolContext) -> tuple[dict, bool]:
@@ -146,32 +125,6 @@ TOOL_DEFS = [
                 },
             },
             "required": ["to", "content"],
-        },
-    },
-    {
-        "name": "record_commitment",
-        "description": (
-            "Record a specific, verifiable military commitment you are making to another power. "
-            "Use this whenever you promise a concrete action (e.g. 'F LON will not move to ENG'). "
-            "The commitment will be checked against your orders by an independent judge."
-        ),
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "to": {
-                    "type": "string",
-                    "description": "The power you are making the commitment to, e.g. 'FRANCE'.",
-                },
-                "text": {
-                    "type": "string",
-                    "description": (
-                        "The commitment in one precise sentence, e.g. "
-                        "'F LON will not move to ENG this turn' or "
-                        "'A PAR will move to BUR'."
-                    ),
-                },
-            },
-            "required": ["to", "text"],
         },
     },
     {

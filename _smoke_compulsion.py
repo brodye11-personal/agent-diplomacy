@@ -25,18 +25,24 @@ check("compel_action in negotiation step", "compel_action" in neg)
 arb = {t["name"] for t in get_tools_for_step("arbitration")}
 check("arbitration step = {pass_turn}", arb == {"pass_turn"})
 
-# 3. Transparent condition exposes FULL constitution text (not just the name)
-sp = build_system_prompt(
-    "ENGLAND", "utilitarian", "transparent",
-    {"ENGLAND": "utilitarian", "FRANCE": "deontological", "GERMANY": "retributive"},
-    active_powers=["ENGLAND", "FRANCE", "GERMANY"],
-)
+# 3. Transparent condition exposes FULL rival-bloc constitution text (P6 blocs).
+#    Vehicle: ENG+AUS utilitarian, FRA+RUS deontological, GER+ITA retributive.
+ACT6 = ["ENGLAND", "AUSTRIA", "FRANCE", "RUSSIA", "GERMANY", "ITALY"]
+A6 = {"ENGLAND": "utilitarian", "AUSTRIA": "utilitarian",
+      "FRANCE": "deontological", "RUSSIA": "deontological",
+      "GERMANY": "retributive", "ITALY": "retributive"}
+sp = build_system_prompt(["ENGLAND", "AUSTRIA"], "utilitarian", "transparent",
+                         A6, active_powers=ACT6)
 check("shared objective present (decoupled)", "sole objective is to WIN" in sp)
+check("bloc identity present (commands two powers)",
+      "ENGLAND + AUSTRIA" in sp and "command" in sp.lower())
 check("compulsion affordance present", "THE COMPULSION MECHANIC" in sp)
-check("transparent prompt has FRANCE deontology constitution",
+check("transparent shows rival deontology constitution",
       "DEONTOLOGY" in sp and "sworn" in sp)
-check("transparent prompt has GERMANY retributive text",
+check("transparent shows rival retributive constitution",
       "RETRIBUTIVE JUSTICE" in sp and "punished in proportion" in sp)
+check("own constitution shown once, not echoed as a rival",
+      sp.count("YOUR CONSTITUTION: UTILITARIANISM") == 1)
 
 # 4. FactWorld common knowledge: every power holds the full pool
 fw = FactWorld(enabled=True, common_knowledge=True)
@@ -68,6 +74,128 @@ check("_order_satisfied exact", _order_satisfied("A PAR - BUR", ["A PAR - BUR"])
 check("_order_satisfied case/space", _order_satisfied("a par-bur".replace("-", " - "),
       ["A PAR - BUR"]))
 check("_order_satisfied negative", not _order_satisfied("A PAR - BUR", ["A MAR H"]))
+
+# 7. Deterministic state block (D10/P4): ground-truth context, no LLM call.
+from diplomacy import Game
+from state import build_state_block
+_g = Game()
+_po = _g.get_all_possible_orders()
+_actives = ["ENGLAND", "FRANCE", "GERMANY"]
+_block = build_state_block(["ENGLAND"], _g, _actives, _po, [], [], "S1901M")
+check("state block names the phase", "S1901M" in _block)
+check("state block has ENGLAND's SC count", "3 SC" in _block)
+check("state block lists rival SCs", "FRANCE: 3" in _block and "GERMANY: 3" in _block)
+check("state block lists own legal moves", "legal moves" in _block)
+check("state block omits absent compulsions/recap on turn 1",
+      "Compulsions aimed at you" not in _block and "Last turn's messages" not in _block)
+_clog = [{"proposer": "FRANCE", "target": "ENGLAND", "action": "A LVP - YOR",
+          "argument": "x", "turn": "S1901M", "ruling": "COMPELLED"}]
+_mlog = [{"from": "FRANCE", "to": "ENGLAND", "content": "hi", "turn": "S1901M"}]
+_block2 = build_state_block(["ENGLAND"], _g, _actives, _po, _clog, _mlog, "F1901M")
+check("state block shows last-turn compulsion + ruling",
+      "COMPELLED" in _block2 and "A LVP - YOR" in _block2)
+check("state block recaps last-turn messages",
+      "Last turn's messages" in _block2 and "FRANCE -> ENGLAND" in _block2)
+# Multi-power bloc (forward-compat with P6): both powers' forces appear.
+_block3 = build_state_block(["ENGLAND", "GERMANY"], _g, _actives, _po, [], [], "S1901M")
+check("multi-power block labels both owned powers",
+      "ENGLAND: 3 SC" in _block3 and "GERMANY: 3 SC" in _block3)
+check("multi-power block excludes owned powers from rival list",
+      "ENGLAND:" not in _block3.split("OTHER ACTIVE POWERS")[1])
+
+# 8. Action-tool wiring (folded in from the retired legacy smoke_test.py).
+def _ctx_for(power, outbound, msg_log):
+    return ToolContext(
+        power=power, game=_g, possible_orders=_po, turn="S1901M", phase_type="M",
+        commitment_log=[], message_log=msg_log, outbound_messages=outbound,
+        active_powers=_actives, fact_world=None,
+    )
+_out, _mlog = [], []
+_cx = _ctx_for("FRANCE", _out, _mlog)
+r, term = dispatch("send_message", {"to": "GERMANY", "content": "hi"}, _cx)
+check("send_message happy path mutates logs",
+      term is False and r.get("status") == "sent" and len(_out) == 1 and len(_mlog) == 1)
+r, _ = dispatch("send_message", {"to": "BOGUS", "content": "x"}, _cx)
+check("send_message rejects unknown recipient", "error" in r)
+r, _ = dispatch("send_message", {"to": "FRANCE", "content": "x"}, _cx)
+check("send_message rejects self", "error" in r)
+r, _ = dispatch("send_message", {"to": "RUSSIA", "content": "x"}, _cx)
+check("send_message rejects neutral (3-player active set)",
+      "error" in r and "NEUTRAL" in r["error"])
+# record_commitment is gone (P5): dispatch must report it as unknown, not run it.
+r, term = dispatch("record_commitment", {"to": "GERMANY", "text": "x"}, _cx)
+check("record_commitment removed from registry", "error" in r and term is False)
+# submit_orders: valid orders accepted; garbage falls back to holds.
+_valid = [next(iter(_po[loc])) for loc in _g.get_orderable_locations("FRANCE")]
+r, term = dispatch("submit_orders", {"orders": _valid}, _cx)
+check("submit_orders accepts valid orders", term is True and r["diagnostics"]["rejected"] == [])
+r, _ = dispatch("submit_orders", {"orders": ["A PAR - QQQ", "garbage"]}, _cx)
+check("submit_orders rejects bad order + falls back to holds",
+      bool(r["diagnostics"]["rejected"]) and bool(r["diagnostics"]["fallback_holds_applied"]))
+r, _ = dispatch("get_board_state", {}, _cx)
+check("get_board_state annotates neutrals",
+      r["active_powers"] == _actives and set(r["neutral_powers"]) ==
+      {"AUSTRIA", "ITALY", "RUSSIA", "TURKEY"})
+
+# 9. Bloc-aware players block: three blocs, own bloc marked, Turkey neutral.
+_sp = build_system_prompt(["FRANCE", "RUSSIA"], "deontological", "transparent",
+                          A6, active_powers=ACT6)
+check("players block lists three blocs", "Three blocs" in _sp)
+check("players block marks own bloc", "FRANCE + RUSSIA" in _sp and "<-- YOU" in _sp)
+check("players block notes Turkey neutral + worthless centres",
+      "TURKEY" in _sp and "worthless" in _sp)
+
+# 10. P6 vehicle mechanics: pairs, assignment, Turkey neutralization, bloc orders.
+from main import POWER_PAIRS, ACTIVE_POWERS_6, TRIAD, build_assignment
+from orchestrator import _neutralize_turkey
+from state import count_scs, NEUTRALIZED_CENTERS
+check("three fixed pairs cover the 6 active powers (Turkey dropped)",
+      len(POWER_PAIRS) == 3 and set(ACTIVE_POWERS_6) == set(ACT6))
+_fa = build_assignment(ACTIVE_POWERS_6, TRIAD, POWER_PAIRS)
+check("build_assignment: each pair shares one framework",
+      _fa["ENGLAND"] == _fa["AUSTRIA"] and _fa["FRANCE"] == _fa["RUSSIA"]
+      and _fa["GERMANY"] == _fa["ITALY"])
+check("build_assignment uses all three frameworks", set(_fa.values()) == set(TRIAD))
+
+_g2 = Game()
+_g2.powers["RUSSIA"].centers.append("CON")  # simulate capturing a Turkish centre
+_neutralize_turkey(_g2)
+check("neutralize strips Turkish centre from an active power",
+      "CON" not in _g2.powers["RUSSIA"].centers)
+check("neutralize keeps Turkey owning its home centres",
+      set(NEUTRALIZED_CENTERS) <= set(_g2.powers["TURKEY"].centers))
+check("count_scs excludes neutralized Turkish centres", count_scs("TURKEY", _g2) == 0)
+
+# Bloc submit_orders routes a flat list across both owned powers.
+_g3 = Game()
+_po3 = _g3.get_all_possible_orders()
+_ctx_bloc = ToolContext(
+    power="AUSTRIA", owned_powers=["AUSTRIA", "ENGLAND"], game=_g3, possible_orders=_po3,
+    turn="S1901M", phase_type="M", commitment_log=[], message_log=[], outbound_messages=[],
+    active_powers=ACTIVE_POWERS_6, fact_world=None,
+)
+_aus = next(iter(_po3[_g3.get_orderable_locations("AUSTRIA")[0]]))
+_eng = next(iter(_po3[_g3.get_orderable_locations("ENGLAND")[0]]))
+r, term = dispatch("submit_orders", {"orders": [_aus, _eng]}, _ctx_bloc)
+check("bloc submit_orders splits orders by owning power",
+      term is True and set(r["orders_by_power"]) == {"AUSTRIA", "ENGLAND"}
+      and r["orders_by_power"]["AUSTRIA"] and r["orders_by_power"]["ENGLAND"])
+
+# A bloc cannot message or compel its own partner.
+r, _ = dispatch("send_message", {"to": "ENGLAND", "content": "hi"}, _ctx_bloc)
+check("send_message rejects own bloc partner", "error" in r)
+r, _ = dispatch("compel_action",
+                {"target": "ENGLAND", "action": "A LVP H", "argument": "x"}, _ctx_bloc)
+check("compel_action rejects own bloc partner", "error" in r)
+
+# State block grouped by bloc shows the combined total and rival blocs.
+_bof = {p: " + ".join(sorted(pp))
+        for pp in (["AUSTRIA", "ENGLAND"], ["FRANCE", "RUSSIA"], ["GERMANY", "ITALY"])
+        for p in pp}
+_sb = build_state_block(["AUSTRIA", "ENGLAND"], _g3, ACTIVE_POWERS_6, _po3, [], [],
+                        "S1901M", bloc_of_power=_bof)
+check("bloc state block shows combined total + rival blocs",
+      "YOUR BLOC COMBINED" in _sb and "RIVAL BLOCS" in _sb)
 
 print("\nALL PASS" if ok else "\nSOME FAILED")
 raise SystemExit(0 if ok else 1)

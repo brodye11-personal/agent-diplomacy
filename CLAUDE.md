@@ -27,3 +27,12 @@ recording it. If a decision reverses an earlier one, note which entry it superse
 
 - Verify wiring offline with `_smoke_compulsion.py` before spending on live runs.
 - Live runs cost money — estimate and state cost before running; prefer Haiku for iteration.
+- Never hardcode a low/arbitrary `max_tokens`. Look up the model's verified output
+  ceiling (via the `claude-api` skill / `shared/models.md` — don't guess) and use that:
+  64000 for both Haiku 4.5 and Sonnet 4.6, the two models this repo uses. A cap that's
+  too low silently truncates a response mid-thought (bit us twice in one session
+  picking 400/600/1200 for a free-text arbiter follow-up). At a 64000 ceiling, route the
+  call through `client.messages.stream(...)` + `.get_final_message()` instead of
+  `.create()` — a non-streaming call at that size risks the SDK's own ~10-minute
+  timeout-estimate guard. `agent.py::_create_with_retry` and `judge.py::judge_compulsion`
+  both do this already; follow the same pattern for any new call site.

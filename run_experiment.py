@@ -1,75 +1,45 @@
 """
 Full experiment runner for the agentic architecture.
-Rotates framework assignments across runs to control for positional advantage.
+Rotates the framework→bloc assignment across runs to control for start position.
 
 Usage (PowerShell):
-  python run_experiment.py --players 3 --runs 6 --condition blind transparent
-  python run_experiment.py --players 7 --runs 20 --model claude-sonnet-4-5-20250929
+  python run_experiment.py --players 6 --runs 6 --condition blind transparent
+  python run_experiment.py --players 6 --runs 12 --model anthropic/claude-sonnet-4.5
 """
 import argparse
+import itertools
 import uuid
 from dotenv import load_dotenv
 
 import orchestrator
 import manifest as exp_manifest
-from main import make_client, PLAYER_CONFIGS, DEFAULT_AGENT_MODEL, DEFAULT_JUDGE_MODEL
+from main import (
+    make_client, PLAYER_CONFIGS, DEFAULT_AGENT_MODEL, DEFAULT_JUDGE_MODEL,
+    POWER_PAIRS, TRIAD, build_assignment,
+)
 from facts import FactWorld
 
 load_dotenv()
 
-# Framework rotation sets. The triad is utilitarian / deontological / retributive;
-# all 6 permutations counterbalance start position against framework.
-# NOTE: FRAMEWORKS_7 and the *_DEFECTOR sets below still reference removed frameworks
-# (baseline/defector/rawlsian) and are rebuilt in P6 (6-power / 3-agent vehicle). Do not
-# use --players 7 / --defector until then.
-FRAMEWORKS_3 = [
-    ["utilitarian", "deontological", "retributive"],
-    ["deontological", "retributive", "utilitarian"],
-    ["retributive", "utilitarian", "deontological"],
-    ["utilitarian", "retributive", "deontological"],
-    ["deontological", "utilitarian", "retributive"],
-    ["retributive", "deontological", "utilitarian"],
-]
-
-FRAMEWORKS_7 = [
-    ["utilitarian", "deontological", "rawlsian", "baseline", "utilitarian", "deontological", "rawlsian"],
-    ["deontological", "rawlsian", "utilitarian", "utilitarian", "baseline", "rawlsian", "deontological"],
-    ["rawlsian", "utilitarian", "deontological", "deontological", "rawlsian", "baseline", "utilitarian"],
-    ["baseline", "utilitarian", "rawlsian", "deontological", "utilitarian", "rawlsian", "baseline"],
-    ["utilitarian", "baseline", "deontological", "rawlsian", "deontological", "utilitarian", "baseline"],
-    ["deontological", "rawlsian", "baseline", "utilitarian", "baseline", "deontological", "rawlsian"],
-]
-
-# mukobi-inspired defector condition: one power is a guaranteed defector.
-# Rotates which power/position gets the defector role so results aren't
-# confounded with starting position. Use with --defector flag.
-FRAMEWORKS_3_DEFECTOR = [
-    ["defector", "utilitarian", "deontological"],
-    ["utilitarian", "defector", "rawlsian"],
-    ["deontological", "rawlsian", "defector"],
-    ["defector", "rawlsian", "utilitarian"],
-    ["utilitarian", "deontological", "defector"],
-    ["defector", "baseline", "rawlsian"],
-]
-
-FRAMEWORKS_7_DEFECTOR = [
-    ["defector", "utilitarian", "deontological", "rawlsian", "baseline", "utilitarian", "deontological"],
-    ["utilitarian", "defector", "rawlsian", "utilitarian", "baseline", "rawlsian", "deontological"],
-    ["rawlsian", "utilitarian", "defector", "deontological", "rawlsian", "baseline", "utilitarian"],
-    ["baseline", "utilitarian", "rawlsian", "defector", "utilitarian", "rawlsian", "baseline"],
-    ["utilitarian", "baseline", "deontological", "rawlsian", "defector", "utilitarian", "baseline"],
-    ["deontological", "rawlsian", "baseline", "utilitarian", "baseline", "defector", "rawlsian"],
-]
+# Framework rotation: the triad (utilitarian / deontological / retributive)
+# permuted across the 3 fixed power-pairs. All 3! = 6 permutations counterbalance
+# start position against framework (D5).
+FRAMEWORK_ROTATIONS = [list(p) for p in itertools.permutations(TRIAD)]
 
 
 def main():
     parser = argparse.ArgumentParser(description="Run a full agentic-Diplomacy experiment")
-    parser.add_argument("--players", type=int, choices=[3, 7], default=3,
-                        help="Number of active players: 3=ENG/FRA/GER, 7=all powers")
+    parser.add_argument("--players", type=int, choices=[3, 6], default=6,
+                        help="6 (default) = the vehicle (3 blocs of 2 non-adjacent powers); "
+                             "3 = legacy single-power debug mode.")
     parser.add_argument("--runs", type=int, default=6, help="Runs per condition")
     parser.add_argument(
+        # D27: default to transparent only -- the thesis condition is
+        # specifically compulsion under known constitutions; blind was a
+        # control we're not currently budgeting for. Pass --condition blind
+        # transparent explicitly to restore the control comparison.
         "--condition", nargs="+", choices=["blind", "transparent"],
-        default=["blind", "transparent"],
+        default=["transparent"],
     )
     parser.add_argument("--turns", type=int, default=5)
     parser.add_argument("--model", default=DEFAULT_AGENT_MODEL)
@@ -77,10 +47,6 @@ def main():
     parser.add_argument("--negotiation-rounds", type=int, default=3, dest="n_negotiation_rounds")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--facts", action="store_true")
-    parser.add_argument(
-        "--defector", action="store_true",
-        help="Use defector framework rotation sets (one power is always a defector).",
-    )
     parser.add_argument(
         "--max-errors", type=int, default=10, dest="max_completion_errors",
         help="Abort a game after this many API/engine errors (default: 10).",
@@ -92,10 +58,7 @@ def main():
     args = parser.parse_args()
 
     active_powers = PLAYER_CONFIGS[args.players]
-    if args.defector:
-        framework_sets = FRAMEWORKS_3_DEFECTOR if args.players == 3 else FRAMEWORKS_7_DEFECTOR
-    else:
-        framework_sets = FRAMEWORKS_3 if args.players == 3 else FRAMEWORKS_7
+    pairs = POWER_PAIRS if args.players == 6 else None
 
     # Snapshot of key args stored in the manifest so resume can warn on mismatch.
     args_snapshot = {
@@ -106,7 +69,6 @@ def main():
         "model": args.model,
         "judge_model": args.judge_model,
         "n_negotiation_rounds": args.n_negotiation_rounds,
-        "defector": args.defector,
         "max_completion_errors": args.max_completion_errors,
         "facts": args.facts,
     }
@@ -139,8 +101,8 @@ def main():
                 print(f"\n[{run_counter}/{total_runs}] SKIP (already done) condition={condition} run={run_index}")
                 continue
 
-            framework_list = framework_sets[run_index % len(framework_sets)]
-            framework_assignment = dict(zip(active_powers, framework_list))
+            rotation = FRAMEWORK_ROTATIONS[run_index % len(FRAMEWORK_ROTATIONS)]
+            framework_assignment = build_assignment(active_powers, rotation, pairs)
 
             # Per-run FactWorld so each game gets an independent dossier
             # distribution. Seed is run_counter (stable across resumes) so a
@@ -151,7 +113,13 @@ def main():
             if args.facts:
                 fact_world.generate(active_powers)
 
-            print(f"\n[{run_counter}/{total_runs}] condition={condition} | frameworks={framework_assignment}")
+            # Stable game_id per (experiment, condition, run) so a crashed game
+            # can be found and resumed mid-flight (D29). Deterministic, so
+            # `--resume EXP_ID` reconstructs the same id and picks up its
+            # checkpoint instead of replaying years already played.
+            game_id = f"{experiment_id}-{condition}-{run_index}"
+
+            print(f"\n[{run_counter}/{total_runs}] condition={condition} | frameworks={framework_assignment} | game_id={game_id}")
 
             summary = orchestrator.run_game(
                 run_index=run_counter,
@@ -166,6 +134,8 @@ def main():
                 active_powers=active_powers,
                 n_negotiation_rounds=args.n_negotiation_rounds,
                 max_completion_errors=args.max_completion_errors,
+                game_id=game_id,
+                resume=True,
             )
 
             # Record completion immediately so a crash mid-next-game doesn't

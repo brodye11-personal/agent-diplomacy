@@ -35,9 +35,12 @@ def get_valid_orders(args: dict, ctx: ToolContext) -> dict:
             if unit_filter in loc
         }
         return {"valid_orders": filtered}
-    # Default: only the calling power's own orderable locations. Returning all
-    # powers' legal orders was the single biggest token sink (~8.5K tokens/call).
-    own_locs = set(ctx.game.get_orderable_locations(ctx.power))
+    # Default: only the calling bloc's own orderable locations (union over both
+    # owned powers). Returning all powers' legal orders was the single biggest
+    # token sink (~8.5K tokens/call).
+    own_locs = set()
+    for power in (ctx.owned_powers or [ctx.power]):
+        own_locs.update(ctx.game.get_orderable_locations(power))
     own = {
         loc: orders
         for loc, orders in ctx.possible_orders.items()

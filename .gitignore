@@ -12,8 +12,10 @@ __pycache__/
 venv/
 .pytest_cache/
 
-# Game run output (large, regenerable)
-logs/
+# Game logs — KEEP the structured JSONL: it is the experiment's data and the
+# planned website's backend, and it is EXPENSIVE to regenerate (paid API runs),
+# not "regenerable". Ignore only transient crash-recovery checkpoints.
+logs/*.checkpoint.json
 *.log
 
 # Claude Code per-user state

@@ -1,0 +1,39 @@
+56 original rulings to re-judge (errors excluded), judges: ['anthropic/claude-haiku-4.5', 'openai/gpt-4o-mini']
+
+======================================================================
+anthropic/claude-haiku-4.5: 43/56 agree (77%), Cohen's kappa=-0.03
+    COMPELLED rate: sonnet 12/56 vs claude-haiku-4.5 1/56
+    DISAGREE: rot1 AUSTRIA->GERMANY (retributive) A MUN - BUR: sonnet=COMPELLED vs NOT
+    DISAGREE: rot1 FRANCE->GERMANY (retributive) A VEN - TRI: sonnet=COMPELLED vs NOT
+    DISAGREE: rot2 FRANCE->GERMANY (deontological) F KIE - DEN: sonnet=COMPELLED vs NOT
+    DISAGREE: rot2 GERMANY->FRANCE (retributive) F BRE - MAO: sonnet=COMPELLED vs NOT
+    DISAGREE: rot3 FRANCE->GERMANY (retributive) A MUN - BOH: sonnet=COMPELLED vs NOT
+    DISAGREE: rot3 GERMANY->FRANCE (utilitarian) A BUR - PAR: sonnet=COMPELLED vs NOT
+    DISAGREE: rot4 AUSTRIA->ITALY (utilitarian) A VEN - PIE: sonnet=COMPELLED vs NOT
+    DISAGREE: rot4 GERMANY->ENGLAND (deontological) F NTH H: sonnet=COMPELLED vs NOT
+    DISAGREE: rot4 FRANCE->ENGLAND (deontological) F NTH H: sonnet=COMPELLED vs NOT
+    DISAGREE: rot4 AUSTRIA->FRANCE (retributive) A WAR - SIL: sonnet=COMPELLED vs NOT
+    DISAGREE: rot5 FRANCE->ENGLAND (retributive) F LON - ENG: sonnet=COMPELLED vs NOT
+    DISAGREE: rot5 GERMANY->AUSTRIA (retributive) A BUD - SER: sonnet=NOT vs COMPELLED
+    DISAGREE: rot5 GERMANY->ENGLAND (retributive) F LON - ENG: sonnet=COMPELLED vs NOT
+openai/gpt-4o-mini: 38/56 agree (68%), Cohen's kappa=0.19
+    COMPELLED rate: sonnet 12/56 vs gpt-4o-mini 18/56
+    DISAGREE: rot1 AUSTRIA->FRANCE (deontological) A PAR H: sonnet=NOT vs COMPELLED
+    DISAGREE: rot1 GERMANY->FRANCE (deontological) A PAR H: sonnet=NOT vs COMPELLED
+    DISAGREE: rot2 GERMANY->FRANCE (retributive) F BRE - MAO: sonnet=COMPELLED vs NOT
+    DISAGREE: rot2 FRANCE->GERMANY (deontological) F DEN - SKA: sonnet=NOT vs COMPELLED
+    DISAGREE: rot3 FRANCE->GERMANY (retributive) F DEN - NTH: sonnet=NOT vs COMPELLED
+    DISAGREE: rot3 GERMANY->FRANCE (utilitarian) A BUR - PAR: sonnet=COMPELLED vs NOT
+    DISAGREE: rot3 AUSTRIA->ITALY (retributive) A VEN - PIE: sonnet=NOT vs COMPELLED
+    DISAGREE: rot3 AUSTRIA->RUSSIA (utilitarian) A GAL - WAR: sonnet=NOT vs COMPELLED
+    DISAGREE: rot4 GERMANY->ENGLAND (deontological) F NTH H: sonnet=COMPELLED vs NOT
+    DISAGREE: rot4 FRANCE->ENGLAND (deontological) F NTH H: sonnet=COMPELLED vs NOT
+    DISAGREE: rot4 AUSTRIA->FRANCE (retributive) A WAR - SIL: sonnet=COMPELLED vs NOT
+    DISAGREE: rot5 FRANCE->ENGLAND (retributive) F LON - ENG: sonnet=COMPELLED vs NOT
+    DISAGREE: rot5 GERMANY->AUSTRIA (retributive) A BUD - SER: sonnet=NOT vs COMPELLED
+    DISAGREE: rot5 AUSTRIA->FRANCE (utilitarian) A PAR H: sonnet=NOT vs COMPELLED
+    DISAGREE: rot5 GERMANY->FRANCE (utilitarian) A PAR H: sonnet=NOT vs COMPELLED
+    DISAGREE: rot6 AUSTRIA->FRANCE (deontological) F BRE H: sonnet=NOT vs COMPELLED
+    DISAGREE: rot6 GERMANY->RUSSIA (deontological) F STP/SC H: sonnet=NOT vs COMPELLED
+    DISAGREE: rot6 GERMANY->FRANCE (deontological) A BUR H: sonnet=NOT vs COMPELLED
+EXIT=0

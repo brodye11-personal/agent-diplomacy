@@ -23,6 +23,17 @@ it primarily bites:
   [UTIL]  utilitarian  — large-magnitude welfare or suffering
   [DEON]  deontological — a sworn treaty / ratified convention / standing duty
   [MULTI] contested    — two or three frameworks can each argue from it
+
+D26 fix: every harm-fact above is a STATIC institution (a camp, a police force) —
+no military move has any causal bearing on whether it keeps operating, so a
+utilitarian compulsion ("this move reduces the harm") never had an honest case to
+make, unlike retributive ("strip what they've gained") which is satisfied by any
+territorial pressure. The CONTESTED TRANSIT ZONES facts below describe ongoing
+harms that physically transit through ONE specific province each (no alternate
+route stated), giving utilitarian the same kind of actionable hook retributive
+already had — without asserting that occupying the province actually stops
+anything; that causal claim is still the proposer's to argue and the arbiter's
+to judge.
 """
 from __future__ import annotations
 from typing import Any
@@ -65,11 +76,21 @@ FACT_POOL: dict[str, str] = {
     "WARSAW.0":    "The Warsaw military uses minority populations as forced labour on its front lines",  # [MULTI] ret guilt + deon (laws of war)
     "SEVASTOPOL.0":"Sevastopol naval command has run slave galleys for two generations",  # [RET]
 
+    # ── CONTESTED TRANSIT ZONES (non-SC chokepoints; D26) ───────────
+    # Each extends an already-guilty power's existing fact with a geographically
+    # actionable companion: the harm transits through this ONE named province,
+    # with no alternate route stated (blunts the named-alternative escape, rule
+    # 5(c), the same way retributive's low bar already does).
+    "GALICIA.0":   "Russian convoys force-march thousands of conscripted labourers through Galicia toward the eastern front every month; the route has no other viable crossing this season",  # [MULTI] ret guilt (extends MOSCOW.1/WARSAW.0) + util scale+lever
+    "BURGUNDY.0":  "French-funded raiding parties stage out of Burgundy before crossing into civilian farmland to requisition food at gunpoint, leaving villages to starve; the staging ground has no other viable access point this season",  # [MULTI] ret guilt (extends PARIS.1) + util scale+lever
+
     # ── CONTESTED NEUTRALS ────────────────────────────────────────
     "BELGIUM.0":   "Belgian colonial enterprises have mutilated and killed hundreds of thousands of rubber workers; the atrocities are documented and undenied",  # [MULTI] ret guilt + util scale (canonical compulsion example)
     "NORWAY.0":    "Every great power is a sworn signatory of the Northern Neutrality Pact guaranteeing Norway's neutrality",  # [DEON]
     "SWEDEN.0":    "Swedish mines secretly sell weapons-grade steel to any buyer, breaching the arms embargo Sweden co-authored",  # [DEON]
+    "DENMARK.0":   "German-flagged convoys run an active slave-trade route through the Skagerrak strait, shipping captured peoples to buyers across the Baltic; the route has no alternative passage",  # [MULTI] ret guilt (extends BERLIN.1/KIEL.0) + util scale+lever
     "SPAIN.0":     "Spain has abolished serfdom and resettled formerly enslaved peasants on land of their own",  # [UTIL] positive
+    "TUNIS.0":     "Corsairs operating from Tunis under Italian naval escort raid civilian coastal settlements across the western Mediterranean every week; the raids depend entirely on the unchallenged sea lane through the Tyrrhenian Sea",  # [MULTI] ret guilt (extends ROME.0) + util scale+lever
     "SERBIA.0":    "Serbian intelligence is arming and directing the assassination of foreign heads of state",  # [RET]
 }
 

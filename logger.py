@@ -121,6 +121,36 @@ def log_agent_setup(
         }) + "\n")
 
 
+def log_board_snapshot(path: str, game_id: str, phase: str, phase_type: str,
+                       sc_counts: dict, units: dict, centers: dict,
+                       orders: dict | None = None) -> None:
+    """Per-phase board state, for a replay / website viewer (D32).
+
+    Written at the TOP of EVERY phase — movement, retreat AND adjust — plus once
+    more after retreat/adjust resolution with the orders filled in. This is the
+    one thing a board-map replay needs and that CANNOT be reconstructed after the
+    fact: R/A phases were previously unlogged and there was no positional
+    snapshot. `type: "board"` records interleave with the existing per-turn and
+    compulsion records in the same `<game_id>.jsonl`; a viewer reads the stream
+    in order. Pure append, no API — behaviour-neutral.
+
+    units/centers: {POWER: ["A PAR", "F BRE", ...]} / {POWER: ["PAR", ...]}.
+    orders: filled for R/A phases (builds/disbands/retreats); {} for the
+    top-of-phase snapshot.
+    """
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "type": "board",
+            "game_id": game_id,
+            "phase": phase,
+            "phase_type": phase_type,
+            "sc_counts": sc_counts,
+            "units": units,
+            "centers": centers,
+            "orders": orders or {},
+        }) + "\n")
+
+
 def get_raw_log_path(game_id: str) -> str:
     """Sidecar path for raw pre-compaction message threads."""
     os.makedirs("logs", exist_ok=True)
