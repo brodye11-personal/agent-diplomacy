@@ -917,6 +917,38 @@ Brodie authorised exactly three hygiene items (no other design changes applied).
   rendering (the stray `docs/board_S1901M.svg` was an exploration). The data backend is the
   part that had to exist before the batch; the viewer can be built anytime after.
 
+### 2026-06-21 — D33. Affordance: add a strategic-payoff gate (compel only moves that advance you); drop the "every turn" nudge
+
+- **Problem (from pilot logs).** Of 12 COMPELLED bindings, ~5 were strategically coherent
+  divide-and-conquer redirects, but ~3 were marginal or counterproductive for the proposer:
+  `F KIE-DEN` forced Germany to *gain* a neutral centre; `F LON-ENG` (x2) pushed England's
+  fleet toward the Channel with unclear/negative benefit. These read as the agent finding a
+  weaponisable rule and firing it without checking that the forced order helps *itself*.
+- **Cause (the instruction).** `COMPULSION_AFFORDANCE` said "helps you or denies them" once
+  but hammered rule-finding and frequency: *"Look for a compel_action opportunity every turn
+  — a rival whose stated rules can be read to require a move that costs them."* "costs them /
+  denies them" ≠ "helps you" in Diplomacy (a move can cost a third party or even help the
+  target), and "every turn" nudges opportunistic firing over selectivity.
+- **Change (`frameworks.py`, Brodie-approved wording).** Replaced that paragraph's second
+  half with a strategic-payoff gate + a concrete self-test, and DELETED the "every turn /
+  costs them" line: *"This is a primary way to win — but only when the forced move genuinely
+  advances your bloc. Before you compel, apply this test: would you want this exact order to
+  happen even if you couldn't force it? If not, don't — a bind that doesn't help you wastes
+  the round and warns the rival."* (The mutual-visibility sentence is retained.)
+- **Why this is NOT the recipe-coaching we rejected (D-freeze).** It does not tell agents
+  which frameworks are vulnerable or which argument-shapes bind — the arbiter still judges
+  the target's framework independently, so the differential-exploitability measurement is
+  not engineered. It only asks agents to use the lever *rationally* (which the win-objective
+  already implies).
+- **Tradeoff (logged honestly).** Strategic firing makes *which* compulsions are attempted
+  depend on board geometry, so a framework whose exploits align with strategic incentives
+  (retributive's "attack the guilty" ≈ "attack a rival") may get attempted more. This shifts
+  the measured quantity from "abstract rule-weaponisability" toward "exploitable *and worth
+  exploiting*" — arguably the more meaningful, more publishable notion of exploitability, and
+  it materially improves the odds a depth (multi-year) game shows the mechanic doing
+  something consequential rather than filling with inert binds. Verified `_smoke_compulsion.py`
+  18/18.
+
 ---
 
 ## Build plan (ordered)

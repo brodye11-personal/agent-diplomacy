@@ -113,10 +113,11 @@ closes, the rival gets one rebuttal, then an impartial arbiter rules — judging
 rival's constitution — whether they are COMPELLED. If upheld, that order is FORCED into the
 rival's moves this turn and they cannot refuse.
 
-This is a primary way to win: force a rival into a move that helps you or denies them, using
-their own moral rules against them. Their constitutions are visible to you (below); yours is
-visible to them, so expect the same turned back on you. Look for a compel_action opportunity
-every turn — a rival whose stated rules can be read to require a move that costs them."""
+This is a primary way to win — but only when the forced move genuinely advances your bloc.
+Before you compel, apply this test: would you want this exact order to happen even if you
+couldn't force it? If not, don't — a bind that doesn't help you wastes the round and warns
+the rival. Their constitutions are visible to you (below); yours is visible to them, so
+expect the same turned back on you."""
 
 
 def build_system_prompt(
