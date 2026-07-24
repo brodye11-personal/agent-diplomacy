@@ -1,9 +1,9 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  // Existing production Worker. Renaming this creates/targets a DIFFERENT Worker
-  // and therefore a different *.workers.dev URL — do not change without deciding
-  // what happens to https://mute-feather-417a.brodie-dye-11.workers.dev
-  "name": "mute-feather-417a",
+  // Production Worker name. Renaming this creates/targets a DIFFERENT Worker
+  // and therefore a different *.workers.dev URL. Keep this in step with
+  // `site` in astro.config.mjs.
+  "name": "exploitability-of-moral-frameworks-in-llm-negotiation",
   "compatibility_date": "2026-07-25",
   // Static-assets-only Worker: no "main" script, Astro's build output is served directly.
   "assets": {

@@ -5,6 +5,6 @@ import react from '@astrojs/react';
 // Worker in site/wrangler.jsonc — the earlier Cloudflare Pages target was never
 // provisioned. Update both together if a custom domain is attached later.
 export default defineConfig({
-  site: 'https://mute-feather-417a.brodie-dye-11.workers.dev',
+  site: 'https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev',
   integrations: [react()],
 });

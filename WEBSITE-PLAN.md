@@ -1,7 +1,7 @@
 # Principles at War — website implementation plan
 
 Status: approved direction, ready for implementation planning review  
-Target host: `principles-at-war.pages.dev`  
+Target host: `exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev`
 Working branch: `feature/diplomacy-log-viewer`
 
 ## Product statement
@@ -34,11 +34,11 @@ and readable without opening the viewer. The viewer must also work independently
   so nothing reaches `site/public/` without a human deciding to publish it.
 - ~~Initial deployment target is Cloudflare Pages at `principles-at-war.pages.dev`.~~
   **Superseded 2026-07-25:** the site runs on a Cloudflare **Worker** with static assets,
-  `mute-feather-417a` (`https://mute-feather-417a.brodie-dye-11.workers.dev`). Pages was never
-  provisioned; a root-level Git build failed because it detected `requirements.txt` and installed the
-  Python experiment stack. The Worker name is preserved deliberately to keep the existing public URL —
-  renaming it to `principles-at-war` would create a different Worker at a different URL. A custom
-  domain can be attached later without renaming.
+  `exploitability-of-moral-frameworks-in-llm-negotiation`
+  (`https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev`).
+  Pages was never provisioned; a root-level Git build failed because it detected `requirements.txt`
+  and installed the Python experiment stack. The generated Worker name was replaced deliberately to
+  create a readable `workers.dev` URL. A custom domain can be attached later without renaming.
 - Desktop is the primary visualization target. Mobile must remain readable but is not the design
   constraint for the first release.
 
@@ -294,8 +294,7 @@ CI/CD can later automate steps 6–8 without changing the public data contract.
 - Curate the showcase games and significant moments.
 - Add the game gallery and methodology page.
 - Verify accessibility, keyboard controls, and static downloads.
-- Create the Cloudflare Pages project and claim `principles-at-war.pages.dev`.
-- Deploy manually and perform production smoke tests.
+- Deploy to the Cloudflare Worker static-assets target and perform production smoke tests.
 
 ## MVP acceptance criteria
 
@@ -322,4 +321,3 @@ CI/CD can later automate steps 6–8 without changing the public data contract.
 - Automated detection of significant moments.
 - First-class mobile board interaction.
 - Comments, accounts, analytics, or a content-management system.
-

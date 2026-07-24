@@ -1,8 +1,8 @@
-# Principles at War site
+# Exploitability of Moral Frameworks in LLM Negotiation site
 
 Static Astro site deployed to Cloudflare Workers static assets. It deliberately consumes only reviewed JSON in `public/data/` and rendered maps in `public/maps/`.
 
-Live: <https://mute-feather-417a.brodie-dye-11.workers.dev>
+Live: <https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev>
 
 ## Deployment (automatic)
 

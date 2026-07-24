@@ -1,7 +1,8 @@
 name: Deploy Principles at War
 
 # Builds and deploys the static Astro site in `site/` to the Cloudflare Worker
-# `mute-feather-417a` (https://mute-feather-417a.brodie-dye-11.workers.dev).
+# `exploitability-of-moral-frameworks-in-llm-negotiation`
+# (https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev).
 #
 # Everything runs with `working-directory: site` on purpose. An earlier Cloudflare
 # Git build ran from the repository root, found `requirements.txt`, installed the

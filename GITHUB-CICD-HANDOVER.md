@@ -59,8 +59,8 @@ Do not switch to or edit the original `main` worktree: live experiments may be r
 ## Current Cloudflare deployment
 
 - Platform: Cloudflare Worker serving static assets
-- Worker name: `mute-feather-417a`
-- Public URL: `https://mute-feather-417a.brodie-dye-11.workers.dev`
+- Worker name: `exploitability-of-moral-frameworks-in-llm-negotiation`
+- Public URL: `https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev`
 - Current deployment method: manual static ZIP upload
 - Health verified 2026-07-25:
   - `/` returned HTTP 200
@@ -70,9 +70,10 @@ There is also a failed, unused Worker named `agent-diplomacy` created during an 
 
 ### Worker-name decision
 
-The lowest-risk implementation should deploy to the existing Worker name `mute-feather-417a`, preserving the current URL.
-
-Before changing the Wrangler `name` to `principles-at-war`, explain that doing so will create or target a different Worker and therefore a different `workers.dev` URL. Obtain Brodie's choice. A custom domain can be attached later without coupling the public name to the Worker identifier.
+Brodie chose to replace the generated Worker name with
+`exploitability-of-moral-frameworks-in-llm-negotiation`. This creates/targets a different
+Worker and therefore a different `workers.dev` URL. Old generated-worker links do not redirect
+unless a separate redirect is configured later.
 
 ## Recommended technical approach
 
@@ -83,7 +84,7 @@ Cloudflare's current static Astro configuration is:
 ```jsonc
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "mute-feather-417a",
+  "name": "exploitability-of-moral-frameworks-in-llm-negotiation",
   "compatibility_date": "2026-07-25",
   "assets": {
     "directory": "./dist"
@@ -182,9 +183,8 @@ The agent may guide Brodie through creating these values, but must not guess the
 ## Rollout sequence
 
 1. Re-read `WEBSITE-PLAN.md`, `site/README.md`, `site/package.json`, and the current worktree status.
-2. Confirm the production Worker name with Brodie:
-   - preserve `mute-feather-417a`, or
-   - deliberately create/target `principles-at-war`.
+2. Confirm the production Worker name with Brodie. Current choice:
+   `exploitability-of-moral-frameworks-in-llm-negotiation`.
 3. Add and validate `site/wrangler.jsonc`.
 4. Add pinned Wrangler dependency and update the lockfile.
 5. Add the GitHub Actions workflow.
