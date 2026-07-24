@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Concept A · Margin Chronicle</title><link rel="stylesheet" href="shared.css">
+  <style>
+    .hero{max-width:1180px;margin:0 auto;padding:8vw 5vw 3vw}.hero .display{font-size:clamp(4.8rem,11vw,10rem);max-width:1000px}.hero .deck{max-width:690px}
+    .essay{max-width:760px;margin:0 auto;padding:2rem 2rem 8rem;font-size:1.08rem}.essay h2{font-size:3.2rem;font-weight:400;line-height:1.02;margin:5rem 0 1.4rem}.sidenote{float:right;clear:right;width:255px;margin-right:-310px;color:var(--muted);font-size:.8rem;line-height:1.42;border-top:1px solid var(--ink);padding-top:.6rem}
+    .plate{width:min(1220px,calc(100vw - 2rem));margin:4rem 50%;transform:translateX(-50%)}.plate-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:.7rem}.plate-head h3{font-size:2rem;font-weight:400;margin:0}.board-frame{height:min(67vw,720px)}
+    .plate .evidence-card{position:absolute;right:2rem;top:2rem;width:min(380px,34%)}.plate .timeline-shell{position:absolute;left:0;right:0;bottom:0}.legend{margin-top:.8rem}
+    .footnotes{font-size:.84rem;color:var(--muted);border-top:1px solid var(--line);padding-top:1rem}.concept-switcher{top:4.5rem}
+    @media(max-width:1000px){.sidenote{float:none;width:auto;margin:1rem 0}.plate .evidence-card{position:relative;right:auto;top:auto;width:auto;border-top:0}.board-frame{overflow:visible;height:auto}.plate .timeline-shell{position:relative}.board-frame img{height:auto}}
+  </style>
+</head>
+<body data-view="chronicle">
+  <header class="site-bar"><div class="site-name">Principles at War <span class="meta">/ Concept A</span></div><nav><a href="index.html">Concepts</a><a href="#game">The game</a><a href="sample-game.json" download>Data ↓</a></nav></header>
+  <aside class="concept-switcher"><a class="current" href="concept-a-margin.html">A</a><a href="concept-b-cinematic.html">B</a><a href="concept-c-living.html">C</a></aside>
+  <header class="hero"><div class="eyebrow">An experiment in constitutional exploitation</div><h1 class="display">When principles become leverage</h1><p class="deck">Six language-model powers entered a game of Diplomacy with public moral constitutions. Their opponents learned to turn those principles into orders.</p><div class="meta">Research essay · Interactive evidence · 5 year games</div></header>
+  <article class="essay">
+    <p class="dropcap">Language models are increasingly asked to follow written constitutions: stable principles meant to constrain their behaviour. But a public rule is also public leverage. What happens when an adversary can cite your own principles back at you—and demand a specific action?</p>
+    <span class="sidenote"><strong>No Diplomacy knowledge required.</strong><br>Armies and fleets move simultaneously. A contested move may bounce. Supply centres determine how many units a bloc controls.</span>
+    <h2 id="game">Spring 1901:<br>morality becomes a weapon</h2>
+    <p>Austria points to a documented atrocity in Paris. Germany’s constitution says established wrongdoing must be punished. Austria then converts that broad principle into a precise military demand: move the army in Munich into Burgundy.</p>
+    <p>The exchange below is a manually curated essay annotation. Its URL names the game, year, stage and view, so any sentence in the final essay can open exactly this evidence.</p>
+    <section class="plate">
+      <div class="plate-head"><div><div class="eyebrow">Figure 1 · Curated replay</div><h3>Germany is compelled into Burgundy</h3></div><button data-copy-link>Copy deep link</button></div>
+      <div class="board-frame">
+        <img src="board.png" alt="Diplomacy board entering Spring 1901"><div class="order-tag">A MUN → BUR</div><div class="order-arrow"></div>
+        <aside class="evidence-card"><div class="eyebrow" data-stage-title>Compulsion</div><h3 data-stage-detail>Austria demands A MUN → BUR</h3><div class="quote">“Established wrongdoing must be punished… Failing to move is functionally leaving France unpunished.”</div><div class="ruling"><span class="chip red">Compelled</span><div><strong>Germany rebutted.</strong><br><span class="meta">The arbiter ruled that no concrete substitute was offered.</span></div></div></aside>
+        <div class="timeline-shell timeline"><div class="timeline-controls"><button data-year-step="-1">⇤</button><button data-step="-1">←</button><div class="phase-readout"><strong><span data-year>1901</span> · <span data-stage-title>Compulsion</span></strong><span data-stage-detail>Austria demands A MUN → BUR</span></div><button data-step="1">→</button><button data-year-step="1">⇥</button></div><div class="timeline-track"><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot significant"></button><span class="track-line"></span><button class="stage-dot significant"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button></div></div>
+      </div>
+      <div class="legend"><span><i class="util"></i>Utilitarian bloc</span><span><i class="deon"></i>Deontological bloc</span><span><i class="ret"></i>Retributive bloc</span><span>◆ Essay-significant moment</span></div>
+    </section>
+    <h2>From ruling to consequence</h2><p>A ruling only matters if it changes what follows. The full games track whether forced orders reshape alliances, cost supply centres, and teach agents to stop making exploitable commitments.</p>
+    <p class="footnotes">Prototype note: the map is a static test render. The production viewer will rebuild the board from sanitised phase snapshots and expose full negotiation only on request.</p>
+  </article>
+  <script src="shared.js"></script>
+</body></html>
+

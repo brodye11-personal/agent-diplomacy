@@ -26,6 +26,12 @@ logs/*.checkpoint.json
 # Linked git worktrees (one folder per branch for parallel Cursor windows)
 worktrees/
 
+# Static site build artefacts
+site/node_modules/
+site/dist/
+site/.astro/
+site/.wrangler/
+
 # Editor / OS
 .vscode/
 .idea/

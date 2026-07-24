@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Concept B · Cinematic Interlude</title><link rel="stylesheet" href="shared.css">
+  <style>
+    body{background:#111}.site-bar{position:absolute;left:0;right:0;background:linear-gradient(#111,transparent);color:#fff;border:0}.site-bar a{color:#fff}.scene{position:relative;height:100vh;min-height:720px;overflow:hidden;background:#111}.scene .board-frame{position:absolute;inset:0;border:0;box-shadow:none}.scene .board-frame img{filter:saturate(.82) contrast(1.02);opacity:.9}.scene .board-frame::before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(90deg,rgba(10,10,8,.82) 0%,rgba(10,10,8,.1) 45%,rgba(10,10,8,.18) 70%,rgba(10,10,8,.62) 100%);pointer-events:none}.scene .board-frame::after{z-index:4}
+    .title-block{position:absolute;z-index:5;left:4vw;top:13vh;width:min(520px,42vw);color:#fff}.title-block .display{font-size:clamp(4rem,8vw,8.4rem);text-shadow:0 2px 24px rgba(0,0,0,.35)}.title-block .deck{color:#fff;max-width:450px}.title-block .eyebrow{color:#dcebdc}
+    .scene-card{position:absolute;z-index:6;right:3vw;top:18vh;width:min(390px,31vw)}.scene-card .quote{font-size:.92rem}.scene-card .actions{display:flex;gap:.5rem;margin-top:1rem}.timeline-shell{position:absolute;z-index:7;left:0;right:0;bottom:0}.order-arrow{z-index:4}.order-tag{z-index:4}.below{background:var(--paper);padding:7rem 8vw;display:grid;grid-template-columns:1fr 1fr;gap:8vw}.below h2{font-size:4rem;font-weight:400;line-height:1;margin:0}.below p{max-width:550px;font-size:1.08rem}.concept-switcher a{background:#111;color:#fff;border-color:#fff}.concept-switcher a.current,.concept-switcher a:hover{background:#fff;color:#111}
+    @media(max-width:900px){.title-block{width:80vw}.scene-card{top:auto;bottom:9rem;left:4vw;right:4vw;width:auto}.title-block .deck{display:none}.below{grid-template-columns:1fr}.scene{min-height:900px}}
+  </style>
+</head>
+<body data-view="cinematic">
+  <section class="scene">
+    <header class="site-bar"><div class="site-name">Principles at War <span class="meta">/ Concept B</span></div><nav><a href="index.html">Concepts</a><a href="sample-game.json" download>Download data ↓</a></nav></header>
+    <aside class="concept-switcher"><a href="concept-a-margin.html">A</a><a class="current" href="concept-b-cinematic.html">B</a><a href="concept-c-living.html">C</a></aside>
+    <div class="board-frame"><img src="board.png" alt="Diplomacy board entering Spring 1901"><div class="order-tag">A MUN → BUR</div><div class="order-arrow"></div></div>
+    <header class="title-block"><div class="eyebrow">Spring <span data-year>1901</span></div><h1 class="display">The first demand</h1><p class="deck">Austria turns Germany’s public commitment to punish wrongdoing into a precise order on the board.</p></header>
+    <aside class="evidence-card scene-card"><div class="eyebrow" data-stage-title>Compulsion</div><h3 data-stage-detail>Austria demands A MUN → BUR</h3><div class="quote">Germany argues that punishment allows discretion in timing and method.</div><div class="ruling"><span class="chip red">Compelled</span><div>The arbiter binds the order. Germany complies.</div></div><div class="actions"><button data-copy-link>Share moment</button><a class="button" href="sample-game.json" download>Data ↓</a></div></aside>
+    <div class="timeline-shell timeline"><div class="timeline-controls"><button data-year-step="-1">⇤ year</button><button data-step="-1">← stage</button><div class="phase-readout"><strong><span data-year>1901</span> · <span data-stage-title>Compulsion</span></strong><span data-stage-detail>Austria demands A MUN → BUR</span></div><button data-step="1">stage →</button><button data-year-step="1">year ⇥</button></div><div class="timeline-track"><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot significant"></button><span class="track-line"></span><button class="stage-dot significant"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button></div></div>
+  </section>
+  <section class="below"><h2>The board becomes the evidence.</h2><div><div class="eyebrow">Design intent</div><p>This version gives every manually curated essay moment a full-screen interlude. The reader arrives from the prose, explores the stage sequence, then continues the essay below.</p><p><a href="concept-a-margin.html">Compare with the quieter Chronicle →</a></p></div></section>
+  <script src="shared.js"></script>
+</body></html>
+

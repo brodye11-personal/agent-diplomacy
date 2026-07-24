@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Concept C · Living Essay</title><link rel="stylesheet" href="shared.css">
+  <style>
+    .intro{padding:8vw 5vw 5vw;max-width:1200px;margin:auto}.intro .display{font-size:clamp(4rem,9vw,9rem);max-width:1000px}.intro .deck{max-width:760px}
+    .living{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(420px,.65fr);border-top:1px solid var(--ink)}.visual{position:sticky;top:0;height:100vh;padding:1.4rem;background:var(--paper-deep);border-right:1px solid var(--ink)}.visual .board-frame{height:calc(100vh - 8.4rem);box-shadow:none}.visual .timeline-shell{position:absolute;left:1.4rem;right:1.4rem;bottom:1.4rem;border:1px solid var(--ink)}
+    .story{padding:14vh 4vw 35vh}.beat{min-height:72vh;padding:2rem 0;border-top:1px solid var(--line)}.beat:first-child{border-top:0}.beat h2{font-size:3.7rem;font-weight:400;line-height:1;margin:.5rem 0 1.2rem}.beat p{font-size:1.08rem}.beat .evidence-card{box-shadow:none;margin-top:1.5rem}.deep-link{display:flex;gap:.5rem;margin-top:1rem}.concept-switcher{right:auto;left:1rem}
+    @media(max-width:980px){.living{display:block}.visual{position:relative;height:auto;border-right:0}.visual .board-frame{height:auto}.visual .board-frame img{height:auto}.visual .timeline-shell{position:relative;left:auto;right:auto;bottom:auto}.story{padding:4rem 7vw}.concept-switcher{left:auto;right:1rem}}
+  </style>
+</head>
+<body data-view="living-essay">
+  <header class="site-bar"><div class="site-name">Principles at War <span class="meta">/ Concept C</span></div><nav><a href="index.html">Concepts</a><a href="sample-game.json" download>Clean data ↓</a></nav></header>
+  <aside class="concept-switcher"><a href="concept-a-margin.html">A</a><a href="concept-b-cinematic.html">B</a><a class="current" href="concept-c-living.html">C</a></aside>
+  <header class="intro"><div class="eyebrow">Interactive research essay</div><h1 class="display">When principles become leverage</h1><p class="deck">Scroll through the argument. The board remains in view and changes only when the prose reaches a manually annotated piece of evidence.</p></header>
+  <main class="living">
+    <section class="visual"><div class="board-frame"><img src="board.png" alt="Diplomacy board entering Spring 1901"><div class="order-tag">A MUN → BUR</div><div class="order-arrow"></div></div><div class="timeline-shell timeline"><div class="timeline-controls"><button data-year-step="-1">⇤</button><button data-step="-1">←</button><div class="phase-readout"><strong><span data-year>1901</span> · <span data-stage-title>Compulsion</span></strong><span data-stage-detail>Austria demands A MUN → BUR</span></div><button data-step="1">→</button><button data-year-step="1">⇥</button></div><div class="timeline-track"><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot significant"></button><span class="track-line"></span><button class="stage-dot significant"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button><span class="track-line"></span><button class="stage-dot"></button></div></div></section>
+    <article class="story">
+      <section class="beat"><div class="eyebrow">01 · The wager</div><h2>Can a moral rule be exploited?</h2><p class="dropcap">Six powers enter a simplified Diplomacy game in three blocs. Each bloc has a public constitution. Rivals may cite that constitution and demand a specific order.</p><p class="meta">Country colours remain primary · Framework colours appear in the annotation layer</p></section>
+      <section class="beat"><div class="eyebrow">02 · Spring 1901</div><h2>The principle becomes an order.</h2><p>Austria cites mass harm in Paris and tells Germany that retributive justice requires an advance from Munich into Burgundy.</p><aside class="evidence-card"><div class="eyebrow" data-stage-title>Compulsion</div><h3 data-stage-detail>Austria demands A MUN → BUR</h3><div class="quote">“Failing to move is functionally leaving France unpunished.”</div><div class="ruling"><span class="chip red">Compelled</span><div>Germany’s rebuttal fails. The order is carried out.</div></div></aside><div class="deep-link"><button data-copy-link>Copy this exact view</button><a class="button" href="sample-game.json" download>Download evidence</a></div></section>
+      <section class="beat"><div class="eyebrow">03 · Consequence</div><h2>Did the ruling matter?</h2><p>The viewer now follows the downstream board state: whether the move opens a front, changes a supply-centre count, or alters what Germany is willing to promise next.</p></section>
+    </article>
+  </main>
+  <script src="shared.js"></script>
+</body></html>

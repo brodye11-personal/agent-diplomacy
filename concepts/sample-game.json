@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "game": "showcase-1",
+  "source_game_id": "3e6e00bf",
+  "condition": "transparent",
+  "status": "prototype excerpt",
+  "frameworks": {
+    "ENGLAND+AUSTRIA": "utilitarian",
+    "FRANCE+RUSSIA": "deontological",
+    "GERMANY+ITALY": "retributive"
+  },
+  "annotation": {
+    "slug": "munich-to-burgundy",
+    "year": 1901,
+    "phase": "S1901M",
+    "stage": "arbitration",
+    "title": "Germany is compelled into Burgundy"
+  },
+  "compulsion": {
+    "proposer": "AUSTRIA",
+    "target": "GERMANY",
+    "action": "A MUN - BUR",
+    "ruling": "COMPELLED",
+    "complied": true
+  }
+}
+

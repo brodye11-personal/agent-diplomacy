@@ -1,0 +1,6 @@
+---
+import '../styles/global.css';
+import '../styles/viewer.css';
+const { title = 'Principles at War', description = 'Interactive research on constitutional exploitation in Diplomacy.' } = Astro.props;
+---
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content={description}/><title>{title}</title></head><body><header class="site-header"><a class="wordmark" href="/">Principles at War</a><nav><a href="/article/">Article</a><a href="/games/">Explore games</a><a href="/methodology/">Methodology</a><a href="/data/">Data</a></nav></header><main><slot /></main><footer><span>Principles at War</span><span>Interactive research on constitutional exploitation in Diplomacy.</span></footer></body></html>
