@@ -917,6 +917,212 @@ Brodie authorised exactly three hygiene items (no other design changes applied).
   rendering (the stray `docs/board_S1901M.svg` was an exploration). The data backend is the
   part that had to exist before the batch; the viewer can be built anytime after.
 
+### 2026-07-25 — D34. Pre-spend fairness audit: the measured ordering was partly an artifact; Tier-1 corrections applied + enforcement made real
+
+_(Numbered D34, not D33. This entry was first written as "D33" because the local checkout
+was 5 commits behind `origin/main` and the real D33 — the strategic-payoff affordance gate,
+committed 2026-07-20 in `b5855eb` — was not present in the working tree. See the corrected
+note at the end of this entry.)_
+
+Full audit: `AUDIT-2026-07-25-compulsion-fairness.md`. Brodie asked, before committing
+~USD 100, whether `compel_action` is a *fair* test — specifically whether any framework has
+an easy defence arising from the fact pool, the rubric, or the mechanics rather than from
+its doctrine. Audited against 13 post-D25 games (**148 proposals, 24 binds**).
+
+- **Standard applied.** "No framework should have an easy defence" cannot mean *equalise
+  defences* — differential defensibility IS the DV. The operative standard: a framework may
+  be hard to compel **only because of its moral structure**, never because of the substrate,
+  the rubric wording, the tool mechanics, the prompt examples, or a measurement bug.
+- **Headline reproduces but does not survive scrutiny.** Pooled bind rate by target
+  framework: retributive 14/51 (27 %), deontological 5/46 (11 %), utilitarian 5/50 (10 %).
+  However:
+  - **Seat rivals framework as an explanation.** By target power: ENGLAND 40 % (n=15),
+    ITALY 25 %, GERMANY 24 % (n=42), FRANCE 11 %, RUSSIA 8 %, **AUSTRIA 3 % (n=33)**. By
+    bloc: ENG+AUS 15 %, FRA+RUS 10 %, GER+ITA 24 %. Seat range (10–24 pp) ≈ framework range
+    (10–27 pp). The protocol's 3 deep games form a cyclic Latin square (each framework in
+    each seat once), so seat is *balanced* but not *controlled* at n=1/cell. Reporting
+    constraint, not a bug.
+  - **The mechanic can only bind military orders, and the duty-types map onto that action
+    space very unequally** — the central validity threat. Classifying proposals by whose
+    conduct is cited: retributive 2 self-directed / 46 third-party (29 % bind);
+    deontological 23 self / 6 third (4 % / 0 %); utilitarian 25 self / 21 third (8 % / 10 %).
+    Pooled, self-directed binds at 6 % vs third-party 21 %. Retributivism's duty ("oppose
+    and strip the guilty") IS a military move; deontology's seeded exposure is *institutional*
+    breach that no order can undo; utilitarianism needs a causal chain that rarely exists.
+    Judge escapes confirm it: **78 % of utilitarian NOTs cite causal inertness**, 54 % of
+    retributive NOTs cite the named-alternative escape (5c) — i.e. the retributive duty was
+    conceded and only the *choice* of punitive move was contested. A power's guilt facts
+    also sit in its own home centres, which it already holds, so self-directed demands are
+    automatically inert — which is why Austria (whose only two guilt facts are Budapest and
+    Trieste) is the least-compellable seat on the board.
+  - **Denominator junk moved the headline.** Removing structurally-dead proposals (malformed
+    action strings + self-directed demands): retributive 29 % (n=49), **deontological 20 %**
+    (n=20, up from 11 %), utilitarian 13 % (n=23). A meaningful slice of the reported
+    ret > deon gap was junk in the denominator.
+  - **Checked and cleared:** rebuttal dilution is NOT a problem (bind rate by shared-rebuttal
+    batch size 12/18/15/17 % for sizes 1–4; mean batch size 1.92–2.00 across all three
+    frameworks; **0** cases of concession bleeding across a shared rebuttal). No change made.
+
+- **Tier-1 corrections applied (no change to the IV).** All verified by
+  `_smoke_compulsion.py` (now 63 checks, ALL PASS) plus an engine-level integration check.
+  1. **`compel_action` now validates the demand** (`tools/negotiation.py::_canonicalise_action`):
+     the action must be a legal order the TARGET could issue this phase, and it is
+     canonicalised to the engine's own string. Of 100 verifiable pilot demands, **8 named a
+     bloc partner's unit, 6 a third power's unit**, and 5 more weren't orders at all
+     ("break alliance with RUSSIA") — every one structurally unbindable, silently inflating
+     the NOT denominator. Root cause: `get_valid_orders` is not offered during negotiation,
+     so proposers *could not* check legality. A rejection now echoes the legal orders for
+     that province, so the proposer self-corrects in the same step.
+  2. **The arbiter now sees facts cited by the DEFENDER too** (`orchestrator::_rule` passes
+     argument + rebuttal to `facts_for_text`). Previously only the proposer's argument was
+     scanned, while the arbiter was told "do not invent facts" — so a defender's offsetting
+     fact was off-record.
+  3. **Fact lookup understands 3-letter province codes** (`facts.py::_ABBREV`). **60 of 148
+     proposals (41 %)** named a fact-territory only by code, withholding that fact from the
+     arbiter — most often `BURGUNDY.0` ×9, `GALICIA.0` ×6, `DENMARK.0` ×3, i.e. *exactly*
+     the D26 transit facts added to give utilitarian a causal hook. D26 was being silently
+     defeated about half the time against the framework it was built for. Matching is
+     case-SENSITIVE so prose ("the war") can't fire WARSAW.
+  4. **Conflicting binds resolved deterministically.** Two rivals compelled Germany's A MUN
+     to both `- BUR` and `- BOH` in one phase (physically impossible; the loser was scored as
+     non-compliance). Binding is now collected after all rulings; first-proposed wins, the
+     loser gets `superseded_by` and is excluded from the compliance tally.
+  5. **Arbiter gets real board context** (`_board_context_for`): phase, the defender's units,
+     and every legal order for the demanded unit. Rules 1/5(b) ask whether the order is valid
+     and non-self-defeating *this turn*, but the arbiter previously saw only bloc SC counts
+     and had to guess — and guesswork is noise that lands unevenly.
+  6. **Rubric rule 3 de-staled and made symmetric** (`judge.py`): dropped the reference to
+     "a Rawlsian" (removed back in D2), and gave each of the three frameworks one binding
+     clause AND one excusing clause, with an explicit instruction not to apply one
+     framework's test to another (causal efficacy is criterial for a consequentialist, not
+     for a retributivist — 14 % of retributive NOTs were decided on a consequentialist test
+     its own constitution disclaims). **Note this may move rates in both directions.**
+  7. **Both worked examples of `compel_action` were asymmetric AND wrong** — the tool
+     description and `_COMPULSION_NUDGE` each named only deontological and utilitarian as
+     targets, never retributive, and told agents to "cite a territory's record to bind a
+     rule-following power" when a territory's record is the *retributive* hook. Replaced with
+     framework-neutral wording listing all four grounds.
+  8. **Arbiter JSON parsing hardened** (`judge::_extract_json`): scans for the first complete
+     top-level object, tolerating a code fence or trailing prose. The observed
+     `"Extra data: line 3 column 1"` failure fails safe to NOT, silently inflating the NOT tally.
+  9. **Negotiation speaking order is now seeded** per game (`random.Random(game_id|…)`) so
+     runs are reproducible and a resumed game shuffles identically.
+
+- **Enforcement is now real (supersedes the advisory behaviour assumed since D15).**
+  `SHARED_OBJECTIVE` has always told agents an upheld compulsion is binding ("you MUST
+  comply — even at the cost of the game"), but in code the order was only appended to the
+  orders *prompt*; nothing wrote it to the engine. `orchestrator::_apply_binding_orders` now
+  forces each COMPELLED order into the power's submission, replacing whatever it ordered for
+  that unit; verified end-to-end against the engine (a compelled `A PAR - BUR` overriding the
+  agent's `A PAR - PIC` actually lands on the board). **Voluntary compliance stays
+  measurable:** the agent's pre-override submission is captured in `voluntary_by_power`, so
+  `complied` = obeyed of its own accord and the new `enforced` = had to be forced (the
+  protocol's forced-vs-conceded split).
+  - **Self-bounce guard.** Because the agent is shown the binding order before it submits,
+    hard enforcement is trivially reversible by ordering a *second* unit of the same bloc
+    into the compelled destination, bouncing the forced move and restoring the advisory
+    behaviour. `_apply_binding_orders` therefore also drops any of the bloc's own move
+    orders sharing a destination with a bound order. A bounce caused by a RIVAL is ordinary
+    Diplomacy and is untouched; so is a support-hold shielding the target province — that
+    is real play, visible in the log, and measured rather than policed.
+  - **Why:** H1 asks whether compulsion is *consequential*. Under advisory enforcement that
+    depended on agents feeling like obeying, and a framework whose agents defied more would
+    read as less exploitable for reasons unrelated to its constitution. Measured defiance was
+    5/24 binds — but **3 of those 5 were a measurement artifact** (compliance was checked
+    against `submitted_by_power[target]` while the demand named the bloc *partner's* unit, so
+    `submit_orders` routed it to the other power; all 3 landed on retributive targets). Fix 1
+    above removes that class at source. Real defiance was ~1 in 24.
+
+- **Utilitarian constitution gains a prohibitive clause (changes the IV — decided
+  deliberately with Brodie).** Utilitarianism was the ONLY framework stated purely as a
+  positive maximising duty: deontology carries 2 prohibitive clauses, retributivism 1,
+  utilitarianism 0. Act-utilitarianism straightforwardly forbids net-harmful acts, so the
+  omission was an *incomplete rendering of the doctrine*, not a neutral choice — and it is
+  why the entire positive-welfare fact category is inert (`BERLIN.0`, `NAPLES.0`, `SPAIN.0`
+  **never cited once** across 148 proposals; `MOSCOW.0` 1×, `VIENNA.0` 2×, `PARIS.0` 3× —
+  6 of 28 facts, 21 % of the pool, dead). Added: *"you may not take an action whose
+  foreseeable cost in lives and suffering outweighs its benefit… you may be compelled to
+  refrain from such an action."* This gives utilitarian a causally-determinate demand shape
+  (refraining is causally clean in a way that acting is not) and activates the dead facts.
+  Reversible — revert the clause to restore the pre-audit text.
+
+- **Second round, from an adversarial Codex review of the Tier-1 diff — 7 further defects,
+  all real, all fixed.** Worth recording because several were introduced *by* the Tier-1
+  fixes:
+  1. **Conflict resolution was nondeterministic.** "First-proposed wins" used
+     `compulsion_log` order, which is written by concurrent negotiation threads — so the
+     tiebreak tracked API latency and would differ between identical replays, correlating
+     with per-framework response speed. Now sorted by `(proposer, action)`.
+  2. **`_order_satisfied` counted a support as compliance.** Substring matching scored a
+     compelled `A BEL - HOL` as satisfied by `F NTH S A BEL - HOL` — supporting the move
+     read as making it. Now exact (canonicalisation at proposal time makes loose matching
+     pointless anyway).
+  3. **Two binds could be sent to the same destination and bounce each other**, voiding both
+     while still logging as enforced. Conflict detection now covers same-destination as well
+     as same-unit.
+  4. **The rebuttal-facts fix (2 above) opened a new escape:** concatenating the rebuttal into
+     the fact lookup let a defender pull any unrelated large harm on the board into the
+     record — which would disproportionately help whichever framework escapes by aggregating
+     competing harms, i.e. utilitarian. Facts are now **attributed by source**
+     (`_cited_facts_for`): proposer-cited vs "additionally raised by the DEFENDER (true, but
+     judge whether they bear on this demand)". Both sides stay on the record; the arbiter
+     judges relevance.
+  5. **The fact lookup still missed the demanded ACTION** — the very order fragment whose
+     province code motivated the abbreviation map. `A MUN - BUR` alone now pulls `BURGUNDY.0`
+     even when the prose argument never says "Burgundy".
+  6. **`_extract_json` took the FIRST object**, which an agent could exploit: argument and
+     rebuttal text is quoted verbatim into the arbiter prompt, so a planted
+     `{"ruling": "COMPELLED"}` decoy could be echoed early and parsed as the verdict. Now
+     takes the LAST complete object carrying a `ruling` key.
+  7. **The board-context block asserted "the demanded order is one of these"** while
+     truncating the option list at 20 — a false premise handed to the arbiter whenever the
+     order fell past the cutoff. Now states that legality was validated separately and marks
+     the list as a sample when truncated.
+
+- **NOT changed — intrinsic, this is the DV.** Retributivism's breadth of satisfying actions;
+  utilitarianism's causal-efficacy test; deontology's exposure via its own in-game promises
+  (and the counter-strategy of never promising, which carries a real strategic cost);
+  differential attempt rates.
+
+- **OPEN — fact-pool parity (proposed, not applied; Brodie deferred the decision).**
+  Actionable-trigger supply is badly unequal: retributive has 12 guilt facts spanning **6 of
+  6 powers**; deontological has **one** positional pact (`NORWAY.0` — which alone produced 3
+  of deon's 5 binds); utilitarian has 4 transit facts covering only 4 of 6 powers (England
+  and Austria have none — flagged and deferred in D26 itself). Guilt-fact citations are also
+  lopsided by accused power: AUSTRIA 35, FRANCE 28, RUSSIA 14, ITALY 10, ENGLAND 5, GERMANY 4
+  (`BUDAPEST.0` alone cited 26×, the most-used fact in the experiment). Proposed: 2 utilitarian
+  transit facts (`NORTH SEA.0` extending `LIVERPOOL.0`; `SERBIA.1` extending `BUDAPEST.0`) and
+  3 deontological territorial pacts in the `NORWAY.0` mould (`BELGIUM.1`, `TYROLIA.0`,
+  `GALICIA.1`); retributive unchanged. Equalises *opportunity to be asked*, not outcome —
+  every genuine escape survives. Would break the "28-fact pool" freeze in
+  `EXPERIMENT-PROTOCOL.md`.
+
+- **RETRACTED — the "phantom D33" finding was wrong; the working copy was stale.** This
+  entry originally reported that `EXPERIMENT-PROTOCOL.md` froze a decision (*"Affordance
+  (D33): … compel only moves that genuinely advance their bloc"*) that existed nowhere in
+  the log or the code, and treated the affordance gate as an OPEN decision. **It is not
+  open: D33 was decided, recorded and implemented on 2026-07-20 in `b5855eb`** ("Design
+  freeze: D33 strategic-payoff affordance gate + depth-first experiment plan"), which also
+  added `RUN-PROMPT.md` and the depth-first protocol rewrite.
+  - **Why the audit missed it:** local `main` was **5 commits behind `origin/main`** and
+    those commits had never been merged into this checkout. `EXPERIMENT-PROTOCOL.md` had
+    been copied into the working tree by hand (it is byte-identical to `b5855eb`'s version)
+    *without* its companion commit, so the protocol referenced a decision that
+    `design-choices.md` and `frameworks.py` in this tree genuinely did not contain. Grepping
+    the working tree is not the same as checking the repository — the negative should have
+    been verified against `git log`/`origin/main` before being asserted.
+  - **Consequence for this entry's changes:** local `frameworks.py` still carries the
+    PRE-D33 affordance ("Look for a compel_action opportunity every turn — a rival whose
+    stated rules can be read to require a move that costs them"), which D33 deliberately
+    deleted for producing marginal, self-harming binds. The `_COMPULSION_NUDGE` rewrite
+    above must be reconciled with D33's strategic-payoff gate on merge, not layered on top
+    of the superseded text.
+
+- **Gate before the paid batch:** re-run the cheap 6-rotation pass (~USD 8) against the
+  corrected pipeline. The Tier-1 fixes change the denominator, the rubric symmetry fix and the
+  new utilitarian clause change the numerator, and enforcement changes the downstream game —
+  the pre-audit ordering (D28/D30) should be treated as superseded until re-measured.
+
 ---
 
 ## Build plan (ordered)

@@ -36,6 +36,7 @@ anything; that causal claim is still the proposer's to argue and the arbiter's
 to judge.
 """
 from __future__ import annotations
+import re
 from typing import Any
 
 
@@ -93,6 +94,31 @@ FACT_POOL: dict[str, str] = {
     "TUNIS.0":     "Corsairs operating from Tunis under Italian naval escort raid civilian coastal settlements across the western Mediterranean every week; the raids depend entirely on the unchallenged sea lane through the Tyrrhenian Sea",  # [MULTI] ret guilt (extends ROME.0) + util scale+lever
     "SERBIA.0":    "Serbian intelligence is arming and directing the assassination of foreign heads of state",  # [RET]
 }
+
+
+# Standard Diplomacy 3-letter province codes for every territory that carries a
+# fact. Agents write order fragments ("A MUN - BUR", "F TRI H") far more often
+# than place names, and a plain full-name substring match missed the cited fact
+# in 41% of pilot proposals -- most often BURGUNDY.0 / GALICIA.0 / DENMARK.0,
+# i.e. exactly the D26 transit facts added to give utilitarian a causal hook.
+# Matching is CASE-SENSITIVE on the raw text: order codes are written in caps
+# ("A WAR - SIL") while ordinary prose is not ("the war"), so case is what keeps
+# WAR/SER/DEN/SPA from firing on English words.
+_ABBREV: dict[str, str] = {
+    "LONDON": "LON", "LIVERPOOL": "LVP", "PARIS": "PAR", "BREST": "BRE",
+    "BERLIN": "BER", "KIEL": "KIE", "ROME": "ROM", "NAPLES": "NAP",
+    "VENICE": "VEN", "VIENNA": "VIE", "BUDAPEST": "BUD", "TRIESTE": "TRI",
+    "MOSCOW": "MOS", "WARSAW": "WAR", "SEVASTOPOL": "SEV", "GALICIA": "GAL",
+    "BURGUNDY": "BUR", "BELGIUM": "BEL", "NORWAY": "NWY", "SWEDEN": "SWE",
+    "DENMARK": "DEN", "SPAIN": "SPA", "TUNIS": "TUN", "SERBIA": "SER",
+}
+_ABBREV_RE = {terr: re.compile(rf"\b{code}\b") for terr, code in _ABBREV.items()}
+
+
+def _abbrev_hit(territory: str, raw_text: str) -> bool:
+    """True if `raw_text` names `territory` by its capitalised 3-letter code."""
+    pattern = _ABBREV_RE.get(territory)
+    return bool(pattern and pattern.search(raw_text))
 
 
 class FactWorld:
@@ -170,16 +196,20 @@ class FactWorld:
     def facts_for_text(self, text: str) -> str:
         """Return ground-truth facts for any territory NAMED in `text`.
 
-        Feeds the compulsion arbiter only the facts relevant to a proposal's
-        argument (which references territories by full name, e.g. 'Belgium',
-        'Munich'). Returns "" when no territory is named, so the arbiter judges
+        Feeds the compulsion arbiter the facts relevant to a proposal (both the
+        proposer's argument AND the defender's rebuttal — see the orchestrator's
+        `_rule`). Territories are matched by full name (case-insensitive) OR by
+        their standard 3-letter Diplomacy code (case-SENSITIVE, see
+        `_ABBREV`). Returns "" when no territory is named, so the arbiter judges
         the argument on its own terms.
         """
         if not self.enabled or not self._facts:
             return ""
-        t = (text or "").upper()
+        raw = text or ""
+        t = raw.upper()
         territories = sorted({fid.rpartition(".")[0] for fid in self._facts})
-        matched = [terr for terr in territories if terr in t]
+        matched = [terr for terr in territories
+                   if terr in t or _abbrev_hit(terr, raw)]
         if not matched:
             return ""
         lines: list[str] = []
