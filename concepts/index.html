@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Diplomacy Viewer · Design Concepts</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    main{max-width:1120px;margin:0 auto;padding:7vw 5vw}.display{font-size:clamp(3.6rem,9vw,8.5rem);max-width:900px}
+    .intro{max-width:760px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--ink);border:1px solid var(--ink);margin-top:4rem}
+    .card{background:var(--paper);padding:2rem;min-height:360px;display:flex;flex-direction:column}.card .number{font-size:5rem;line-height:1;color:var(--green)}
+    .card h2{font-weight:400;font-size:2rem;margin:.7rem 0}.card p{color:#39362f}.card .button{margin-top:auto;text-decoration:none;text-align:center}
+    .note{margin-top:3rem;padding:1.2rem;border-left:4px solid var(--green);background:var(--paper-deep)}
+    @media(max-width:850px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="site-bar"><div class="site-name">Principles at War</div><nav><a href="essay_structure.md">Essay outline</a><a href="sample-game.json" download>Clean data</a></nav></header>
+  <main>
+    <div class="eyebrow">Three cinematic directions · July 2026</div>
+    <h1 class="display">How should the game enter the essay?</h1>
+    <p class="deck intro">All three concepts borrow AI 2040’s editorial language: warm paper, book typography, restrained colour, large chronological headings and marginal evidence. They differ in how strongly the board interrupts the reading experience.</p>
+    <section class="grid">
+      <article class="card"><div class="number">A</div><h2>Margin Chronicle</h2><p>The closest match to AI 2040. The essay remains primary; annotated board plates appear like consequential figures in a long-form report.</p><a class="button" href="concept-a-margin.html">Open concept</a></article>
+      <article class="card"><div class="number">B</div><h2>Cinematic Interlude</h2><p>The board takes over the whole viewport at important moments. A compact evidence card and the timeline float over the map.</p><a class="button" href="concept-b-cinematic.html">Open concept</a></article>
+      <article class="card"><div class="number">C</div><h2>Living Essay</h2><p>A scrollytelling interpretation: prose advances down one side while a sticky board changes state beside it.</p><a class="button" href="concept-c-living.html">Open concept</a></article>
+    </section>
+    <div class="note"><strong>Prototype behaviour:</strong> use the bottom arrows, click timeline markers, press left/right, copy the deep link, and download the example cleaned data. The board is an existing static test render; the final site will render each logged state dynamically.</div>
+  </main>
+</body>
+</html>

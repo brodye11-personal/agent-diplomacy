@@ -1,0 +1,72 @@
+name: Deploy Principles at War
+
+# Builds and deploys the static Astro site in `site/` to the Cloudflare Worker
+# `exploitability-of-moral-frameworks-in-llm-negotiation`
+# (https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev).
+#
+# Everything runs with `working-directory: site` on purpose. An earlier Cloudflare
+# Git build ran from the repository root, found `requirements.txt`, installed the
+# whole Python experiment stack, then failed because there was no root package.json.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "site/**"
+      - ".github/workflows/deploy-principles-at-war.yml"
+  pull_request:
+    paths:
+      - "site/**"
+      - ".github/workflows/deploy-principles-at-war.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: principles-at-war-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: site
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: site/.nvmrc
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check site
+        run: npm run check
+
+      - name: Build site
+        run: npm run build
+
+      # Pull requests validate only — no credentials are used and nothing ships.
+      - name: Deploy static assets to Cloudflare
+        if: github.event_name != 'pull_request'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: site
+          packageManager: npm
+          # wranglerVersion is deliberately omitted so the action uses the version
+          # pinned in site/package.json rather than downloading a floating one.
+          command: deploy
