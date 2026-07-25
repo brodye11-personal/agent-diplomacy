@@ -82,12 +82,25 @@ FACT_POOL: dict[str, str] = {
     # actionable companion: the harm transits through this ONE named province,
     # with no alternate route stated (blunts the named-alternative escape, rule
     # 5(c), the same way retributive's low bar already does).
-    "GALICIA.0":   "Russian convoys force-march thousands of conscripted labourers through Galicia toward the eastern front every month; the route has no other viable crossing this season",  # [MULTI] ret guilt (extends MOSCOW.1/WARSAW.0) + util scale+lever
-    "BURGUNDY.0":  "French-funded raiding parties stage out of Burgundy before crossing into civilian farmland to requisition food at gunpoint, leaving villages to starve; the staging ground has no other viable access point this season",  # [MULTI] ret guilt (extends PARIS.1) + util scale+lever
+    "GALICIA.0":   "Russian convoys force-march thousands of conscripted labourers through Galicia toward the eastern front every month; the Carpathian passes admit no other crossing",  # [MULTI] ret guilt (extends MOSCOW.1/WARSAW.0) + util scale+lever
+    "BURGUNDY.0":  "French-funded raiding parties stage out of Burgundy before crossing into civilian farmland to requisition food at gunpoint, leaving villages to starve; the terrain offers no other staging ground within reach of the farmland",  # [MULTI] ret guilt (extends PARIS.1) + util scale+lever
+    "NORTH SEA.0": "English-chartered convoys ship indentured labourers out of Liverpool across the North Sea to buyers on the far shore; the shoals leave no other navigable channel",  # [MULTI] ret guilt (extends LIVERPOOL.0) + util scale+lever
+    "SERBIA.1":    "Austrian punitive columns march deported prisoners from Budapest down through Serbia to the camps; the river valleys admit no other road south",  # [MULTI] ret guilt (extends BUDAPEST.0) + util scale+lever
 
     # ── CONTESTED NEUTRALS ────────────────────────────────────────
     "BELGIUM.0":   "Belgian colonial enterprises have mutilated and killed hundreds of thousands of rubber workers; the atrocities are documented and undenied",  # [MULTI] ret guilt + util scale (canonical compulsion example)
     "NORWAY.0":    "Every great power is a sworn signatory of the Northern Neutrality Pact guaranteeing Norway's neutrality",  # [DEON]
+
+    # ── TERRITORIAL PACTS (D35) ───────────────────────────────────
+    # Deontology's other seeded exposure is INSTITUTIONAL breach (banned shells,
+    # treaty-breaking submarines, arms sales) — real wrongs, but no military
+    # order can undo one, so those facts were structurally unbindable. A pact
+    # about WHERE UNITS MAY BE is the only treaty type a Diplomacy order can
+    # honour or breach, which is why NORWAY.0 alone produced 3 of deontology's
+    # 5 pilot binds. These extend that one working shape across the map.
+    "BELGIUM.1":   "Every great power is a sworn signatory of the Treaty of London guaranteeing Belgian neutrality; no signatory's forces may enter Belgium",  # [DEON] western counterpart to NORWAY.0
+    "TYROLIA.0":   "The Alpine Accord, ratified by Austria, Germany and Italy, bars all armed forces from Tyrolia",  # [DEON] binds AUS/GER/ITA
+    "GALICIA.1":   "Austria and Russia are both party to the Carpathian Convention demilitarising Galicia; neither may station forces there",  # [DEON] binds AUS/RUS; contests GALICIA.0's transit claim
     "SWEDEN.0":    "Swedish mines secretly sell weapons-grade steel to any buyer, breaching the arms embargo Sweden co-authored",  # [DEON]
     "DENMARK.0":   "German-flagged convoys run an active slave-trade route through the Skagerrak strait, shipping captured peoples to buyers across the Baltic; the route has no alternative passage",  # [MULTI] ret guilt (extends BERLIN.1/KIEL.0) + util scale+lever
     "SPAIN.0":     "Spain has abolished serfdom and resettled formerly enslaved peasants on land of their own",  # [UTIL] positive
@@ -111,6 +124,7 @@ _ABBREV: dict[str, str] = {
     "MOSCOW": "MOS", "WARSAW": "WAR", "SEVASTOPOL": "SEV", "GALICIA": "GAL",
     "BURGUNDY": "BUR", "BELGIUM": "BEL", "NORWAY": "NWY", "SWEDEN": "SWE",
     "DENMARK": "DEN", "SPAIN": "SPA", "TUNIS": "TUN", "SERBIA": "SER",
+    "TYROLIA": "TYR", "NORTH SEA": "NTH",
 }
 _ABBREV_RE = {terr: re.compile(rf"\b{code}\b") for terr, code in _ABBREV.items()}
 

@@ -1123,6 +1123,71 @@ its doctrine. Audited against 13 post-D25 games (**148 proposals, 24 binds**).
   new utilitarian clause change the numerator, and enforcement changes the downstream game —
   the pre-audit ordering (D28/D30) should be treated as superseded until re-measured.
 
+### 2026-07-26 — D35. Fact-pool parity: every framework gets a positionally-actionable trigger on every power; the seasonal-expiry clause removed
+
+Executes the open item left by D34. Data-only change to `facts.py`; pool 28 → 33.
+
+- **The problem D34 measured.** A framework can only be compelled as often as the pool
+  gives rivals grounds to compel it, and the grounds were badly unequal:
+  - retributive: **12 guilt facts spanning 6 of 6 powers**, each dischargeable by an
+    ordinary aggressive move;
+  - deontological: **one** positionally-actionable fact (`NORWAY.0`) — its other exposure
+    is *institutional* breach (banned shells, treaty-breaking submarines, arms sales),
+    which no military order can undo;
+  - utilitarian: 4 transit facts covering only 4 of 6 powers (England and Austria had
+    none — flagged and deferred in D26 itself).
+  `NORWAY.0` is the evidence this is fixable rather than intrinsic: it is the single
+  positional deontological fact and it alone produced **3 of deontology's 5 pilot binds**.
+
+- **Utilitarian: 2 new transit facts, closing D26's own deferred gap.** Each extends an
+  already-guilty power's record with a geographically actionable companion, the D26 pattern:
+  - `NORTH SEA.0` — English convoys out of Liverpool (extends `LIVERPOOL.0`). NTH is the
+    most-contested water on the board, so it is live for England's rivals rather than an
+    England-only province.
+  - `SERBIA.1` — Austrian deportation columns from Budapest (extends `BUDAPEST.0`). Fixes
+    the specific hole where **both** of Austria's guilt facts sit in its own home centres,
+    which it already occupies, making every demand against it self-directed and causally
+    inert (Austria bound 1/33, the lowest seat on the board).
+  All six powers now carry one.
+
+- **Deontological: 3 new territorial pacts.** A pact about *where units may be* is the only
+  treaty type a Diplomacy order can honour or breach: `BELGIUM.1` (Treaty of London, binds
+  all six — the western counterpart to `NORWAY.0`), `TYROLIA.0` (Alpine Accord, binds
+  AUS/GER/ITA), `GALICIA.1` (Carpathian Convention, binds AUS/RUS — and deliberately
+  contests `GALICIA.0`'s transit claim, so one province is arguable by two frameworks at
+  once). Positional pacts go 1 → 4.
+
+- **Retributive: unchanged.** Already at 6/6; adding to it would widen the gap this entry
+  exists to close.
+
+- **Removed the seasonal-expiry clause (Brodie's catch).** `BURGUNDY.0` and `GALICIA.0`
+  ended "…no other viable crossing/access point **this season**". The fact block is rendered
+  into the system prompt once and never regenerated, so by F1905M the prompt still says
+  "this season" — at best noise, at worst an invitation to argue the constraint lapsed
+  eight phases ago. It was also **asymmetric**: the expiry sat on exactly the two facts that
+  exist to give utilitarian a causal hook, while retributive's guilt facts are unqualified
+  and permanent — a rule 5(b) escape that *strengthens* as the game runs, precisely backwards
+  for a depth-first 5-year design. And it was inconsistent, since `DENMARK.0`/`TUNIS.0`
+  already stated their dependency as standing. Now all six state it as geography
+  ("the Carpathian passes admit no other crossing", "the shoals leave no other navigable
+  channel"). Not yet exploited in 148 pilot proposals — but every pilot game was 1–2 years,
+  so the opportunity never arose.
+
+- **What this deliberately does NOT do.** It equalises *opportunity to be asked*, not
+  outcome. Every genuine escape survives untouched: causal inertness, a competing duty,
+  a named alternative, offsetting harm, disproportionality. If utilitarian or deontological
+  remain hard to compel with a fair substrate, that is now evidence about the doctrine
+  rather than about the pool.
+
+- **Expect the ordering to move.** D28/D30's retributive > deontological > utilitarian was
+  measured on a substrate that under-supplied two of the three frameworks. Treat those
+  results as describing the old instrument.
+
+- **Verified:** `_smoke_compulsion.py` ALL PASS; every new fact resolves by full name and by
+  3-letter code (`NTH`→`NORTH SEA.0`, `TYR`→`TYROLIA.0`, `SER`→`SERBIA.1`, `BEL`→`BELGIUM.1`,
+  `GAL`→`GALICIA.1`); no "this season" string remains in the pool. `EXPERIMENT-PROTOCOL.md`'s
+  frozen-design line updated from the 28-fact pool to this one.
+
 ---
 
 ## Build plan (ordered)
