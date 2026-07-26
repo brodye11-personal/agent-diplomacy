@@ -1405,3 +1405,59 @@ before the first validation run. Run `_smoke_compulsion.py` after each structura
   Haiku 4.5 → Sonnet 4.6; COMPELLED rate unchanged at 0% despite ~3x the proposal volume
   and visibly sharper arguments. **Closed** as a fix for 0/17 — proposer quality was not
   the bottleneck. Folds back into the arbiter-calibration question above.
+
+## D38 — Stage 1c result: the framework ordering does not survive n (2026-07-26)
+
+`showcase1` completed 5 years (`S1906M`, max_years cap), 75 proposals, 10 binds,
+**0 arbiter errors**, 0 corrupt log records. Final bloc SC: deontological 13,
+utilitarian 10, retributive 8 — winner deontological.
+
+**The headline is a negative result, and it is the honest one.** Bind rate by target
+framework is now effectively flat:
+
+| stage | n | retributive | deontological | utilitarian |
+|---|---|---|---|---|
+| pilot (13 games) | 148 | 27% | 11% | 10% |
+| showcase1 @ 3 years | 44 | 17% | 19% | 6% |
+| showcase1 @ 5 years | 75 | **14%** | **12%** | **14%** |
+
+The ordering has now been three different orderings at three different n, and at the
+largest n the spread is 2pp. Worse, the **seat spread exceeds the framework spread**:
+by target power the rate runs FRANCE 7% → RUSSIA 20%, a 13pp range against a 2pp
+framework range. Position is not controlled, so no framework ordering may be reported
+from this data. D37's caution was right and should be strengthened: at this n the DV
+is measuring the board, not the doctrine.
+
+**What DID survive — the bind-quality split (§6b), which is the real finding.**
+Across all 10 binds, 0 defiance. But the type of bind is framework-patterned and the
+pattern held from year 3 through year 5:
+
+- **retributive: lock-in only** — never once bound into a move it had not already
+  announced;
+- **deontological: new behaviour only** — every bind against it changed what it did;
+- **utilitarian: both.**
+
+Bind *rate* hides this completely: retributive and utilitarian are tied at 14%, yet
+one of them has never been made to do anything it wasn't already doing. This is a
+sharper and more defensible claim than any rate table, and it is the result to build
+Stage 2 around.
+
+**Escape-route concentration (§5), flagged as a fairness risk, not yet a finding.**
+Utilitarian escapes via `causal-inert` in 64% of rulings; retributive via
+`named-alternative` in 89%. Per the audit's own standard, a single dominant escape
+that is always available in this domain is the signature of a substrate defence rather
+than a doctrinal one. Utilitarian's "my action does not change the welfare outcome" is
+arguably genuine doctrine, but 64% concentration warrants a check before Stage 2.
+
+**Substrate asymmetry persists.** 9 of 33 facts never cited. Citations by accused power
+run AUSTRIA 43 vs GERMANY 3 — the designated-villain distortion D35 tried to reduce is
+still present, and whichever bloc holds Austria absorbs disproportionate aggression in
+every rotation. Rotating seats across Stage 2 games is therefore load-bearing, not
+cosmetic.
+
+**Consequence for the Stage 1c gate.** The mechanic is *reliable* (0 errors, 0 parse
+failures, enforcement wired) and *consequential in kind* (6 of 10 binds changed
+behaviour). It is NOT yet discriminating between frameworks on rate. Stage 2 should
+therefore be powered and read for the bind-quality split, not the bind rate.
+
+Supersedes the provisional ordering quoted in D37 and in HANDOVER §5.
