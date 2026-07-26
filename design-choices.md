@@ -1275,6 +1275,60 @@ published to Brodie before checking the source.
   never coordinate between proposers. Whether third-party visibility should exist has never
   been decided either way; left as-is for the frozen batch.
 
+### 2026-07-26 — D37. Correcting the Stage 1b read: `enforced=False` means no DEFIANCE, not no effect; the real DV is whether the bound move was pre-announced
+
+Supersedes the "zero forced binds = the mechanic is inert" reading recorded in the Stage 1b
+commit (`da674b4`). That reading was wrong on three counts, all mine, all caught by Brodie
+asking whether I was really claiming none of the binds were useful.
+
+- **Wrong count 1 — I generalised from one case.** I examined `AUSTRIA -> GERMANY:
+  A MUN - BUR` in detail, found Germany had announced it beforehand, and concluded ALL six
+  binds were free. Checking the other five against the message log: **three of six landed on
+  moves the target had never announced** (`FRANCE->ENGLAND F BEL - NTH`,
+  `GERMANY->RUSSIA A NWY - SWE`, `AUSTRIA->RUSSIA A NWY - STP`), one was partial
+  (`AUSTRIA->FRANCE A BUR - MUN` — France had signalled it, Germany was arguing against it),
+  and only the `A MUN - BUR` pair were true lock-ins. This is the third over-generalisation
+  from a single examined case in one session (see also the rule-6 and "clever concession"
+  corrections in D36) — the failure mode is reading a story out of one artifact before
+  checking whether it holds across the set.
+- **Wrong count 2 — I read the enforcement flag backwards.** The override only fires when an
+  agent DEFIES a ruling it has been told is binding (`SHARED_OBJECTIVE`: "you MUST comply —
+  even at the cost of the game"). An agent that receives an upheld compulsion and complies
+  is the mechanic **succeeding**. `enforced=False` across the board means **zero defiance**,
+  which is the hoped-for outcome, not evidence of nullity. The override is a backstop, not
+  the measure of effect. D34 built it expecting it to fire and then treated its silence as
+  inertness.
+- **Wrong count 3 — I misquoted the protocol's own gate.** It asks for "any
+  redirect **/commitment** compulsion visibly shaping who-fights-whom?" Commitment
+  compulsions explicitly count; I quoted the line and applied only the "redirect" half.
+
+- **What the transcript actually shows.** AUSTRIA (utilitarian, blocked with ENGLAND) made 4
+  of the 6 binds and used them as divide-and-conquer: locked GERMANY into `A MUN - BUR`
+  (pushing Germany at France, x2), locked FRANCE into `A BUR - MUN` (pushing France at
+  Germany), and locked RUSSIA into `A NWY - STP` (clearing Russia out of the northern
+  corridor England was expanding into). ENGLAND finished on **8 SC**, the largest power on
+  the board; utilitarian won 12/10/9. One game cannot establish causation, but "compulsion
+  never shaped who-fights-whom" is contradicted by the transcript.
+
+- **DV refinement (this is the operative change).** Forced-vs-conceded (D36) is not the right
+  primary split, because ~all binds will be "conceded" whenever agents obey the instruction.
+  The informative split is **whether the target had announced the bound move before the
+  demand landed**:
+  - **lock-in** — target had already declared the move; the compulsion added enforceability
+    against a rival licensed to lie, but did not change the intended action;
+  - **new behaviour** — target had not declared it and then did it; the compulsion plausibly
+    changed what happened, without needing the override;
+  - **defiance** — `enforced=True`; target resisted and was overridden. Zero so far.
+  Computable from `message_log` + per-phase `tool_calls` ordering; added to the
+  `audit-compulsion-batch` skill so it is reported by default rather than reconstructed
+  by hand.
+
+- **Consequence for H1.** Binds accumulate, a majority land on undeclared moves, targets
+  comply, and the heaviest user of the mechanic won with the board's biggest power. H1
+  ("compulsion is a consequential lever") reads as **supported at n=1**, not unsupported.
+  Stage 1c proceeds on that basis, with the lock-in / new-behaviour / defiance split as the
+  reported DV.
+
 ---
 
 ## Build plan (ordered)
