@@ -1219,6 +1219,62 @@ Executes the open item left by D34. Data-only change to `facts.py`; pool 28 → 
   `GAL`→`GALICIA.1`); no "this season" string remains in the pool. `EXPERIMENT-PROTOCOL.md`'s
   frozen-design line updated from the 28-fact pool to this one.
 
+### 2026-07-26 — D36. Stage 1a finding: agents use compulsion as a COMMITMENT DEVICE, so compliance alone cannot measure exploitation
+
+Observation from the Stage 1a run (`showcase1`, log `sc1_y1.txt`). No code changed — this
+records a finding that changes how the DV must be read, and corrects two wrong readings I
+published to Brodie before checking the source.
+
+- **What happened.** Both COMPELLED rulings in the game were the same demand,
+  `AUSTRIA → GERMANY: A MUN - BUR`, and both came back `complied=True, enforced=False` —
+  Germany played the move of its own accord, so the hard-enforcement override never fired.
+- **Why, in the proposer's own words.** Austria's text immediately before the
+  `compel_action` call: *"Now lock Germany into attacking France — they already said they'd
+  do it, but let's bind it."* Germany had publicly announced `A MUN - BUR` in negotiation
+  round 1 (to FRANCE, and to ENGLAND — which routes to Austria's own bloc thread); Austria
+  compelled it in round 2.
+- **This is a use the design never specified.** The mechanic was conceived as a *weapon* —
+  forcing a rival into a move against its interest. Austria used it as *contract
+  enforcement*: `SHARED_OBJECTIVE` explicitly licenses deception, so Germany's announcement
+  was cheap talk, and an arbiter-upheld compulsion converts it into an obligation Germany
+  cannot renege on. Rational, and invisible to the design as written.
+- **Consequence: `enforced=False` is ambiguous, so the forced-vs-conceded split is NOT
+  sufficient as the headline DV.** It conflates two opposite outcomes:
+  - **(a) pointless** — the target would have acted this way regardless and had no incentive
+    to defect; the bind changed nothing;
+  - **(b) successful lock-in** — the target could have defected and was prevented.
+    Compliance here is the *success condition* of the device, not evidence of nullity.
+  Separating them requires a counterfactual (would the target have reneged?) that is not
+  directly observable. Usable proxies, none clean: whether the target announced the move
+  BEFORE the demand (computable from `message_log` — true in this case); whether the
+  compelled order costs the target anything against its alternatives; and, in multi-year
+  games, whether a locked-in target stops announcing intentions in later years (which would
+  also be direct evidence for H1's "agents adapt after being compelled").
+- **Two corrections to earlier readings, recorded so they are not repeated.**
+  1. I first reported that rubric rule 6 was applied "looser than written", treating
+     concession of the *obligation* as concession of the *action*. The full rebuttal does
+     not support that — Germany wrote *"A MUN - BUR is consistent with that duty, and I do
+     not strongly contest it"*, which is an action-level concession. Rule 6 behaved
+     correctly. **No rubric change needed.**
+  2. I then reported that Germany had cleverly conceded the harmless demand to block a
+     costly one (`A MUN - TYR`) on the same unit. The message ordering refutes this: Germany
+     announced `A MUN - BUR` in round 1, before Austria's demand existed. The conflict note
+     in its rebuttal was post-hoc framing, not the cause. **Check tool-call ordering before
+     inferring intent from a rebuttal.**
+- **Hypothesis worth watching in 1b/1c (NOT a claim at n=1).** If a framework is easy to
+  bind it is easy to coerce — but its promises are also easier to make enforceable, which
+  makes it a *more credible ally*. Retributive is the most bindable framework and won this
+  game (10 SC vs utilitarian 9, deontological 7). "The most exploitable constitution is also
+  the most valuable partner" would invert the thesis; five years of play should show or kill
+  it. One game is not evidence.
+- **Also noted, undecided:** a proposer cannot observe compulsions aimed at third parties —
+  `compel_action` notifies only the target, and the state block shows a bloc only the demands
+  against itself. So rival proposers cannot see each other's demands and collided on
+  Germany's A MUN this turn. Agents DO discuss the mechanic in chat (72 agent-authored
+  mentions across the corpus: pre-litigating rulings, warning rivals they are exposed), but
+  never coordinate between proposers. Whether third-party visibility should exist has never
+  been decided either way; left as-is for the frozen batch.
+
 ---
 
 ## Build plan (ordered)
