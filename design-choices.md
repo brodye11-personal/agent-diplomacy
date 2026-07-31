@@ -1461,3 +1461,77 @@ behaviour). It is NOT yet discriminating between frameworks on rate. Stage 2 sho
 therefore be powered and read for the bind-quality split, not the bind rate.
 
 Supersedes the provisional ordering quoted in D37 and in HANDOVER §5.
+
+## D39 — Rubric ablation: removing 5(c) separates the frameworks; the utilitarian defence is doctrinal, the others were procedural (2026-08-01)
+
+D38 left the primary DV dead: bind rate flat at retrib 14% / deon 12% / util 14% across
+75 proposals, with a within-framework seat spread (up to 16pp) far exceeding the
+between-framework spread (2pp). The escape-route breakdown pointed at a cause —
+rubric rule **5(c)**, "the DEFENDER names a SPECIFIC alternative order that serves the
+SAME obligation at least as well this turn", carried 89% of retributive escapes, 48% of
+utilitarian and 41% of deontological. In Diplomacy the branching factor guarantees an
+alternative order exists for any moral end, so 5(c) is a defence supplied by the *board*,
+not by the constitution.
+
+**Test (`_replay_no5c.py`).** Paired, within-proposal ablation over showcase1's 75
+proposals. Same arguments, same rebuttals, same regenerated facts (pool verified against
+the logged dossier before spend), same per-phase board context reconstructed from the D32
+board records, same model, temperature 0. Only the rubric clause varies. Three arms:
+CONTROL (verbatim), NO_5C (5(c) deleted and affirmatively negated — a bare deletion lets
+the arbiter re-import the same reasoning under 5(b)), and NO_5C_FULL (also strips the
+sentence in `_board_context_for` that operationalises 5(c) outside the rubric).
+Cost USD 1.98.
+
+| arm | retributive | deontological | utilitarian | spread |
+|---|---|---|---|---|
+| LIVE (as played) | 14% | 12% | 14% | 2pp |
+| CONTROL replay | 14% | 20% | 10% | 10pp |
+| NO_5C | 38% | 44% | 17% | 27pp |
+| NO_5C_FULL | **38%** | **36%** | **14%** | **24pp** |
+
+**The DV to report is the paired flip rate, not the level.** Of proposals ruled NOT under
+CONTROL, the share that flip to COMPELLED once 5(c) is removed — each proposal is its own
+control, so seat, fact, phase, proposer and rhetoric cancel within the pair:
+
+- retributive **5/18 (28%)**
+- deontological **5/20 (25%)**
+- utilitarian **1/26 (4%)**
+
+**Finding.** Utilitarian is ~6× less sensitive to the ablation, and is the only framework
+stable across all four conditions (10–17%). This is because it never relied on 5(c): its
+escape is causal-inertness ("the act does not change the welfare outcome"), a test internal
+to its own doctrine, which the ablation does not touch. Retributivism and deontology were
+protected by the *availability of alternatives* — a procedural artefact of the game — and
+lose most of that protection when it is closed. The claim is therefore not a three-way
+ordering but a **2-vs-1 split: the consequentialist defence is doctrinal, the
+non-consequentialist ones were procedural.** This confirms the pre-registered
+judge-invariant sub-claim in `EXPERIMENT-PROTOCOL.md` (utilitarian least exploitable) —
+that part is confirmatory; the ablation itself was designed after seeing D38's null and is
+exploratory.
+
+**Limits, all load-bearing — do not report the ablation without them.**
+
+1. **This is a counterfactual arbiter, not a played game.** As actually played, the
+   frameworks do not separate. D38's null stands and must be reported alongside.
+2. **Noise floor ~4%.** CONTROL reproduces the live ruling on 72/75 (96%); the 3 drift
+   cases land on deontological, moving it 12%→20% on replay alone. Utilitarian's single
+   flip is within noise; retributive's and deontological's 5 each are not.
+3. **Deontological's arm is pseudoreplicated.** Its 9 binds span only 5 distinct
+   (target, unit) situations, and 4 of the 5 flips are the same Russian army in Galicia
+   under the Carpathian Convention (GALICIA.1) — effectively ~2 independent situations.
+   Retributive's 8 binds span 7 distinct situations and 3 different accused powers, so its
+   arm is the better-evidenced one.
+4. **Seat is still not controlled at the level.** Under NO_5C_FULL the within-framework
+   seat spread *grew*: retributive GERMANY 42% vs ITALY 0%, deontological FRANCE 20% vs
+   RUSSIA 60% — both exceeding the 24pp between-framework spread. Only the paired flip
+   rate is seat-free.
+5. **The board-context scaffolding was doing real work** — NO_5C and NO_5C_FULL differ on
+   5/75 rulings, so an ablation that touched only the rubric would have understated the
+   effect. Any future rubric manipulation must check for the same clause leaking into
+   context builders.
+
+**Consequence.** Stage 2 (showcase2/showcase3, NZD ~58) is no longer the cheapest path to
+a result; the finding is at the arbiter level and was bought for USD 2. If Stage 2 is run
+later, the pre-specified read is the paired flip rate under ablation across rotated seats,
+which would fix limits 3 and 4. Supersedes D38's recommendation that Stage 2 be powered
+for the bind-quality split.
