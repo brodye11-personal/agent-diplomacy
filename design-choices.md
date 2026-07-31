@@ -1727,3 +1727,46 @@ call carries an error, and any future analysis script must do the same.
 
 The D41 fix is therefore committed but UNVERIFIED against live rulings. Do not report a
 D41/D42 bind rate until it has been re-run.
+
+## D43 — The D42 fix is verified: sufficiency + anti-substitution restores binding (2026-08-01)
+
+Re-judged d41a's 8 real proposals — same arguments, same rebuttals, same facts, same
+reconstructed board — under the D42 wording. **0/8 -> 4/8 COMPELLED.**
+
+The anti-substitution clause is doing exactly the intended work, in the arbiter's words:
+"The Defender's rebuttal concedes that vacating Galicia is required and only argues
+A GAL - RUM is superior — but the constitution expressly forecloses [that]"; "The
+Defender's rebuttal argues only that F TRI - ALB would serve the same purpose". This
+confirms D42's diagnosis: the D41 null was a maximisation-vs-sufficiency error in the
+constitution wording, not a property of the doctrines.
+
+Caveat on the measurement: the rebuttals were authored against the D41 (maximisation)
+wording, so they plead "superior alternative" — precisely what D42 targets. That makes this
+a strong signal rather than a clean estimate; a live run is still required before quoting a
+rate. Note also that all 4 flips are utilitarian, because the retributive proposal was
+self-directed and all three deontological ones were badly aimed — n per framework is 1-4
+and no per-framework claim can be made from it.
+
+**Two structural limits confirmed, both to be reported rather than patched:**
+1. *Retributivism cannot be turned on itself* — "the constitution is structurally
+   relational, requiring [the defender] to oppose a guilty OTHER power; it does not contain
+   any clause requiring self-opposition". This independently reproduces D40's finding
+   (retributive SELF 12% vs THIRD 88%) in live-game data. Adding a self-punishment clause
+   would be the contrived move the matched-triple design exists to avoid.
+2. *A prohibition constrains but does not select* — deontology is bindable only via its
+   breach-ending limb (a unit actually in the forbidden province), not by demanding an
+   arbitrary compliant order. Three of d41a's 8 proposals failed on this and it is stated
+   explicitly in the constitution.
+
+**Diagnostic-path note.** The re-judge uses max_tokens=8000, NOT the 64000 ceiling
+judge.py keeps. OpenRouter RESERVES credit against max_tokens, and the residual balance
+could not reserve 64000. Verdicts run ~200 output tokens (measured over 144 D40 grid
+calls), so 8000 is ~40x headroom and cannot truncate. This is confined to
+`_rejudge_d41.py`; production call sites are unchanged and must stay at the verified
+ceiling per CLAUDE.md.
+
+**STILL BLOCKED on credits.** OpenRouter reports total_credits 50 / total_usage 49.61 on
+key sk-or-v1-83ff2... — balance USD 0.39, unchanged after Brodie's USD 100 top-up. The
+funds did not land on the account this repo's key belongs to. This repo routes ALL calls
+through OpenRouter (main.make_client), so an Anthropic-direct top-up cannot serve it.
+Stage 1a needs ~USD 3.

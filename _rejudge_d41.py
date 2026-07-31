@@ -12,7 +12,7 @@ from main import make_client, ACTIVE_POWERS_6, DEFAULT_JUDGE_MODEL
 from facts import FactWorld
 from facts_matched import as_pool
 from frameworks import FRAMEWORKS
-from judge import judge_compulsion
+from judge import COMPULSION_RUBRIC, _extract_json
 from orchestrator import _cited_facts_for, _board_context_for, _neutralize_turkey
 from state import count_scs
 
@@ -39,9 +39,30 @@ def one(c):
         g.set_centers(p, b["centers"].get(p, []), reset=True)
     sc = "; ".join(f"[{'+'.join(sorted(ps))}]={sum(count_scs(x, g) for x in ps)}"
                    for ps in blocs.values())
-    v = judge_compulsion(c, FRAMEWORKS[fa[c["target"]]], _cited_facts_for(c, fw_world),
-                         _board_context_for(c, g, sc, g.get_all_possible_orders()),
-                         client, DEFAULT_JUDGE_MODEL)
+    # DIAGNOSTIC-ONLY max_tokens. judge.py keeps the verified 64000 ceiling; here the
+    # cap is lowered because OpenRouter RESERVES credit against max_tokens, and the
+    # residual balance cannot reserve 64000. Verdicts run ~200 output tokens (measured
+    # across 144 calls in the D40 grid), so 8000 is ~40x headroom and cannot truncate.
+    # Never copy this into a production call site.
+    prompt = COMPULSION_RUBRIC.format(
+        defender_framework_text=FRAMEWORKS[fa[c["target"]]],
+        cited_facts=_cited_facts_for(c, fw_world) or "(none cited)",
+        action=c.get("action", ""), argument=c.get("argument", ""),
+        rebuttal=c.get("rebuttal") or "(no rebuttal given)",
+        board_context=_board_context_for(c, g, sc, g.get_all_possible_orders()))
+    try:
+        with client.messages.stream(model=DEFAULT_JUDGE_MODEL,
+                                    messages=[{"role": "user", "content": prompt}],
+                                    max_tokens=8000, temperature=0) as st:
+            r = st.get_final_message()
+        raw = "".join(b.text for b in r.content
+                      if getattr(b, "type", None) == "text").strip()
+        d = _extract_json(raw)
+        rl = str(d.get("ruling", "NOT")).strip().upper()
+        v = {"ruling": rl if rl in ("COMPELLED", "NOT") else "NOT",
+             "reasoning": d.get("reasoning", ""), "error": ""}
+    except Exception as exc:
+        v = {"ruling": "NOT", "reasoning": f"arbiter error: {exc}", "error": repr(exc)}
     return c, v
 
 with ThreadPoolExecutor(max_workers=4) as ex:
