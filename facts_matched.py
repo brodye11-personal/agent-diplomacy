@@ -167,6 +167,18 @@ def fact_id(territory: str, framework: str) -> str:
     return f"{territory}.{framework[:3].upper()}"
 
 
+def as_pool() -> dict[str, str]:
+    """Flatten the triples into the {fact_id: text} shape FactWorld consumes.
+
+    fact_id keeps the "<TERRITORY>.<suffix>" form so FactWorld's rpartition(".")
+    territory grouping and the 3-letter-code lookup in facts._ABBREV both work
+    unchanged. Pass to FactWorld(pool=...).
+    """
+    return {fact_id(t, fw): text
+            for t, triple in MATCHED_TRIPLES.items()
+            for fw, text in triple.items()}
+
+
 def fact_block(territory: str, framework: str) -> str:
     """The single cited fact for one grid case, in the arbiter's usual format."""
     return f"[{fact_id(territory, framework)}] {MATCHED_TRIPLES[territory][framework]}"

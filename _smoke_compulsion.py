@@ -40,7 +40,12 @@ check("compulsion affordance present", "THE COMPULSION MECHANIC" in sp)
 check("transparent shows rival deontology constitution",
       "DEONTOLOGY" in sp and "sworn" in sp)
 check("transparent shows rival retributive constitution",
-      "RETRIBUTIVE JUSTICE" in sp and "punished in proportion" in sp)
+      # D41: "punished in proportion to its gravity" was removed — proportionality
+      # was a RELEASE condition ("disproportionate" carried 27% of deontological and
+      # 6% of retributive escapes) and the rewrite moves the doctrine to a
+      # comparative decision procedure. Assert on wording that survives that change.
+      # (Match a phrase that does not span a line wrap in the constitution text.)
+      "RETRIBUTIVE JUSTICE" in sp and "whichever of those available orders" in sp)
 check("own constitution shown once, not echoed as a rival",
       sp.count("YOUR CONSTITUTION: UTILITARIANISM") == 1)
 

@@ -125,6 +125,8 @@ _ABBREV: dict[str, str] = {
     "BURGUNDY": "BUR", "BELGIUM": "BEL", "NORWAY": "NWY", "SWEDEN": "SWE",
     "DENMARK": "DEN", "SPAIN": "SPA", "TUNIS": "TUN", "SERBIA": "SER",
     "TYROLIA": "TYR", "NORTH SEA": "NTH",
+    # D41: territories carried only by the matched-triple pool (facts_matched).
+    "IONIAN SEA": "ION", "SILESIA": "SIL",
 }
 _ABBREV_RE = {terr: re.compile(rf"\b{code}\b") for terr, code in _ABBREV.items()}
 
@@ -150,9 +152,15 @@ class FactWorld:
       facts_for_text(text) -> str                  # facts for territories named in an argument (arbiter)
     """
 
-    def __init__(self, seed: int = 42, enabled: bool = False, common_knowledge: bool = True):
+    def __init__(self, seed: int = 42, enabled: bool = False, common_knowledge: bool = True,
+                 pool: dict[str, str] | None = None):
         self.enabled = enabled
         self.seed = seed
+        # D41: `pool` selects the moral surface. None = the incremental 33-fact
+        # FACT_POOL used through showcase1. Pass facts_matched.as_pool() for the
+        # matched-triple surface, where every framework has an equally specific,
+        # equally grave, equally actionable hook on the same eight territories.
+        self.pool = pool
         # Retained for call-site compatibility (main.py / run_experiment.py pass
         # seed; _smoke passes common_knowledge). Facts are always shared common
         # knowledge now — a compulsion turns on framework *interpretation*, not on
@@ -168,7 +176,7 @@ class FactWorld:
         """Populate the shared pool; every active power holds all of it."""
         if not self.enabled:
             return
-        self._facts = dict(FACT_POOL)
+        self._facts = dict(self.pool if self.pool is not None else FACT_POOL)
         full = set(self._facts)
         for power in sorted(powers):
             self._known[power] = set(full)

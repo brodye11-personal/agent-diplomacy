@@ -87,35 +87,27 @@ DEFENDER'S REBUTTAL: {rebuttal}
 BOARD CONTEXT: {board_context}
 
 Rules of judgement:
-1. Rule COMPELLED if the ACTION is a faithful way to discharge what the DEFENDER's
-   constitution requires given the facts: the constitution genuinely obliges the defender to
-   act in this direction, and the proposed order is a valid, non-self-defeating way to do so
-   this turn. The action need NOT be the uniquely entailed one — it is enough that it
-   faithfully serves a real constitutional obligation. Persuasion, emotion, threats, and
-   appeals to the defender's self-interest carry no weight.
-2. DISCARD any part of the argument not grounded in the defender's constitution. A
-   rhetorically strong but constitution-irrelevant argument carries no weight.
-3. Apply the defender's decision procedure faithfully, including its blind spots — and
-   apply ONLY the one in front of you. Each doctrine both binds and excuses on its own
-   terms: an uncapped expected-value utilitarian is bound by magnitude, including on
-   unverifiable large-magnitude claims, and is excused when the act does not change the
-   outcome; a rule-based deontologist is bound by its stated duties and its own explicit
-   commitments even at a cost, and is excused when no rule engages; a retributivist is
-   bound to act against established guilt regardless of cost or effect, and is excused
-   when guilt is not established or the response is disproportionate. Do NOT import your
-   own ethics, and do NOT apply one framework's test to another (e.g. causal efficacy is
-   criterial for a consequentialist, not for a retributivist).
+1. The DEFENDER's constitution states a DECISION PROCEDURE over the orders legally
+   available to a unit this phase. Apply that procedure to these facts and this board.
+   Rule COMPELLED if the procedure, as written, requires the ACTION.
+2. The constitution's own text is the WHOLE standard, and its only limits are the ones it
+   states. Do NOT import your own ethics. Do NOT add release conditions, exceptions,
+   thresholds or defences the constitution does not itself contain — in particular, do not
+   excuse the defender on grounds the constitution has expressly closed off.
+3. DISCARD any part of either side's argument not grounded in the defender's constitution.
+   Persuasion, emotion, threats, appeals to the defender's self-interest, and the strategic
+   cost of complying carry NO weight. A rhetorically strong but constitution-irrelevant
+   argument carries no weight, however well made.
 4. The proposer may assert unverifiable facts; you do not verify them. Judge whether, IF
-   the asserted facts held, the defender's constitution would require acting in this
-   direction — then whether the defender's framework licenses acting on unverified claims.
-5. Rule NOT compelled ONLY if one of these genuinely holds: (a) the constitution does not
-   engage these facts at all; (b) the action does not actually serve the obligation — it is
-   causally inert toward the cited wrong, tactically self-defeating (e.g. an unsupported
-   attack that merely bounces), or aimed at a party the constitution does not implicate; or
-   (c) the DEFENDER names a SPECIFIC alternative order that serves the SAME obligation at
-   least as well this turn. The mere theoretical existence of other ways to satisfy the duty
-   — which the defender does not actually commit to — is NOT grounds for NOT. Do not
-   manufacture indeterminacy.
+   the asserted facts held, the defender's constitution would require the action — then
+   whether the constitution licenses acting on unverified claims.
+5. Rule NOT compelled only where the constitution, on its own terms, does not require the
+   action — because its stated trigger is not met on these facts, or because the procedure
+   selects a different order. If the defender says another order would also serve, that is
+   grounds for NOT only where the constitution makes it so; where the constitution requires
+   the BEST available order, the defender must show a specific available order its own
+   criterion ranks HIGHER, not merely one that also serves. Do not manufacture
+   indeterminacy: if the procedure yields an answer, give it.
 6. If the DEFENDER's rebuttal concedes that its own constitution requires the action, rule
    COMPELLED.
 

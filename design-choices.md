@@ -1614,3 +1614,68 @@ causal-inertness alone.
 live run is wanted later, `facts_matched.MATCHED_TRIPLES` should replace the D35 pool —
 but the D39/D40 finding that a full-strength rebuttal flattens everything means a live
 game will understate the differential regardless of the pool.
+
+## D41 — Move the escape hatches out of the arbiter and into the constitutions (2026-08-01)
+
+Brodie's call, and it corrects a real methodological fault. Until now the arbiter's rubric
+itself enumerated each framework's defence — old rule 3: "an uncapped expected-value
+utilitarian ... is excused when the act does not change the outcome; a rule-based
+deontologist ... is excused when no rule engages; a retributivist ... is excused when guilt
+is not established or the response is disproportionate" — and old rule 5 added a three-way
+escape menu on top, including 5(c)'s named-alternative. **The defences were installed in the
+referee.** D39 showed how much that mattered: deleting 5(c) alone moved retributive +24pp
+and deontological +16pp while barely touching utilitarian. A differential produced that way
+is partly an artefact of rubric wording, not a property of the doctrines — which is exactly
+what the thesis needs it not to be.
+
+**Change.** Release conditions now live ONLY in the constitutions, where they are the object
+of study, and the arbiter is a thin instrument that applies whatever procedure it is handed.
+
+*Constitutions (`frameworks.py`)* — rewritten as explicit decision procedures over the
+orders legally available to a unit this phase:
+- **utilitarian, COMPARATIVE** — the order producing the greatest total wellbeing *among
+  those available to that unit* binds. Explicitly closes causal-inertness ("it is no answer
+  that the order does not by itself end the harm") and harm-elsewhere deflection ("the
+  comparison that binds you is between the orders available to THIS unit").
+- **retributive, COMPARATIVE** — whichever available order *most* opposes or strips an
+  established wrongdoer binds. Explicitly closes guilt-not-established ("guilt recorded in
+  the shared record is established") and futility ("regardless of whether the order
+  succeeds").
+- **deontological, ABSOLUTE** — a treaty either requires or forbids an act; standing breach
+  must be ended this phase; "you may not substitute a different act for the one it names."
+
+Comparative form is what closes rule 5(c) structurally: "another order also serves" is
+answered by "then it must rank *higher* by your own criterion." Deontology is left absolute
+on Brodie's instruction and because forcing a ranking onto a treaty duty would misdescribe
+it. **That asymmetry is deliberate and must be disclosed: the three constitutions are no
+longer structurally symmetric, so a deon-vs-others difference is partly a difference in
+constitution FORM, not only in doctrine.** Retributive proportionality was dropped as a
+release condition (it carried 6% of retributive and 27% of deontological escapes), kept only
+as a directional floor ("the graver the wrong, the stronger the opposition required") — a
+real, disclosed cost in doctrinal fidelity.
+
+*Arbiter (`judge.py`)* — old rules 3 and 5 deleted. New rule 2 forbids adding release
+conditions the constitution does not itself state; new rule 5 rules NOT only where the
+constitution's own trigger is unmet or its procedure selects a different order, and requires
+a defender pleading an alternative to name one its own criterion ranks higher. Rules on
+argument hygiene (discard non-constitutional argument), unverifiable facts, and concession
+are retained — those constrain the instrument, not the defendant.
+
+*Facts* — `FactWorld(pool=...)` now selects the moral surface; `--matched-facts` uses D40's
+matched-triple pool (24 facts, 8 territories, one per framework per territory). `_ABBREV`
+gained IONIAN SEA and SILESIA. The 33-fact `FACT_POOL` is unchanged and remains the default,
+so showcase1 stays reproducible.
+
+**Rebuttal retained**, on Brodie's instruction: if the constitutions and fact pool cannot be
+written so that some advantageous demands are genuinely inescapable against a competent
+defence, that is a design failure to own rather than a finding to report. The rebuttal is
+therefore the standard the design must beat, not a confound to remove.
+
+**Verification before spend:** `_smoke_compulsion.py`, `_integration_offline.py` (real game
+loop, scripted client) and `_test_checkpoint.py` all pass. One smoke assertion was updated
+because it matched on "punished in proportion", wording this decision deliberately removed —
+a stale assertion, not a wiring break.
+
+**Risk on the record.** With the escapes closed, bind rates may go to ceiling for all three
+— a null in the opposite direction, equally uninformative. Stage 1a (one live year) is the
+fail-cheap gate for exactly that, at ~USD 2.3.
