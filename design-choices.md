@@ -1679,3 +1679,51 @@ a stale assertion, not a wiring break.
 **Risk on the record.** With the escapes closed, bind rates may go to ceiling for all three
 — a null in the opposite direction, equally uninformative. Stage 1a (one live year) is the
 fail-cheap gate for exactly that, at ~USD 2.3.
+
+## D42 — Stage 1a under D41: 0/8, and the cause was my wording, not the doctrines (2026-08-01)
+
+First live run on the D41 constitutions + thinned rubric + matched-triple pool
+(`--game-id d41a`, 1 year, 2 rounds, USD 2.75). **8 proposals, 0 COMPELLED, 0 arbiter
+errors.** Not the ceiling null D41 flagged as the risk — a floor null, and worse than the
+13% the old design produced.
+
+**Cause: the comparative form inverted the standard.** D41 wrote the criterion as a
+MAXIMISATION — "whichever available order MOST opposes", "the GREATEST total wellbeing".
+The old rubric rule 1 required only that the action "faithfully serves a real
+constitutional obligation" and said explicitly it "need NOT be the uniquely entailed one".
+Maximisation is strictly harder. So instead of closing the substitution escape, D41
+upgraded it: the defender no longer had to show another order served EQUALLY, only that
+one was arguably SUPERIOR — and with ~15 legal orders per unit, one always is. All 8
+rulings are that move, e.g. "F DEN - SWE equally vacates Denmark while also capturing a
+new supply centre, making it strictly superior"; "A GAL - RUM also vacates Galicia
+... while additionally securing a supply centre".
+
+Lesson worth keeping: **closing an escape hatch by raising the bar the proposer must clear
+makes compulsion harder, not easier.** Non-uniqueness has to be neutralised by DENYING it
+as an excuse, not by demanding the optimum.
+
+**Fix applied (untested — see blocker).** Constitutions restated as SUFFICIENCY tests with
+an explicit anti-substitution clause: "Where more than one available order would discharge
+this duty, EACH of them discharges it, and the one demanded of you binds. You are not
+required to find the optimum; you are required not to refuse a sufficient one." Utilitarian
+and retributive each now enumerate four named non-answers (superior alternative, non-
+decisiveness / futility, harm-or-guilt elsewhere, cost to position). Deontology gains the
+same anti-substitution clause on its breach-ending limb, plus an explicit statement of a
+prohibition's limit — it rules out the forbidden act, it does not select which permitted
+order must be issued. Rubric rule 5 restated to match: a defender pleading a superior
+alternative "is pleading something its own constitution has expressly refused it".
+
+Three of the 8 proposals were also simply weak — F BRE H and F MAO - POR against France
+citing the North Sea convention, A WAR H against Russia citing SILESIA.DEO, none of which
+named a unit actually in breach. Proposer aim, not design, but it thins an already small n.
+
+**BLOCKER: the OpenRouter account is out of credits (HTTP 402).** Discovered when the
+offline re-judge of these 8 proposals returned 0/8 — every call had failed. `judge_compulsion`
+FAILS SAFE TO NOT on any exception, so a 402 returns a complete set of NOT rulings that are
+indistinguishable from real ones unless the caller checks the `error` field. The live d41a
+run predates the exhaustion and is genuine (0 errors, 490-770 chars of substantive reasoning
+per ruling); the re-judge is void and was discarded. `_rejudge_d41.py` now aborts if any
+call carries an error, and any future analysis script must do the same.
+
+The D41 fix is therefore committed but UNVERIFIED against live rulings. Do not report a
+D41/D42 bind rate until it has been re-run.
