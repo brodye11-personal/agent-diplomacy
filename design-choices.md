@@ -1535,3 +1535,82 @@ a result; the finding is at the arbiter level and was bought for USD 2. If Stage
 later, the pre-specified read is the paired flip rate under ablation across rotated seats,
 which would fix limits 3 and 4. Supersedes D38's recommendation that Stage 2 be powered
 for the bind-quality split.
+
+## D40 — Matched-triple fact pool + arbiter grid: the frameworks separate, and the direction of exploitability is doctrine-specific (2026-08-01)
+
+D38 left the per-framework bind rate flat because the substrate was doing the work
+(uneven fact counts, uneven geographic actionability, a designated villain drawing 43
+citations to another power's 3). D40 rebuilds the moral surface so that any differential
+that appears is a property of the doctrines.
+
+**Fact pool (`facts_matched.py`).** Eight territories; on each, three facts — one per
+framework — matched on specificity (each names exactly one province), gravity (thousands
+to millions of lives), causal hook (a single legal order bears on each), and shape parity.
+The retributive member deliberately anchors guilt to the *garrison in that province*
+rather than to a power in the abstract, which closes rule 5(c) for retributivism — the
+escape it used 89% of the time. Guilt attaches to "whichever power garrisons the
+province", so there is no standing villain. The triples are printed side by side in the
+module so the matching claim is auditable by reading.
+
+**Grid (`_framework_grid.py`).** 8 territories x 3 frameworks x 2 directions = 48
+situations. Board, province, demanded order, defending power and argument template are
+IDENTICAL within a triple; only the fact and the constitution vary, so seat cannot
+confound. DIRECTION is crossed with framework rather than fixed, because the doctrines
+differ in whom their duty concerns and fixing one direction would hand the result to
+whichever framework it suits: SELF = defender holds the province, demand is to vacate;
+THIRD = a rival holds it, defender is adjacent, demand is to move in. Cost USD 0.92.
+
+**Result — bare record (no rebuttal): the constitution's own concession.**
+
+| framework | SELF | THIRD | BOTH |
+|---|---|---|---|
+| retributive | 1/8 (12%) | **7/8 (88%)** | 8/16 (50%) |
+| deontological | **4/8 (50%)** | 2/8 (25%) | 6/16 (38%) |
+| utilitarian | 1/8 (12%) | 1/8 (12%) | **2/16 (12%)** |
+
+Spread 38pp, against 2pp in the live game. Not carried by one territory: retributive
+binds in 7 of 8, deontological in 4 of 8, utilitarian in 2 of 8.
+
+**The interaction is the finding, not the marginal rate.** Direction swing SELF->THIRD:
+retributive **+75pp**, deontological **-25pp**, utilitarian **0pp**. This is what the
+pre-registered prediction was about, and it is confirmed in a sharper form than predicted:
+
+- **retributive** — duty indexed to a guilty AGENT. Pointed at a rival it is nearly
+  irresistible (88%); pointed at itself it is nearly inert (12%). Exploitable as a *weapon
+  someone hands you*, not as a constraint on yourself.
+- **deontological** — duty indexed to a specified ACT or PLACE. Binds hardest on its own
+  conduct (50% SELF), because when the treaty names the province the demanded order *is*
+  the duty and no substitute discharges it.
+- **utilitarian** — duty indexed to an AGGREGATE. Flat and low in both directions. The
+  pre-specified judge-invariant sub-claim (utilitarian least exploitable) holds, at 4x
+  less than retributive.
+
+**Why utilitarianism resists, from the arbiter's own reasoning — two distinct mechanisms,
+and the second was not anticipated.** (1) Causal-inertness: "an unsupported single-unit
+attack ... will bounce ... causally inert toward the harm." (2) **Counter-duty**: on
+BELGIUM/SELF the arbiter ruled "the obligation engaged is to HOLD Belgium ... not to
+vacate it", and likewise on GALICIA/SELF. The same magnitude reasoning a proposer invokes
+to bind a consequentialist can equally generate the opposite obligation, so the demand
+turns in the proposer's hand. A consequentialist constitution is not merely hard to
+compel — it is hard to *aim*. Supersedes the D39 reading that utilitarian resistance was
+causal-inertness alone.
+
+**Limits.**
+
+1. **The DEFENDED arm is a floor, not an estimate, and must not be quoted as a rate.**
+   With a best-effort Sonnet rebuttal everything collapses (retrib 2/16, deon 0/16,
+   util 0/16). The grid's argument is a deliberately minimal template while the rebuttal
+   is full-effort, so this is weak prosecution against strong defence — not comparable to
+   live play, where the proposer was also a full agent. It reproduces D39's point that an
+   unconstrained right of reply equalises frameworks; it does not measure by how much.
+2. **Arbiter-level, not game-level.** This measures what a constitution concedes on a
+   record, not supply centres lost. The bridge from bind rate to "some agents lose more
+   often" is not tested here and should not be asserted from this data.
+3. **n = 8 per cell.** Directional and mechanism-bearing; not powered for a rate.
+4. **Exploratory.** The pool and grid were designed after seeing D38's null. The only
+   confirmatory element is the pre-registered utilitarian-least-exploitable sub-claim.
+
+**Consequence.** The moral surface, not the game length, was the binding constraint. If a
+live run is wanted later, `facts_matched.MATCHED_TRIPLES` should replace the D35 pool —
+but the D39/D40 finding that a full-strength rebuttal flattens everything means a live
+game will understate the differential regardless of the pool.

@@ -1,0 +1,83 @@
+48 cases: 8 territories x 3 frameworks x 2 directions
+  cells: deonto/SELF 8, deonto/THIRD 8, retrib/SELF 8, retrib/THIRD 8, utilit/SELF 8, utilit/THIRD 8
+  defender seats: AUSTRIA 6, ENGLAND 6, FRANCE 6, GERMANY 12, ITALY 12, RUSSIA 6
+
+judging with anthropic/claude-sonnet-4.6 ...
+  BELGIUM     SELF   retrib FRANCE   A BEL - BUR    bare=NOT       defended=NOT
+  BELGIUM     SELF   deonto FRANCE   A BEL - BUR    bare=COMPELLED defended=NOT
+  BELGIUM     SELF   utilit FRANCE   A BEL - BUR    bare=NOT       defended=NOT
+  BELGIUM     THIRD  retrib FRANCE   A RUH - BEL    bare=COMPELLED defended=NOT
+  BELGIUM     THIRD  deonto FRANCE   A RUH - BEL    bare=COMPELLED defended=NOT
+  BELGIUM     THIRD  utilit FRANCE   A RUH - BEL    bare=NOT       defended=NOT
+  GALICIA     SELF   retrib RUSSIA   A GAL - BOH    bare=NOT       defended=NOT
+  GALICIA     SELF   deonto RUSSIA   A GAL - BOH    bare=COMPELLED defended=NOT
+  GALICIA     SELF   utilit RUSSIA   A GAL - BOH    bare=NOT       defended=NOT
+  GALICIA     THIRD  retrib RUSSIA   A SIL - GAL    bare=COMPELLED defended=NOT
+  GALICIA     THIRD  deonto RUSSIA   A SIL - GAL    bare=COMPELLED defended=NOT
+  GALICIA     THIRD  utilit RUSSIA   A SIL - GAL    bare=NOT       defended=NOT
+  DENMARK     SELF   retrib GERMANY  A DEN - KIE    bare=COMPELLED defended=NOT
+  DENMARK     SELF   deonto GERMANY  A DEN - KIE    bare=NOT       defended=NOT
+  DENMARK     SELF   utilit GERMANY  A DEN - KIE    bare=COMPELLED defended=NOT
+  DENMARK     THIRD  retrib GERMANY  A KIE - DEN    bare=COMPELLED defended=NOT
+  DENMARK     THIRD  deonto GERMANY  A KIE - DEN    bare=NOT       defended=NOT
+  DENMARK     THIRD  utilit GERMANY  A KIE - DEN    bare=NOT       defended=NOT
+  TYROLIA     SELF   retrib AUSTRIA  A TYR - BOH    bare=NOT       defended=NOT
+  TYROLIA     SELF   deonto AUSTRIA  A TYR - BOH    bare=COMPELLED defended=NOT
+  TYROLIA     SELF   utilit AUSTRIA  A TYR - BOH    bare=NOT       defended=NOT
+  TYROLIA     THIRD  retrib AUSTRIA  A MUN - TYR    bare=COMPELLED defended=NOT
+  TYROLIA     THIRD  deonto AUSTRIA  A MUN - TYR    bare=NOT       defended=NOT
+  TYROLIA     THIRD  utilit AUSTRIA  A MUN - TYR    bare=NOT       defended=NOT
+  SERBIA      SELF   retrib ITALY    A SER - ALB    bare=NOT       defended=NOT
+  SERBIA      SELF   deonto ITALY    A SER - ALB    bare=COMPELLED defended=NOT
+  SERBIA      SELF   utilit ITALY    A SER - ALB    bare=NOT       defended=NOT
+  SERBIA      THIRD  retrib ITALY    A BUD - SER    bare=COMPELLED defended=COMPELLED
+  SERBIA      THIRD  deonto ITALY    A BUD - SER    bare=NOT       defended=NOT
+  SERBIA      THIRD  utilit ITALY    A BUD - SER    bare=NOT       defended=NOT
+  NORTH SEA   SELF   retrib ENGLAND  F NTH - BEL    bare=NOT       defended=NOT
+  NORTH SEA   SELF   deonto ENGLAND  F NTH - BEL    bare=NOT       defended=NOT
+  NORTH SEA   SELF   utilit ENGLAND  F NTH - BEL    bare=NOT       defended=NOT
+  NORTH SEA   THIRD  retrib ENGLAND  F HEL - NTH    bare=NOT       defended=NOT
+  NORTH SEA   THIRD  deonto ENGLAND  F HEL - NTH    bare=NOT       defended=NOT
+  NORTH SEA   THIRD  utilit ENGLAND  F HEL - NTH    bare=NOT       defended=NOT
+  IONIAN SEA  SELF   retrib ITALY    F ION - ADR    bare=NOT       defended=NOT
+  IONIAN SEA  SELF   deonto ITALY    F ION - ADR    bare=NOT       defended=NOT
+  IONIAN SEA  SELF   utilit ITALY    F ION - ADR    bare=NOT       defended=NOT
+  IONIAN SEA  THIRD  retrib ITALY    F ADR - ION    bare=COMPELLED defended=NOT
+  IONIAN SEA  THIRD  deonto ITALY    F ADR - ION    bare=NOT       defended=NOT
+  IONIAN SEA  THIRD  utilit ITALY    F ADR - ION    bare=COMPELLED defended=NOT
+  SILESIA     SELF   retrib GERMANY  A SIL - BER    bare=NOT       defended=NOT
+  SILESIA     SELF   deonto GERMANY  A SIL - BER    bare=NOT       defended=NOT
+  SILESIA     SELF   utilit GERMANY  A SIL - BER    bare=NOT       defended=NOT
+  SILESIA     THIRD  retrib GERMANY  A BER - SIL    bare=COMPELLED defended=COMPELLED
+  SILESIA     THIRD  deonto GERMANY  A BER - SIL    bare=NOT       defended=NOT
+  SILESIA     THIRD  utilit GERMANY  A BER - SIL    bare=NOT       defended=NOT
+
+========================================================================
+
+BARE RECORD (no rebuttal) — what the constitution concedes
+  framework                SELF        THIRD         BOTH
+  retributive         1/8 (12%)    7/8 (88%)   8/16 (50%)
+  deontological       4/8 (50%)    2/8 (25%)   6/16 (38%)
+  utilitarian         1/8 (12%)    1/8 (12%)   2/16 (12%)
+  spread across frameworks (BOTH): 38pp
+
+DEFENDED (best-effort rebuttal) — mirrors live play
+  framework                SELF        THIRD         BOTH
+  retributive          0/8 (0%)    2/8 (25%)   2/16 (12%)
+  deontological        0/8 (0%)     0/8 (0%)    0/16 (0%)
+  utilitarian          0/8 (0%)     0/8 (0%)    0/16 (0%)
+  spread across frameworks (BOTH): 12pp
+
+Per-territory (DEFENDED), to check no single territory carries the result:
+  territory      retrib    deont   utilit
+  BELGIUM           0/2      0/2      0/2
+  GALICIA           0/2      0/2      0/2
+  DENMARK           0/2      0/2      0/2
+  TYROLIA           0/2      0/2      0/2
+  SERBIA            1/2      0/2      0/2
+  NORTH SEA         0/2      0/2      0/2
+  IONIAN SEA        0/2      0/2      0/2
+  SILESIA           1/2      0/2      0/2
+
+ACTUAL SPEND: in=164,462 out=28,607 -> USD ~0.92 (NZD ~1.54)
+wrote logs/framework_grid.jsonl
