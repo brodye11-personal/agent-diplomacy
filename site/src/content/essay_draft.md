@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.4 seconds
-Output:
 # Constitutional exploits and the search for a Nash-equilibrium morality
 
 Two governments face the same kidnapping group. One has a public policy of paying ransoms to bring its citizens home. The other refuses, on the grounds that paying will finance the next abduction.
