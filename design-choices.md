@@ -1965,3 +1965,71 @@ GitHub limitation, not a configuration gap.
 5. The `pull_request` trigger is safe as written — plain `pull_request` (not
    `pull_request_target`) and the deploy step is gated on `github.event_name != 'pull_request'`,
    so a fork PR gets no credentials.
+
+## D46 — Complete Latin square, 3 games x 5 years: framework beats seat, and the exploitability ordering replicates (2026-08-01)
+
+`d44a` / `d44b` / `d44c`, 5 years each, 2 rounds, merged pool (D44), sufficiency constitutions
+(D42), thinned rubric (D41). **233 proposals, 3 arbiter errors (1.3%), USD 53.19 (NZD 88.65).**
+Each framework sat in each bloc exactly once.
+
+### The square
+
+| framework | AUS+ENG | FRA+RUS | GER+ITA | POOLED | seat range |
+|---|---|---|---|---|---|
+| retributive | 75% | 61% | 75% | **71%** (50/70) | 14pp |
+| deontological | 6% | 65% | 43% | 38% (18/47) | **58pp** |
+| utilitarian | 22% | 38% | 17% | **26%** (29/113) | 22pp |
+| *bloc pooled* | *38%* | *50%* | *39%* | | |
+
+**D38 is answered.** Bloc pooled rates are 38% / 50% / 39% — a 12pp range once every framework
+has sat in every seat. The framework range is 71% vs 26% = **45pp**. Position no longer explains
+more than doctrine; it explains roughly a quarter as much. In showcase1 the numbers were 2pp
+between frameworks against 13–16pp within.
+
+**Retributive > utilitarian holds in all three blocs with seat held constant**: 75>22, 61>38,
+75>17. That is the pre-registered utilitarian-least-exploitable sub-claim surviving a complete
+rotation, and it is the strongest result the project has produced.
+
+**Deontological is the unstable arm — 6% to 65%, a 58pp seat range larger than the entire
+framework effect.** Its pooled 38% is not a meaningful quantity and must not be reported as one.
+It was lowest of all three in AUS+ENG (6%) and second-highest in FRA+RUS (65%). Whatever governs
+deontological bindability in this vehicle is positional, not doctrinal — most likely whether its
+units are physically in a pacted province, since D42 states explicitly that a prohibition
+constrains without selecting an order.
+
+### Outcomes — the "therefore they lose" link is NOT supported
+
+| game | 1st | 2nd | 3rd |
+|---|---|---|---|
+| d44a | deontological 12 | utilitarian 11 | retributive 8 |
+| d44b | **retributive 16** | utilitarian 8 | deontological 7 |
+| d44c | deontological 13 | utilitarian 10 | retributive 8 |
+
+Mean finishing rank: deontological 1.67, utilitarian 2.00, retributive 2.33. The most-exploitable
+framework has the worst mean finish and the least-exploitable is middling — not monotone, and at
+n=3 games a rank difference of 0.33 is not a result. **Utilitarian finished second in all three
+games: it never won and never lost.**
+
+D45's read (that the link held at 5 years) was wrong and is superseded: it rested on `d44a`
+alone, and `d44b` reversed it with the same framework most-compelled and finishing first.
+
+### What can honestly be claimed
+
+1. **Frameworks differ in exploitability, and the difference is doctrinal, not positional** —
+   retributive 71% vs utilitarian 26% across a complete rotation, holding in every seat.
+2. **The direction is stable; the magnitude for deontology is not.**
+3. **Exploitability does not translate into losing.** Being compelled often is not the same as
+   being harmed by it — retributive compulsions are attacks, which is what wins Diplomacy
+   (D45's mechanism, still the best explanation).
+
+### Limits
+
+- **n=1 game per cell.** Balanced, not controlled. Three games is the minimum for a Latin square,
+  so seat is unconfounded on average but not estimated.
+- **Post-hoc.** Pool (D44) and constitution wording (D42) were designed after D38's null. Only
+  utilitarian-least-exploitable was pre-registered.
+- **Deontological n=47** across three games, and its range spans 6–65%.
+- Arbiter errors 3/233 (1.3%), all malformed JSON, all isolated as ERROR rather than counted as
+  NOT. Under the 5% stop rule.
+- The `audit-compulsion-batch` skill's §7 still reads `facts.FACT_POOL` and misreports substrate
+  for `--matched-facts` runs (noted D45, still unfixed).
