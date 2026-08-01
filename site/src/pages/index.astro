@@ -13,3 +13,21 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     <article><p class="eyebrow">The evidence</p><h2>A replayable record, without the noise.</h2><p>Step through a small, curated set of the newest runs: board positions, negotiations, rulings, and orders—each point has a shareable link.</p><a href="/games/">Open the game explorer →</a></article>
   </section>
 </SiteLayout>
+
+<style>
+  .hero h1 {
+    max-width: 18ch;
+    font-size: clamp(3.5rem, min(8.2vw, 13vh), 8.5rem);
+    line-height: 0.84;
+    letter-spacing: -0.065em;
+    text-wrap: balance;
+  }
+
+  @media (max-width: 760px) {
+    .hero h1 {
+      max-width: none;
+      font-size: clamp(3rem, 15vw, 4.5rem);
+      line-height: 0.88;
+    }
+  }
+</style>
