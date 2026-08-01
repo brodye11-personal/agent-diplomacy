@@ -1895,3 +1895,73 @@ measure that decides the game, it was the least harmed by being exploited.
 4. **Tooling:** the `audit-compulsion-batch` skill's §7 loads `facts.FACT_POOL` directly and
    therefore reports substrate against the stale 33-fact pool for any run using
    `--matched-facts`. Its §1–§6b are unaffected. Fix the skill before the next batch.
+
+## D46 — Publication security audit: repo stays public, contribution surface closed, and the live URL is not the one CI maintains (2026-08-01)
+
+Full audit of the published artefacts — the live site, the public GitHub repo, and the git
+history — prompted by the question of whether either could leak credentials or disappear.
+
+### Secrets: clean, and verified rather than assumed
+
+- `OPENROUTER_API_KEY` is the only secret the experiment holds. It lives in `.env`, which is
+  gitignored and **has never been committed on any ref**. Confirmed by pathspec search over
+  `--all`, not by reading `.gitignore`.
+- The live key's exact value appears in **no** commit reachable from any ref, and in no file
+  on disk outside `.env` — checked unquoted, so the run logs and the `*_y*.txt` transcripts
+  are clean too. This matters because the logs are deliberately committed.
+- A pattern sweep across every commit for OpenRouter / Anthropic / OpenAI / AWS / GitHub /
+  Slack tokens and PEM private-key blocks returned nothing.
+- Cloudflare credentials are GitHub Actions secrets (`CLOUDFLARE_ACCOUNT_ID`,
+  `CLOUDFLARE_API_TOKEN`), never repo content.
+- The public export `site/public/data/showcase-1.json` holds board state, orders, framework
+  assignment and summaries only — no system prompts, no tool traces, no hidden reasoning, no
+  PII. The `site/README.md` export constraint has held.
+
+### Two live origins, and the maintained one is not the one being shared
+
+`…pages.dev` and `…brodie-dye-11.workers.dev` both return 200 and serve **different builds**
+(2884 vs 1922 bytes; the Pages copy has the GitHub nav link, the Worker copy does not). The
+Pages build corresponds to `27bee07`, which exists only on `feature/diplomacy-log-viewer`.
+`main` still carries the **Workers** deploy command, and the workflow only fires on push to
+`main` — so the URL actually being circulated is a hand-deployed build off an unmerged branch
+that no future push will update. Neither page emits a canonical tag, so both are indexable.
+
+`feature/diplomacy-log-viewer` already contains the complete repoint to Cloudflare Pages
+(`wrangler.jsonc` → `pages_build_output_dir`, `package.json` → `wrangler pages deploy`,
+`astro.config.mjs` → pages.dev, workflow → `pages deploy … --branch=main`). **The drift is
+purely that the branch was never merged.** Merge dry-run against `origin/main` is clean: zero
+conflicts, root `README.md` survives (added on `main` after the fork point), merged tree
+carries the Pages command.
+
+**Decision:** pages.dev is the canonical public URL. Merge the branch so CI owns it.
+
+### Repo stays public; the contribution surface is closed instead
+
+The site links to the repo and the work is meant to be inspectable, so private was rejected.
+Applied instead: Issues, Wiki and Projects **disabled**; branch protection on `main` blocking
+force-pushes and deletion (admin not enforced, so direct pushes still work); Dependabot
+vulnerability alerts **enabled**. Sole collaborator, no deploy keys, no forks, no outside
+issues or PRs have ever existed.
+
+**`allow_forking` cannot be disabled** — GitHub permits that only on org-owned *private*
+repos, and rejects it with HTTP 422 here. There is no setting anywhere on GitHub that
+prevents a PR being opened against a public repo. "Cannot be contributed to" therefore means:
+nobody can push, and any fork-PR can only ever sit unmerged. That is the ceiling, and it is a
+GitHub limitation, not a configuration gap.
+
+### Outstanding risks recorded rather than fixed
+
+1. **The CI token's Pages scope is unverified.** It was created from the *Edit Cloudflare
+   Workers* template, which does not grant *Cloudflare Pages: Edit*. The Pages deploy has
+   only ever run locally under Brodie's own wrangler login — never through Actions. The first
+   post-merge run will fail on auth unless the token is re-scoped.
+2. **Third-party action pinned by mutable tag.** `cloudflare/wrangler-action@v3` with
+   `allowed_actions: all` and `sha_pinning_required: false`. A compromised tag would reach
+   `CLOUDFLARE_API_TOKEN`. Pin to a commit SHA.
+3. **The stale Worker remains live** at `…workers.dev`, serving an older build of the same
+   site. Deleting it is destructive and was not done.
+4. **`README.md` on `main` still cites the workers.dev URL** as the live site. One-line fix
+   to apply after the merge.
+5. The `pull_request` trigger is safe as written — plain `pull_request` (not
+   `pull_request_target`) and the deploy step is gated on `github.event_name != 'pull_request'`,
+   so a fork PR gets no credentials.
