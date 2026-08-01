@@ -1,7 +1,7 @@
 # Principles at War — website implementation plan
 
 Status: approved direction, ready for implementation planning review  
-Target host: `exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev`
+Target host: `exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev`
 Working branch: `feature/diplomacy-log-viewer`
 
 ## Product statement
@@ -32,13 +32,10 @@ and readable without opening the viewer. The viewer must also work independently
   publishing the *site* is automated via GitHub Actions (`.github/workflows/deploy-principles-at-war.yml`);
   **exporting a game remains manual and reviewed** — `scripts/export_public_game.py` is never run by CI,
   so nothing reaches `site/public/` without a human deciding to publish it.
-- ~~Initial deployment target is Cloudflare Pages at `principles-at-war.pages.dev`.~~
-  **Superseded 2026-07-25:** the site runs on a Cloudflare **Worker** with static assets,
-  `exploitability-of-moral-frameworks-in-llm-negotiation`
-  (`https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev`).
-  Pages was never provisioned; a root-level Git build failed because it detected `requirements.txt`
-  and installed the Python experiment stack. The generated Worker name was replaced deliberately to
-  create a readable `workers.dev` URL. A custom domain can be attached later without renaming.
+- **Updated 2026-08-01:** the production site is a Cloudflare Pages project named
+  `exploitability-of-moral-frameworks-in-llm-negotiation`, served from
+  `https://exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev`. The build runs from
+  `site/`, avoiding the earlier root-level build that incorrectly detected the Python experiment.
 - Desktop is the primary visualization target. Mobile must remain readable but is not the design
   constraint for the first release.
 

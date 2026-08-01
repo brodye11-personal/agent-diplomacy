@@ -1,8 +1,7 @@
-name: Deploy Principles at War
+name: Deploy research site
 
-# Builds and deploys the static Astro site in `site/` to the Cloudflare Worker
-# `exploitability-of-moral-frameworks-in-llm-negotiation`
-# (https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev).
+# Builds and deploys the static Astro site in `site/` to Cloudflare Pages at
+# https://exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev.
 #
 # Everything runs with `working-directory: site` on purpose. An earlier Cloudflare
 # Git build ran from the repository root, found `requirements.txt`, installed the
@@ -69,4 +68,4 @@ jobs:
           packageManager: npm
           # wranglerVersion is deliberately omitted so the action uses the version
           # pinned in site/package.json rather than downloading a floating one.
-          command: deploy
+          command: pages deploy dist --project-name=exploitability-of-moral-frameworks-in-llm-negotiation --branch=main

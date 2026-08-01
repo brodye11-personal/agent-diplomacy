@@ -1,12 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  // Production Worker name. Renaming this creates/targets a DIFFERENT Worker
-  // and therefore a different *.workers.dev URL. Keep this in step with
-  // `site` in astro.config.mjs.
   "name": "exploitability-of-moral-frameworks-in-llm-negotiation",
   "compatibility_date": "2026-07-25",
-  // Static-assets-only Worker: no "main" script, Astro's build output is served directly.
-  "assets": {
-    "directory": "./dist"
-  }
+  "pages_build_output_dir": "./dist"
 }

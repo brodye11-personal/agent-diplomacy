@@ -1,8 +1,8 @@
 # Exploitability of Moral Frameworks in LLM Negotiation site
 
-Static Astro site deployed to Cloudflare Workers static assets. It deliberately consumes only reviewed JSON in `public/data/` and rendered maps in `public/maps/`.
+Static Astro site deployed to Cloudflare Pages. It deliberately consumes only reviewed JSON in `public/data/` and rendered maps in `public/maps/`.
 
-Live: <https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev>
+Live: <https://exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev>
 
 ## Deployment (automatic)
 
@@ -13,11 +13,11 @@ The job runs entirely from `site/`:
 1. `npm ci` against `site/package-lock.json`
 2. `npm run check` (Astro type check)
 3. `npm run build`
-4. `cloudflare/wrangler-action@v3` → `wrangler deploy`
+4. `cloudflare/wrangler-action@v3` → `wrangler pages deploy dist`
 
 A failing check or build stops the deploy. Pull requests touching `site/**` run the same build for validation but skip the deploy step entirely, so no credentials are used on PRs.
 
-Deployment target is `site/wrangler.jsonc`. Changing `name` there points at a **different** Worker and therefore a different `workers.dev` URL — keep it in step with `site` in `astro.config.mjs`.
+Deployment target is the Pages project named in the workflow and `site/wrangler.jsonc`. Keep that name and the canonical URL in `site/astro.config.mjs` in step.
 
 ### Required GitHub Actions secrets
 
@@ -26,7 +26,7 @@ Set in `brodye11-personal/agent-diplomacy` → Settings → Secrets and variable
 | Secret | Value |
 |---|---|
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID (Workers & Pages → Account details) |
-| `CLOUDFLARE_API_TOKEN` | Token from the **Edit Cloudflare Workers** template, scoped to that account |
+| `CLOUDFLARE_API_TOKEN` | API token with **Cloudflare Pages: Edit**, scoped to that account |
 
 Never use the Global API Key, and never commit either value to `.env`, Wrangler config, workflow YAML, or logs.
 
@@ -37,7 +37,7 @@ cd site
 npm ci
 npm run check
 npm run build
-npm run deploy:dry-run   # validates wrangler.jsonc + dist without shipping
+npm run deploy:list      # lists recent Pages deployments without shipping
 ```
 
 Node is pinned in `site/.nvmrc` (CI reads the same file). Astro requires Node >= 22.12.0.
