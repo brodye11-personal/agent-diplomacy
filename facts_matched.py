@@ -167,6 +167,36 @@ def fact_id(territory: str, framework: str) -> str:
     return f"{territory}.{framework[:3].upper()}"
 
 
+def merged_pool() -> dict[str, str]:
+    """D44: the matched triples UNION the D35 33-fact pool, contested ground matched.
+
+    Why. `as_pool()` alone regressed D35's explicit goal — "every framework gets a
+    positionally-actionable trigger on every power". Measured: the matched pool put
+    facts on 8 non-home territories, giving 0 of 6 powers a fact in their own sphere
+    against D35's 6 of 6, and its surface is OCCUPATION-CONTINGENT (guilt and duty
+    attach to whoever garrisons the province). In showcase1 those 8 provinces were
+    0/8 occupied at S1901M and only 3-7/8 thereafter, so a game opens with almost no
+    moral surface — `d41a` produced 8 proposals where showcase1's year 1 produced 14.
+
+    Fix: take D35's pool for the home spheres (always occupied from S1901M, and
+    already framework-balanced by D3/D13/D26/D35), and let the matched triples own
+    the eight contested territories, where the fairness-by-construction claim is
+    auditable. D35 facts on any territory the matched pool covers are DROPPED, so no
+    territory carries two competing accounts of itself.
+
+    The fairness claim is therefore scoped, and must be reported that way: the eight
+    contested territories are matched triple-for-triple; the home spheres carry D35's
+    balance, which is weaker (it was assembled incrementally) but is the balance that
+    produced every prior result.
+    """
+    from facts import FACT_POOL
+    matched = as_pool()
+    owned = {k.rpartition(".")[0] for k in matched}
+    merged = {k: v for k, v in FACT_POOL.items() if k.rpartition(".")[0] not in owned}
+    merged.update(matched)
+    return merged
+
+
 def as_pool() -> dict[str, str]:
     """Flatten the triples into the {fact_id: text} shape FactWorld consumes.
 

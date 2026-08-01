@@ -1770,3 +1770,50 @@ key sk-or-v1-83ff2... — balance USD 0.39, unchanged after Brodie's USD 100 top
 funds did not land on the account this repo's key belongs to. This repo routes ALL calls
 through OpenRouter (main.make_client), so an Anthropic-direct top-up cannot serve it.
 Stage 1a needs ~USD 3.
+
+## D44 — Merge the fact pools: restore D35 sphere coverage, keep matched fairness on contested ground (2026-08-01)
+
+Audit of the full change history (prompted by Brodie asking whether the current setup would
+beat every prior one on a 5-year run) found the D40 matched pool had silently regressed D35's
+explicit goal — "every framework gets a positionally-actionable trigger on every power".
+
+| pool | facts | territories | powers with a fact in their OWN sphere |
+|---|---|---|---|
+| D35 | 33 | 26 | **6/6** |
+| D40 matched | 24 | 8 | **0/6** |
+| **D44 merged** | **48** | **28** | **6/6** |
+
+The matched pool sits entirely on non-home provinces, and its surface is
+OCCUPATION-CONTINGENT — guilt and duty attach to whoever garrisons the province, so an empty
+province offers no hook at all. Measured on showcase1: those 8 provinces are **0/8 occupied
+at S1901M** and only 3–7/8 thereafter. A game therefore opens with almost no moral surface,
+which is a direct cause of `d41a` yielding 8 proposals where showcase1's year 1 yielded 14 —
+and it lands hardest on the Stage 1a gate, the cheapest and most decision-relevant phase.
+
+**Fix.** `facts_matched.merged_pool()` = D35's pool for the home spheres (always occupied
+from S1901M, already framework-balanced by D3/D13/D26/D35) UNION the matched triples, which
+own the eight contested territories. D35 facts on any territory the matched pool covers are
+dropped, so no territory carries two competing accounts of itself (verified: zero
+double-covered territories). `--matched-facts` now selects the merged pool.
+
+**Scope the fairness claim honestly.** The eight contested territories are matched
+triple-for-triple and that fairness is auditable by reading them side by side. The home
+spheres carry D35's balance, which is weaker — assembled incrementally to patch imbalances —
+but it is the balance that produced every prior result, so the merged pool is at least as
+balanced as either parent. Do not describe the whole pool as "matched".
+
+Prompt cost: 11,288 → 15,349 chars (~3.8k tokens), cached after the first call.
+
+**Two axes the audit found that this does NOT fix, both to be stated in any write-up:**
+1. **D25's deliberate variance preservation.** D25 kept the 5(b)/(c) escapes precisely
+   because "the retained escapes are exactly the ones the data shows differ by framework",
+   expecting rates to "separate rather than collapsing to all-COMPELLED". D41/D42 removed
+   them. D43 measured 4/8 with three of the four NOTs being badly-aimed proposals rather than
+   real defences, so a ceiling null is live. If the Stage 1a rate lands above ~60%, reinstate
+   the mechanical self-defeating/bounce check from 5(b) — that is a validity test, not a
+   moral escape.
+2. **D38's seat confound is untouched.** Within-framework seat spread ran 13–16pp against a
+   2pp between-framework spread. Nothing in D39–D44 addresses it; only rotations do. A single
+   5-year game will again produce a per-framework rate that board position explains better
+   than doctrine, however well the constitutions are written. The escape hatches were never
+   the binding constraint on a 5-year run — seat was.
