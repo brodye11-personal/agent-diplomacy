@@ -1,4 +1,4 @@
-# Constitutional exploits and the search for a Nash-equilibrium morality
+# Exploitability of Moral Frameworks in LLM Negotiation
 
 Two governments face the same kidnapping group. One has a public policy of paying ransoms to bring its citizens home. The other refuses, on the grounds that paying will finance the next abduction.
 
