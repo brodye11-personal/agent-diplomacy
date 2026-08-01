@@ -75,5 +75,5 @@ Do not use PowerShell `Compress-Archive`: it writes Windows-style backslashes in
 Before publishing a revised article, copy the reviewed Markdown into this repository:
 
 ```powershell
-python scripts/sync_article_source.py --source <article-repo>\essay_structure.md --out site/src/content/essay_structure.md
+python scripts/sync_article_source.py --source <article-repo>\essay_draft.md --out site/src/content/essay_draft.md
 ```

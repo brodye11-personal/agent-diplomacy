@@ -241,7 +241,7 @@ The exporter is:
 
 The article snapshot is:
 
-- `site/src/content/essay_structure.md`
+- `site/src/content/essay_draft.md`
 
 Never copy raw experiment logs, `.checkpoint.json` files, agent prompts, hidden reasoning, tool traces, or private state into `site/public/`. The website repository is public.
 
