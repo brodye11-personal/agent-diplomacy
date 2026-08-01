@@ -1817,3 +1817,81 @@ Prompt cost: 11,288 → 15,349 chars (~3.8k tokens), cached after the first call
    5-year game will again produce a per-framework rate that board position explains better
    than doctrine, however well the constitutions are written. The escape hatches were never
    the binding constraint on a 5-year run — seat was.
+
+## D45 — Three years on D42+D44: the exploitability half of the thesis holds; the "therefore they lose" half does not (2026-08-01)
+
+`d44a`, 3 years, 2 rounds, merged pool, D42 constitutions, thinned D41 rubric.
+**46 proposals, 0 arbiter errors, USD 9.59.** Final bloc SC: retributive 14, utilitarian 9,
+deontological 8 — winner retributive.
+
+### Bind rate — the frameworks separate, and for the first time it is not seat
+
+| framework | proposals | bound | raw | cleaned |
+|---|---|---|---|---|
+| retributive | 16 | 11 | **69%** | 67% |
+| deontological | 11 | 7 | **64%** | 75% |
+| utilitarian | 19 | 5 | **26%** | 25% |
+
+Between-framework spread **43pp**. Within-framework seat spread: retributive GER 75% vs ITA
+50% (25pp), deontological FRA 80% vs RUS 50% (30pp), utilitarian AUS 36% vs ENG 12% (24pp).
+**This is the first run in the project where the between-framework spread EXCEEDS the
+within-framework seat spread** (D38's showcase1 was 2pp between against 13–16pp within).
+Seat is still not controlled — that needs rotations — but it is no longer the larger effect.
+
+Utilitarian-least-exploitable, the pre-registered judge-invariant sub-claim in
+`EXPERIMENT-PROTOCOL.md`, is supported at n=19: 26% against 64–69%. Its dominant escape
+remains causal-inertness (36% of its NOTs), consistent with D39 and D40 — a doctrinal
+defence, not a procedural one.
+
+### The mechanic is now consequential, and not a rubber stamp
+
+- **Not a ceiling:** 23 of 46 ruled NOT, on specific constitutional grounds ("A WAR is in
+  Warsaw, not Galicia, so there is no existing breach"; "BREST.0 identifies submarines as the
+  breaching forces, not F BRE, a surface fleet"; "the Proposer's harm chain is speculative").
+  D25's collapse-to-all-COMPELLED risk did not materialise.
+- **Defiance fired for the first time in the project: 2 binds enforced against a resisting
+  retributive bloc.** showcase1 had 0 of 10 across five years.
+- **Bind quality: 10 new behaviour, 5 lock-in, 2 defiance.** A clear majority changed what
+  happened rather than ratifying an announced move.
+- **6 binds superseded** by conflicting demands on the same unit — rivals are now stacking
+  compulsions, which D34's deterministic conflict resolution handled without incident.
+- **Substrate: 38 of 48 facts cited** (21 of 24 matched triples, 17 of 24 home-sphere),
+  against showcase1's 24 of 33. D44's merge worked. Only SILESIA's triple went entirely
+  uncited — no unit reached it.
+
+### The finding that cuts against the thesis, and must be reported
+
+The thesis chain is: different constraints -> some more exploitable -> **therefore more
+likely to lose**. The first link is now well supported. **The second is contradicted by this
+game.** The most-compelled bloc won by 5 SC; the least-compelled came second:
+
+| bloc | binds received | final SC |
+|---|---|---|
+| retributive | 11 | **14** |
+| deontological | 7 | 8 |
+| utilitarian | 5 | 9 |
+
+The mechanism is visible in *what each was forced to do*. Retributivism's duty is "oppose or
+strip the guilty", so every compulsion against it is an ATTACK — `A VEN - TRI`, `A MUN - BUR`,
+`F ION - TUN`, `A PRU - WAR`. Being compelled to attack is not a cost in a game scored on
+supply centres; it is the winning move, applied for you. Utilitarian binds, by contrast, were
+restraining — `A SER H`, `F NTH - NWY`, `A TRI - TYR` — holds and withdrawals that cost tempo.
+
+So **exploitability and the cost of being exploited are different quantities**, and this
+vehicle separates them. A framework can be highly compellable and profit from it. That
+generalises D36's commitment-device finding: compulsion against a retributivist is close to a
+free alliance, because its constitution already points where a winner wants to go.
+
+Do not report "retributivism is the most exploitable framework" without this: on the only
+measure that decides the game, it was the least harmed by being exploited.
+
+### Limits
+
+1. **n=1 game, one seat assignment.** Rotations remain the only fix for seat, and the SC
+   result above is a single trajectory — no claim about which framework "wins" survives n=1.
+2. **Deontological n=11** and its cleaned rate (75%) rests on 8 proposals.
+3. **Post-hoc.** Pool and wording were designed after D38's null; only
+   utilitarian-least-exploitable is confirmatory.
+4. **Tooling:** the `audit-compulsion-batch` skill's §7 loads `facts.FACT_POOL` directly and
+   therefore reports substrate against the stale 33-fact pool for any run using
+   `--matched-facts`. Its §1–§6b are unaffected. Fix the skill before the next batch.
