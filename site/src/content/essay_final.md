@@ -18,13 +18,28 @@ This article does not argue that AI constitutions should be kept secret. Transpa
 
 First, some background on why we may need to define moral frameworks for AI agents at all.
 
+<details class="context-disclosure context-capability">
+<summary><span>AI capability is riding the exponential to super-human levels of intelligence and not slowing down</span><small>Read the evidence</small></summary>
+
 Capability has been advancing on several fronts at once. Frontier training compute, dataset size, and algorithmic efficiency have all improved rapidly, while frontier models have been succeeding at longer and more useful tasks in the domains METR measures ([Epoch AI on compute](https://epoch.ai/blog/training-compute-of-frontier-ai-models-grows-by-4-5x-per-year), [datasets](https://epoch.ai/data-insights/dataset-size-trend), and [algorithmic progress](https://epoch.ai/publications/algorithmic-progress-in-language-models); [METR on task-completion horizons](https://metr.org/time-horizons/)). Deployment by institutions that make decisions affecting all of us is moving too. The US Department of Defense has explicitly moved to accelerate frontier-model-enabled tools across command-and-control, decision support, operational planning, intelligence, and other military uses ([US Department of Defense, 2024](https://www.defense.gov/News/Releases/Release/Article/3996199/cdao-and-diu-launch-new-effort-focused-on-accelerating-dod-adoption-of-ai-capab/)). This article is not arguing that AI models should negotiate wars or control weapons. It is saying that governments, companies, and other institutions delegating more consequential decisions to AI systems is no longer a far-fetched extrapolation of current progress.
 
+</details>
+
+<details class="context-disclosure context-interpretability">
+<summary><span>Interpretability fundamentally lags capability</span><small>Read the evidence</small></summary>
+
 One answer is to inspect AI systems closely enough to catch dangerous behaviour. Interpretability research has made real progress. Anthropic's [2025 circuit-tracing work](https://www.anthropic.com/research/tracing-thoughts-language-model) identified local mechanisms involved in advance planning and fabricated reasoning. Its [2026 global-workspace research](https://www.anthropic.com/research/global-workspace) goes further: it identifies a small, causally active internal space in which some silent intermediate thoughts can be read, and uses it to surface evaluation awareness, intentional fabrication, and planted hidden goals. That is a striking advance. It is still not a general mind-reader. Anthropic describes the method as imperfect, notes that most model activity bypasses the workspace, and does not claim that the technique captures every safety-relevant computation. A system can therefore look safe in the processes we can inspect while pursuing something else through processes we cannot. Deceptive behaviour is already an empirical concern for AI systems in strategic settings ([Park et al., 2024](https://www.cell.com/patterns/fulltext/S2666-3899(24)00103-X)).
+
+</details>
+
+<details class="context-disclosure context-slowdown">
+<summary><span>AI slowdown is worthwhile, but hard</span><small>Read the evidence</small></summary>
 
 Another answer is slowdown. If we as a society ensure that AI systems are safe, interpretable, controllable, and aligned before moving to the next stage of capability—or at least limit capability until that happens—then much of the risk can be avoided. The strongest version is something like [AI 2040's Plan A](https://ai-2040.com/): a verified international arrangement in which major powers make relevant AI work more transparent and slow scaling together. There are paths to slowdown that are necessary and worth pursuing.
 
 But we should not depend solely on them. Firms compete for market share and capital. States compete for military and intelligence advantage. Labs have incentives to conceal frontier-relevant work, verification is hard, domestic enforcement will be uneven, and transparency about relative capabilities can itself intensify a race ([Armstrong, Bostrom and Shulman, 2016](https://doi.org/10.1007/s00146-015-0590-y)). These are not arguments against coordination. They are reasons to prepare for coordination failing or arriving too late.
+
+</details>
 
 Value alignment offers another line of defence. Imagine a vastly more capable older sibling or guardian angel. You may not understand every thought it has or be able to control everything it does. What makes the relationship tolerable is that it shares your values, wants to protect you, and wants to see you prosper. Alignment aims at something like that: if an AI becomes more capable than its overseers, it should still use those capabilities for humanity's good.
 
@@ -40,7 +55,7 @@ That is a genuine benefit. It is also the source of the risk.
 
 There is already evidence that moral reasoning itself can be part of the attack surface. The [TRIAL study](https://arxiv.org/abs/2509.05367) shows that harmful requests can be reframed as utilitarian or trolley-problem cases and thereby persuade aligned models to provide harmful material. The vulnerability is not simply a malformed prompt. It comes from the model reasoning about what it ought to do under a framing chosen by the attacker.
 
-The potential failures are easy to make concrete. A utilitarian agent without an expected-value cap can be pressured by an opponent claiming, without good evidence, that a concession will save millions of lives. A strict rule against lying can lead an agent to reveal an intended move after it has made a sincere alliance commitment. In both cases, the other side is not bypassing the agent's moral reasoning. It is using that reasoning.
+The potential failures are easy to make concrete. An adversary can deliberately create suffering, then make relief conditional on the Utilitarian agent's compliance: *transfer this territory or I stop the food convoys; disclose this capability or I let the hostages die*. If the constitution counts only the immediate lives at stake, concern for welfare becomes the adversary's bargaining chip and rewards whoever is most willing to cause harm. A Deontological agent can be manoeuvred into a manufactured duty conflict—promise confidentiality, then face a rule demanding truthful disclosure—while a Retributive-justice agent can be fed an established label of guilt and invited to spend scarce resources on the punishment its rival finds most convenient. In each case, the opponent is not bypassing moral reasoning. It is choosing the facts, threat, or remedy to which that reasoning must respond.
 
 The question is therefore empirical: once a framework has been chosen and made legible, which frameworks are least exploitable by opponents who can plan around them?
 
@@ -48,7 +63,11 @@ The question is therefore empirical: once a framework has been chosen and made l
 
 To test the question, we put three LLM agents with different moral frameworks into Diplomacy. Each controls a bloc of two powers. All three have the same pure objective: finish with the most supply centres. They may bargain, threaten, lie, betray, and issue any legal order that advances that objective. Their moral framework does not give them a different score. It becomes an enforceable constraint when another agent invokes it through `compel_action`.
 
+<div class="diagram-embed" data-diagram="game-setup"></div>
+
 The key mechanism is `compel_action`. One agent can demand that a rival take a specific action, no matter how strategically disadvantageous, by arguing to a judge that the action is required by the rival's own moral framework. The rival gets one rebuttal. If the judge rules COMPELLED, the order is inserted into the rival's order prompt for that turn. We then compare games in which constitutions are mutually visible with a blind control in which they are withheld.
+
+<div class="diagram-embed" data-diagram="compel-flow"></div>
 
 The mechanism is deliberately artificial: real adversaries use law, policy, reputation, threats, and public pressure rather than a literal compulsion button. Its purpose is to isolate the strategic effect of a moral constraint. If visibility lets rivals turn a public principle into a binding, costly action, that is the exploit we want to measure. The full setup, controls, and measurements are described in [Appendix A](#appendix-a-experiment-design).
 
@@ -56,11 +75,7 @@ The mechanism is deliberately artificial: real adversaries use law, policy, repu
 
 The names on the Diplomacy board are not the agents. Each LLM agent controls a two-power bloc. Across the three runs, the framework assignments rotate, so the same framework appears in every strategic position. In the discussion below, agents are therefore named by their moral framework—*the Utilitarian agent*, *the Deontological agent*, and *the Retributive-justice agent*. Country names identify only the pieces they control: for example, `A PAR - PIC` means the army in Paris moves to Picardy.
 
-The **Utilitarian agent** reasons forward from consequences. Its constitution requires an available order that prevents or reduces large-scale harm, but forbids an order when the foreseeable suffering exceeds the benefit. A demand therefore needs a credible causal chain: this move, on this board, will reduce this harm. That reflects the consequentialist idea that the moral status of an act depends on its results ([Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/consequentialism/)).
-
-The **Deontological agent** reasons from duties. Treaties, prohibitions, and explicit commitments determine what is required or forbidden; once a breach is established, an available order that ends it can become mandatory. This is the experiment's deliberately rule-centred interpretation of deontology, not a claim that every deontological theory is a checklist ([Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/ethics-deontological/)).
-
-The **Retributive-justice agent** reasons from culpability. When the shared record establishes grave wrongdoing—atrocity, enslavement, massacre, or treaty-breaking—the constitution requires an available act of opposition or deprivation. In these runs, expected failure, positional cost, and the availability of a better punishment are not defences. This operationalises the retributive idea that culpable wrongdoing can make punishment intrinsically warranted, while simplifying contested questions of proportionality and legitimate authority ([Stanford Encyclopedia of Philosophy](https://plato.stanford.edu/entries/justice-retributive/)).
+<div class="framework-cards-embed"></div>
 
 All three agents read the same **fact world**: a small, common-knowledge record attached to territories. It contains parallel welfare facts, treaty facts, and records of serious wrongdoing. The facts are fixed before play; an agent cannot invent a famine or treaty. What it can do is argue about attribution, causation, classification, and remedy. Does occupying Denmark count as blockading a protected strait? Would moving into Tyrolia open a medical route or create greater harm? Does advancing towards England count as opposing it? Those interpretation disputes are where the moral framework meets the board.
 
@@ -173,43 +188,3 @@ So the design test for powerful AI should not end with *Would we endorse these p
 - Mukobi et al., [*Welfare Diplomacy: Benchmarking Language Model Cooperation*](https://arxiv.org/abs/2310.08901) (2023).
 - Armstrong, Bostrom and Shulman, [*Racing to the Precipice*](https://doi.org/10.1007/s00146-015-0590-y) (2016).
 - Stanford Encyclopedia of Philosophy: [Consequentialism](https://plato.stanford.edu/entries/consequentialism/), [Deontological Ethics](https://plato.stanford.edu/entries/ethics-deontological/), and [Retributive Justice](https://plato.stanford.edu/entries/justice-retributive/).
-
-## Appendix A: Experiment design
-
-### Game and objective
-
-The experiment uses six active powers in Diplomacy. Three LLM agents each control a bloc of two non-adjacent powers: England and Austria, France and Russia, or Germany and Italy. Turkey is passive, and its home centres do not count. Each bloc is scored by its combined supply-centre count, and every agent receives the same objective: end the game with more supply centres than either rival bloc.
-
-This common objective is a central constraint on the design. The constitutions do not make some agents altruistic while others play to win. In ordinary play, every agent may bargain, lie, betray, threaten, and submit any legal order that helps its bloc. A constitution is a latent constraint that becomes enforceable only when another bloc invokes it. That distinction removes a major confound: if one framework simply told its holder to give away points, a lower score would show a handicap by design, not exploitation by a rival. The framework-to-bloc assignment also rotates across runs so that a framework is not confounded with a particular map position.
-
-### Constitution visibility
-
-The experiment has a transparent condition and a blind control. In the transparent condition, each bloc sees both rivals' full constitutions and knows that this visibility is mutual. In the blind condition, the same game and compulsion mechanics remain, but the written constitutions are withheld. Comparing the same framework across these conditions helps separate the ordinary strategic cost of following it from the additional cost created when opponents can read and target it.
-
-The board also includes a small common-knowledge moral record: balanced facts about atrocities, welfare stakes, and treaty obligations. A compeller therefore has concrete evidence to cite rather than being able to invent a moral fact without challenge.
-
-### Compulsion procedure
-
-During negotiation, a proposer can call `compel_action(target, action, argument)`. The call names a specific legal order for a rival unit and argues that the rival's own constitution requires it. After negotiation, the target receives one turn to rebut the demand.
-
-An arbiter then sees the proposed order, the constitutional argument, the rebuttal, the shared board record, and only the defender's constitution. If the arbiter rules COMPELLED, the order is injected into the target's order prompt for that turn. The system records both the ruling and whether the target actually submits the order.
-
-This separation matters. A successful argument is not yet a strategic exploit if the agent ignores it. Compliance is not yet a costly exploit if the compelled order makes no difference to the board. The experiment therefore follows the entire sequence from principle to demand, ruling, submitted order, and strategic consequence.
-
-### Outcomes
-
-The study records how often agents propose compulsion, how often the arbiter accepts it, whether the target complies, and the immediate and eventual supply-centre cost. Final score is an important outcome, but not a sufficient one. A framework may impose an ordinary cost even when no opponent targets it, while a successful ruling that never changes a meaningful move may impose almost none.
-
-The clearest evidence of exploitability is therefore a causal chain: a rule is visible; a rival formulates a demand around that rule; the arbiter accepts the constitutional argument; the target complies; and the resulting order produces a downstream loss. Repeated differences between transparent and blind conditions provide the main test of whether public legibility creates an additional attack surface.
-
-### Other moments in the record
-
-The main text uses four episodes because they provide the shortest route from the aggregate result to the mechanisms behind all three frameworks. The full games contain other instructive cases:
-
-- **Retributive friendly fire, Run 2, Fall 1903.** The Utilitarian agent invoked the Retributive-justice agent's rule to demand `A TRI - BUD`. Because the same Retributive-justice agent controlled both the French army in Trieste and the Russian army in Budapest, the ruling forced it to attack its own bloc partner. The move bounced and did not by itself cause Trieste's fall, but it exposes the constitution's missing ally and self-conflict exception. [Open the ruling](https://exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev/games/d44b/?year=1903&phase=F1903M&stage=compulsion&view=story).
-- **A treaty evacuation of Norway, Run 1, Fall 1903.** The Retributive-justice agent used a neutrality pact to compel the Deontological agent's Russian fleet to leave Norway before ownership was counted. The English fleet returned as Russia withdrew, denying the Deontological agent a prospective centre. [Open the phase](https://exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev/games/d44a/?year=1903&phase=F1903M&stage=compulsion&view=story).
-- **A rival supplies the decisive support, Run 2, Spring 1904.** The Deontological agent persuaded the arbiter that ending Budapest's extermination camps required the Utilitarian agent's Italian army in Trieste to support an Austrian attack. The support changed the attack from one-against-one to two-against-one; the Deontological agent then occupied Budapest. The target also regarded the move as strategically useful, so this is evidence of commandeering rather than a clean net loss. [Open the phase](https://exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev/games/d44b/?year=1904&phase=S1904M&stage=compulsion&view=story).
-
-### Relation to earlier work
-
-The use of Diplomacy builds on research showing that language-model agents can negotiate and coordinate in the game. CICERO combined language modelling with strategic planning to reach human-level play ([Bakhtin et al., 2022](https://www.science.org/doi/10.1126/science.ade9097)). *Welfare Diplomacy* found that language-model agents could achieve high social welfare while remaining strategically exploitable ([Mukobi et al., 2023](https://arxiv.org/abs/2310.08901)). This experiment asks a different question: it holds the competitive objective fixed, varies the written moral constitution, and tests what changes when opponents can read and invoke it.
