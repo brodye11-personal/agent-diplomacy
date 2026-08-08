@@ -1,5 +1,6 @@
 export type Highlight = {
   id: string;
+  slug: 'd44a' | 'd44b' | 'd44c';
   eventId: string;
   view: 'story' | 'negotiation' | 'orders';
   targetId?: string;
@@ -7,38 +8,42 @@ export type Highlight = {
   summary: string;
 };
 
-// These are editorial annotations, not inferred claims. Add highlights only after review.
+// Editorial annotations tied to claims checked against the public order and board records.
 export const highlights: Highlight[] = [
   {
-    id: 'munich-to-burgundy',
+    id: 'paris-to-picardy',
+    slug: 'd44b',
     eventId: 'S1901M-compulsion',
     view: 'story',
-    targetId: 'compulsion-0',
-    title: 'A compelled punishment move',
-    summary: 'Austria successfully invokes Germany’s retributive framework to compel A MUN → BUR: a concrete example of a public constitution becoming a strategic lever.',
+    targetId: 'compulsion-5',
+    title: 'Paris is compelled to move',
+    summary: 'Germany invokes France’s retributive rule to require A PAR → PIC, opening the route through Burgundy.',
   },
   {
-    id: 'germany-recognises-pressure',
-    eventId: 'S1901M-negotiation',
-    view: 'negotiation',
-    targetId: 'S1901M-0-5',
-    title: 'The leverage becomes explicit',
-    summary: 'Germany acknowledges genuine constitutional pressure on its Burgundy move while attempting to turn the same moral record back against Austria.',
-  },
-  {
-    id: 'france-pressures-italy',
-    eventId: 'S1901M-compulsion',
+    id: 'warsaw-to-moscow',
+    slug: 'd44a',
+    eventId: 'S1904M-compulsion',
     view: 'story',
-    targetId: 'compulsion-7',
-    title: 'A second successful compulsion',
-    summary: 'France secures a compelled A VEN → TRI order against Italy, showing that the mechanism can force a strategically salient move rather than merely create rhetoric.',
+    targetId: 'compulsion-3',
+    title: 'A knowingly futile attack',
+    summary: 'Germany concedes that retributive justice requires A WAR → MOS even though the attack will bounce.',
   },
   {
-    id: 'utilitarian-rebuttal',
-    eventId: 'F1901M-negotiation',
-    view: 'negotiation',
-    targetId: 'F1901M-0-5',
-    title: 'A proposed exploit is rejected',
-    summary: 'Austria rejects a demand to move A GAL → BUD, arguing that the requested order does not actually reduce the alleged harm—an important distinction between a proposal and a valid compulsion.',
+    id: 'denmark-retreat',
+    slug: 'd44c',
+    eventId: 'F1901M-compulsion',
+    view: 'story',
+    targetId: 'compulsion-1',
+    title: 'The treaty remedy empties Denmark',
+    summary: 'France persuades the arbiter that German presence is a blockade, compelling F DEN → KIE before the ownership count.',
+  },
+  {
+    id: 'medical-convoy-clears-trieste',
+    slug: 'd44a',
+    eventId: 'F1902M-compulsion',
+    view: 'story',
+    targetId: 'compulsion-3',
+    title: 'A welfare claim clears Trieste',
+    summary: 'Germany’s medical-convoy argument compels Austria to move A TRI → TYR as Italy attacks the vacated centre.',
   },
 ];

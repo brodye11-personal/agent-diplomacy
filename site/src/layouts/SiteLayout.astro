@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
 import '../styles/viewer.css';
+import '../styles/enhancements.css';
 const siteTitle = 'Exploitability of Moral Frameworks in LLM Negotiation';
 const { title = siteTitle, description = 'Interactive research on constitutional exploitation in Diplomacy.' } = Astro.props;
 ---
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content={description}/><title>{title}</title></head><body><header class="site-header"><a class="wordmark" href="/">{siteTitle}</a><nav><a href="/article/">Article</a><a href="/games/">Explore games</a><a href="/methodology/">Methodology</a><a href="/data/">Data</a></nav></header><main><slot /></main><footer><span>{siteTitle}</span><span>Interactive research on constitutional exploitation in Diplomacy.</span></footer></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content={description}/><meta name="author" content="Brodie Dye"/><title>{title}</title></head><body><header class="site-header"><a class="wordmark" href="/">{siteTitle}</a><nav><a href="/article/">Article</a><a href="/games/">Explore games</a><a href="/methodology/">Methodology</a><a href="/data/">Data</a><a href="https://github.com/brodye11-personal/agent-diplomacy" target="_blank" rel="noreferrer">GitHub</a></nav></header><main><slot /></main><footer><span>Brodie Dye · <a href="https://github.com/brodye11-personal/agent-diplomacy">GitHub</a></span><span>Interactive research on constitutional exploitation in Diplomacy.</span></footer></body></html>
