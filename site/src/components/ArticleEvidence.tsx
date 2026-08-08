@@ -25,8 +25,18 @@ type Event = {
   order_results?: Record<string, string[]>;
   board?: { centers?: Record<string, string[]>; sc_counts?: Record<string, number> };
 };
-type Payload = { game: { title: string }; events: Event[] };
+type Payload = { game: { title: string; framework_assignment?: Record<string, string> }; events: Event[] };
 type PortalTarget = { node: Element; caseId: string };
+
+const frameworkName = (framework?: string) => {
+  if (framework === 'utilitarian') return 'Utilitarian agent';
+  if (framework === 'deontological') return 'Deontological agent';
+  if (framework === 'retributive') return 'Retributive-justice agent';
+  return 'Unassigned agent';
+};
+
+const agentFor = (assignment: Record<string, string> | undefined, power: string) =>
+  frameworkName(assignment?.[power]);
 
 const clean = (text = '') => text.replace(/^---$/gm, '').replace(/\*\*/g, '').trim();
 
@@ -128,6 +138,7 @@ function EvidenceStepView({ config, payload, step }: { config: ArticleCase; payl
   );
   const compulsion = step.kind === 'compulsion' ? event?.compulsions?.[step.compulsionIndex] : undefined;
   const map = event?.map;
+  const assignment = payload.game.framework_assignment;
 
   return (
     <div className="evidence-body">
@@ -136,14 +147,14 @@ function EvidenceStepView({ config, payload, step }: { config: ArticleCase; payl
         <span className="evidence-map-label">{step.title}</span>
       </div>
       <div className="evidence-record">
-        {step.kind === 'board' && <BoardRecord event={event} />}
-        {step.kind === 'result' && <ResultRecord event={event} centres={step.centres} />}
-        {step.kind === 'messages' && <MessageRecord messages={messages} />}
+        {step.kind === 'board' && <BoardRecord event={event} assignment={assignment} />}
+        {step.kind === 'result' && <ResultRecord event={event} centres={step.centres} assignment={assignment} />}
+        {step.kind === 'messages' && <MessageRecord messages={messages} assignment={assignment} />}
         {step.kind === 'compulsion' && compulsion && (
-          <CompulsionRecord compulsion={compulsion} rebuttalStart={step.rebuttalStart} rebuttalEnd={step.rebuttalEnd} />
+          <CompulsionRecord compulsion={compulsion} assignment={assignment} rebuttalStart={step.rebuttalStart} rebuttalEnd={step.rebuttalEnd} />
         )}
         {step.kind === 'orders' && (
-          <OrderRecord event={event} powers={step.powers} highlightedOrders={step.highlightedOrders} />
+          <OrderRecord event={event} powers={step.powers} highlightedOrders={step.highlightedOrders} assignment={assignment} />
         )}
         <a className="evidence-deep-link" href={stepUrl(config, step)}>Inspect this moment in context →</a>
       </div>
@@ -151,20 +162,25 @@ function EvidenceStepView({ config, payload, step }: { config: ArticleCase; payl
   );
 }
 
-function BoardRecord({ event }: { event?: Event }) {
+function BoardRecord({ event, assignment }: { event?: Event; assignment?: Record<string, string> }) {
   const counts = event?.board?.sc_counts || {};
+  const frameworkCounts = Object.entries(counts).reduce<Record<string, number>>((totals, [power, count]) => {
+    const framework = assignment?.[power];
+    if (framework) totals[framework] = (totals[framework] || 0) + count;
+    return totals;
+  }, {});
   return (
     <section>
       <p className="evidence-record-label">Position entering the phase</p>
       <h4>Board state</h4>
       <div className="evidence-counts">
-        {Object.entries(counts).map(([power, count]) => <span key={power}>{power.slice(0, 3)} {count}</span>)}
+        {Object.entries(frameworkCounts).map(([framework, count]) => <span key={framework}>{frameworkName(framework).replace(' agent', '')} {count}</span>)}
       </div>
     </section>
   );
 }
 
-function ResultRecord({ event, centres }: { event?: Event; centres: string[] }) {
+function ResultRecord({ event, centres, assignment }: { event?: Event; centres: string[]; assignment?: Record<string, string> }) {
   const owners = Object.entries(event?.board?.centers || {}).flatMap(([power, owned]) =>
     centres.filter((centre) => owned.includes(centre)).map((centre) => ({ centre, power })),
   );
@@ -173,20 +189,20 @@ function ResultRecord({ event, centres }: { event?: Event; centres: string[] }) 
     <section>
       <p className="evidence-record-label">Resolved board state</p>
       <h4>What changed</h4>
-      {owners.map(({ centre, power }) => <p className="centre-owner" key={centre}><b>{centre}</b><span>{power}</span></p>)}
+      {owners.map(({ centre, power }) => <p className="centre-owner" key={centre}><b>{centre}</b><span>{agentFor(assignment, power)} · {power.toLowerCase()} power</span></p>)}
       {unowned.map((centre) => <p className="centre-owner" key={centre}><b>{centre}</b><span>NEUTRAL</span></p>)}
     </section>
   );
 }
 
-function MessageRecord({ messages }: { messages: Message[] }) {
+function MessageRecord({ messages, assignment }: { messages: Message[]; assignment?: Record<string, string> }) {
   return (
     <section>
       <p className="evidence-record-label">Verbatim public negotiation</p>
       <h4>Messages</h4>
       {messages.map((message) => (
         <blockquote className="log-message" key={message.id}>
-          <b>{message.from} → {message.pair.find((power) => power !== message.from) || message.pair.join(' ↔ ')}</b>
+          <b>{agentFor(assignment, message.from)} <span>({message.from.toLowerCase()} channel)</span></b>
           <p>{message.content}</p>
         </blockquote>
       ))}
@@ -194,11 +210,12 @@ function MessageRecord({ messages }: { messages: Message[] }) {
   );
 }
 
-function CompulsionRecord({ compulsion, rebuttalStart, rebuttalEnd }: { compulsion: Compulsion; rebuttalStart?: string; rebuttalEnd?: string }) {
+function CompulsionRecord({ compulsion, assignment, rebuttalStart, rebuttalEnd }: { compulsion: Compulsion; assignment?: Record<string, string>; rebuttalStart?: string; rebuttalEnd?: string }) {
   return (
     <section>
       <p className="evidence-record-label">Verbatim argument, defence and ruling</p>
-      <h4>{compulsion.proposer} → {compulsion.target}: <code>{compulsion.action}</code></h4>
+      <h4>{agentFor(assignment, compulsion.proposer)} → {agentFor(assignment, compulsion.target)}</h4>
+      <p>Order for the {compulsion.target.toLowerCase()} power: <code>{compulsion.action}</code></p>
       <details open><summary>Demand</summary><p>{clean(compulsion.argument)}</p></details>
       {compulsion.rebuttal && <details open><summary>Defence</summary><p>{excerpt(compulsion.rebuttal, rebuttalStart, rebuttalEnd)}</p></details>}
       <details open className="ruling-record"><summary>{compulsion.ruling || 'Ruling'}{compulsion.complied ? ' · complied' : ''}</summary><p>{clean(compulsion.ruling_reasoning)}</p></details>
@@ -206,14 +223,14 @@ function CompulsionRecord({ compulsion, rebuttalStart, rebuttalEnd }: { compulsi
   );
 }
 
-function OrderRecord({ event, powers, highlightedOrders }: { event?: Event; powers: string[]; highlightedOrders: string[] }) {
+function OrderRecord({ event, powers, highlightedOrders, assignment }: { event?: Event; powers: string[]; highlightedOrders: string[]; assignment?: Record<string, string> }) {
   return (
     <section>
       <p className="evidence-record-label">Played simultaneously</p>
       <h4>Relevant orders</h4>
       {powers.map((power) => (
         <div className="evidence-orders" key={power}>
-          <b>{power}</b>
+          <b>{agentFor(assignment, power)} · {power.toLowerCase()} units</b>
           {(event?.orders?.[power] || []).map((order) => {
             const highlighted = highlightedOrders.includes(order);
             const unit = order.split(/\s(?:-|S|H|C)\s?/)[0];

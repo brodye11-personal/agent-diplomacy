@@ -2,7 +2,7 @@
   "schema_version": 2,
   "game": {
     "slug": "d44c",
-    "title": "Run 3: Retributive England\u2013Austria",
+    "title": "Run 3 \u00b7 Framework rotation C",
     "condition": "transparent",
     "model": "anthropic/claude-sonnet-4.6",
     "framework_assignment": {

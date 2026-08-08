@@ -47,7 +47,7 @@ Node is pinned in `site/.nvmrc` (CI reads the same file). Astro requires Node >=
 Run the exporter from the repository root, supplying an explicit source log and checkpoint. It allowlists public fields and writes the viewer JSON plus SVG board snapshots:
 
 ```powershell
-python scripts/export_public_game.py --source logs/d44a.jsonl --checkpoint logs/d44a.checkpoint.json --slug d44a --title "Run 1: Retributive Germany–Italy" --out site/public/data/d44a.json --map-dir site/public/maps/d44a
+python scripts/export_public_game.py --source logs/d44a.jsonl --checkpoint logs/d44a.checkpoint.json --slug d44a --title "Run 1 · Framework rotation A" --out site/public/data/d44a.json --map-dir site/public/maps/d44a
 ```
 
 Export is deliberately **not** automated: every publish is a reviewed act. Raw logs, `.checkpoint.json` files, agent prompts, hidden reasoning and tool traces never enter `site/public/` — this repository is public.

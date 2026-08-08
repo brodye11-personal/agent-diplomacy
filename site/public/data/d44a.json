@@ -2,7 +2,7 @@
   "schema_version": 2,
   "game": {
     "slug": "d44a",
-    "title": "Run 1: Retributive Germany\u2013Italy",
+    "title": "Run 1 \u00b7 Framework rotation A",
     "condition": "transparent",
     "model": "anthropic/claude-sonnet-4.6",
     "framework_assignment": {

@@ -40,6 +40,13 @@ const label = (phase: string) => phase === 'summary'
     );
 const defaultView = (event: Event): View => event.kind === 'negotiation' ? 'negotiation' : event.kind === 'orders' ? 'orders' : 'story';
 const clean = (text = '') => text.replace(/^---$/gm, '').replace(/\*\*/g, '').trim();
+const frameworkName = (framework?: string) => {
+  if (framework === 'utilitarian') return 'Utilitarian agent';
+  if (framework === 'deontological') return 'Deontological agent';
+  if (framework === 'retributive') return 'Retributive-justice agent';
+  return 'Unassigned agent';
+};
+const agentFor = (assignment: Record<string, string> | undefined, power: string) => frameworkName(assignment?.[power]);
 const messageSummary = (message: Message) => {
   const order = message.content.match(/order ['‘]([^'’]+)['’]/i)?.[1];
   if (message.content.startsWith('[COMPULSION]')) return `Compulsion request${order ? `: ${order}` : ''}.`;
@@ -172,9 +179,9 @@ export default function Viewer({ slug }: { slug: string }) {
             <button className={view === 'negotiation' ? 'active' : ''} onClick={() => setMode('negotiation')}>Negotiation</button>
             <button className={view === 'orders' ? 'active' : ''} onClick={() => setMode('orders')}>Orders</button>
           </div>
-          {view === 'story' && <Story event={event} activeTarget={gameHighlights.find((item) => item.id === activeHighlight)?.targetId} highlights={eventHighlights} onHighlight={(highlight) => setEvent(index, highlight)} />}
-          {view === 'negotiation' && <Negotiation event={event} activeTarget={gameHighlights.find((item) => item.id === activeHighlight)?.targetId} />}
-          {view === 'orders' && <Orders event={event} />}
+          {view === 'story' && <Story event={event} assignment={payload.game.framework_assignment} activeTarget={gameHighlights.find((item) => item.id === activeHighlight)?.targetId} highlights={eventHighlights} onHighlight={(highlight) => setEvent(index, highlight)} />}
+          {view === 'negotiation' && <Negotiation event={event} assignment={payload.game.framework_assignment} activeTarget={gameHighlights.find((item) => item.id === activeHighlight)?.targetId} />}
+          {view === 'orders' && <Orders event={event} assignment={payload.game.framework_assignment} />}
         </aside>
       </div>
       <nav className="timeline" aria-label="Replay navigation">
@@ -200,10 +207,10 @@ function FrameworkKey({ assignment }: { assignment: Record<string, string> }) {
     grouped[framework] = [...(grouped[framework] || []), power];
     return grouped;
   }, {});
-  return <div className="framework-key">{Object.entries(byFramework).map(([framework, powers]) => <span key={framework}><b>{framework}</b> {powers.join(' + ')}</span>)}</div>;
+  return <div className="framework-key">{Object.entries(byFramework).map(([framework, powers]) => <span key={framework}><b>{frameworkName(framework)}</b> controls {powers.map((power) => power.toLowerCase()).join(' + ')}</span>)}</div>;
 }
 
-function Story({ event, activeTarget, highlights: eventHighlights, onHighlight }: { event: Event; activeTarget?: string; highlights: Highlight[]; onHighlight: (highlight: Highlight) => void }) {
+function Story({ event, assignment, activeTarget, highlights: eventHighlights, onHighlight }: { event: Event; assignment?: Record<string, string>; activeTarget?: string; highlights: Highlight[]; onHighlight: (highlight: Highlight) => void }) {
   return (
     <div className="event-copy">
       <p className="eyebrow">{label(event.phase)} / {event.kind}</p>
@@ -212,8 +219,8 @@ function Story({ event, activeTarget, highlights: eventHighlights, onHighlight }
       {eventHighlights.length > 0 && <section className="highlight-list"><p className="eyebrow">Reviewed highlights</p>{eventHighlights.map((highlight) => <button key={highlight.id} onClick={() => onHighlight(highlight)}><b>{highlight.title}</b><span>{highlight.summary}</span></button>)}</section>}
       {event.compulsions?.map((compulsion, compulsionIndex) => (
         <div className={`compulsion ${activeTarget === `compulsion-${compulsionIndex}` ? 'highlight-focus' : ''}`} id={`compulsion-${compulsionIndex}`} key={compulsionIndex}>
-          <h3>{compulsion.proposer} → {compulsion.target}</h3>
-          <p><b>Requested order:</b> <code>{compulsion.action}</code></p>
+          <h3>{agentFor(assignment, compulsion.proposer)} → {agentFor(assignment, compulsion.target)}</h3>
+          <p><b>Requested order for the {compulsion.target.toLowerCase()} power:</b> <code>{compulsion.action}</code></p>
           <details><summary>Argument</summary><p>{clean(compulsion.argument)}</p></details>
           {compulsion.rebuttal && <details><summary>Defender’s full rebuttal</summary><p>{clean(compulsion.rebuttal)}</p></details>}
           <span className={`ruling ${compulsion.ruling === 'COMPELLED' ? '' : 'not'}`}>{compulsion.ruling || 'recorded'}</span>
@@ -226,7 +233,7 @@ function Story({ event, activeTarget, highlights: eventHighlights, onHighlight }
   );
 }
 
-function Negotiation({ event, activeTarget }: { event: Event; activeTarget?: string }) {
+function Negotiation({ event, assignment, activeTarget }: { event: Event; assignment?: Record<string, string>; activeTarget?: string }) {
   const groups = useMemo(() => {
     const grouped = new Map<string, Message[]>();
     for (const message of event.messages || []) {
@@ -242,20 +249,23 @@ function Negotiation({ event, activeTarget }: { event: Event; activeTarget?: str
     <div className="event-copy">
       <p className="eyebrow">Public negotiation log</p><h2>Negotiation</h2>
       {groups.length ? <>
-        <div className="pair-picker" role="tablist">{groups.map(([key]) => <button role="tab" aria-selected={pair === key} className={pair === key ? 'active' : ''} key={key} onClick={() => setPair(key)}>{key}</button>)}</div>
+        <div className="pair-picker" role="tablist">{groups.map(([key, pairMessages]) => {
+          const participants = [...new Set(pairMessages.flatMap((message) => message.pair).map((power) => agentFor(assignment, power)))];
+          return <button role="tab" aria-selected={pair === key} className={pair === key ? 'active' : ''} key={key} onClick={() => setPair(key)}>{participants.join(' ↔ ')}</button>;
+        })}</div>
         <p className="conversation-note">Expand a message to read the full public record.</p>
-        {messages.map((message) => <details className={`message ${activeTarget === message.id ? 'highlight-focus' : ''}`} id={message.id} key={message.id} open={activeTarget === message.id}><summary><b>{message.from}</b><span>{messageSummary(message)}</span></summary><p>{message.content}</p></details>)}
+        {messages.map((message) => <details className={`message ${activeTarget === message.id ? 'highlight-focus' : ''}`} id={message.id} key={message.id} open={activeTarget === message.id}><summary><b>{agentFor(assignment, message.from)} <small>({message.from.toLowerCase()} channel)</small></b><span>{messageSummary(message)}</span></summary><p>{message.content}</p></details>)}
       </> : <p>No negotiation is attached to this stage. Move to the negotiation event for this phase.</p>}
     </div>
   );
 }
 
-function Orders({ event }: { event: Event }) {
+function Orders({ event, assignment }: { event: Event; assignment?: Record<string, string> }) {
   const entries = Object.entries(event.orders || {});
   return (
     <div className="event-copy">
       <p className="eyebrow">Played simultaneously · arrows shown on board</p><h2>Resolved orders</h2>
-      {entries.length ? entries.map(([power, orders]) => <div className="orders" key={power}><b>{power}</b>{orders.map((order) => {
+      {entries.length ? entries.map(([power, orders]) => <div className="orders" key={power}><b>{agentFor(assignment, power)} · {power.toLowerCase()} units</b>{orders.map((order) => {
         const unit = order.split(/\s(?:-|S|H|C)\s?/)[0];
         const status = event.order_results?.[unit] || [];
         return <div key={order}><span>{order}</span>{status.length > 0 && <em>{status.join(', ')}</em>}</div>;
