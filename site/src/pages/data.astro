@@ -1,4 +1,17 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 ---
-<SiteLayout title="Data — Exploitability of Moral Frameworks in LLM Negotiation"><article class="article-shell"><p class="eyebrow">Public data</p><h1>Download the cleaned record</h1><p class="standfirst">Each game replay has a compact JSON file containing only the fields shown in the visualisation.</p><a class="button primary" href="/data/showcase-1.json" download>Download Showcase 1 JSON</a><h2>Data policy</h2><p>Downloads intentionally omit raw prompts, internal traces, private agent state and unreviewed log fields. The schema is versioned so citations remain stable as more games are added.</p></article></SiteLayout>
+<SiteLayout title="Data — Exploitability of Moral Frameworks in LLM Negotiation">
+  <article class="article-shell">
+    <p class="eyebrow">Public data</p>
+    <h1>Download the cleaned records</h1>
+    <p class="standfirst">Each five-year replay has a compact JSON file containing only the fields shown in the visualisation.</p>
+    <div class="download-list">
+      <a class="button primary" href="/data/d44a.json" download>Download Run 1 JSON</a>
+      <a class="button" href="/data/d44b.json" download>Download Run 2 JSON</a>
+      <a class="button" href="/data/d44c.json" download>Download Run 3 JSON</a>
+    </div>
+    <h2>Data policy</h2>
+    <p>Downloads intentionally omit raw prompts, internal traces, private agent state and unreviewed log fields. The schema is versioned so citations remain stable as more games are added.</p>
+  </article>
+</SiteLayout>

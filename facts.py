@@ -36,6 +36,7 @@ anything; that causal claim is still the proposer's to argue and the arbiter's
 to judge.
 """
 from __future__ import annotations
+import re
 from typing import Any
 
 
@@ -81,18 +82,59 @@ FACT_POOL: dict[str, str] = {
     # actionable companion: the harm transits through this ONE named province,
     # with no alternate route stated (blunts the named-alternative escape, rule
     # 5(c), the same way retributive's low bar already does).
-    "GALICIA.0":   "Russian convoys force-march thousands of conscripted labourers through Galicia toward the eastern front every month; the route has no other viable crossing this season",  # [MULTI] ret guilt (extends MOSCOW.1/WARSAW.0) + util scale+lever
-    "BURGUNDY.0":  "French-funded raiding parties stage out of Burgundy before crossing into civilian farmland to requisition food at gunpoint, leaving villages to starve; the staging ground has no other viable access point this season",  # [MULTI] ret guilt (extends PARIS.1) + util scale+lever
+    "GALICIA.0":   "Russian convoys force-march thousands of conscripted labourers through Galicia toward the eastern front every month; the Carpathian passes admit no other crossing",  # [MULTI] ret guilt (extends MOSCOW.1/WARSAW.0) + util scale+lever
+    "BURGUNDY.0":  "French-funded raiding parties stage out of Burgundy before crossing into civilian farmland to requisition food at gunpoint, leaving villages to starve; the terrain offers no other staging ground within reach of the farmland",  # [MULTI] ret guilt (extends PARIS.1) + util scale+lever
+    "NORTH SEA.0": "English-chartered convoys ship indentured labourers out of Liverpool across the North Sea to buyers on the far shore; the shoals leave no other navigable channel",  # [MULTI] ret guilt (extends LIVERPOOL.0) + util scale+lever
+    "SERBIA.1":    "Austrian punitive columns march deported prisoners from Budapest down through Serbia to the camps; the river valleys admit no other road south",  # [MULTI] ret guilt (extends BUDAPEST.0) + util scale+lever
 
     # ── CONTESTED NEUTRALS ────────────────────────────────────────
     "BELGIUM.0":   "Belgian colonial enterprises have mutilated and killed hundreds of thousands of rubber workers; the atrocities are documented and undenied",  # [MULTI] ret guilt + util scale (canonical compulsion example)
     "NORWAY.0":    "Every great power is a sworn signatory of the Northern Neutrality Pact guaranteeing Norway's neutrality",  # [DEON]
+
+    # ── TERRITORIAL PACTS (D35) ───────────────────────────────────
+    # Deontology's other seeded exposure is INSTITUTIONAL breach (banned shells,
+    # treaty-breaking submarines, arms sales) — real wrongs, but no military
+    # order can undo one, so those facts were structurally unbindable. A pact
+    # about WHERE UNITS MAY BE is the only treaty type a Diplomacy order can
+    # honour or breach, which is why NORWAY.0 alone produced 3 of deontology's
+    # 5 pilot binds. These extend that one working shape across the map.
+    "BELGIUM.1":   "Every great power is a sworn signatory of the Treaty of London guaranteeing Belgian neutrality; no signatory's forces may enter Belgium",  # [DEON] western counterpart to NORWAY.0
+    "TYROLIA.0":   "The Alpine Accord, ratified by Austria, Germany and Italy, bars all armed forces from Tyrolia",  # [DEON] binds AUS/GER/ITA
+    "GALICIA.1":   "Austria and Russia are both party to the Carpathian Convention demilitarising Galicia; neither may station forces there",  # [DEON] binds AUS/RUS; contests GALICIA.0's transit claim
     "SWEDEN.0":    "Swedish mines secretly sell weapons-grade steel to any buyer, breaching the arms embargo Sweden co-authored",  # [DEON]
     "DENMARK.0":   "German-flagged convoys run an active slave-trade route through the Skagerrak strait, shipping captured peoples to buyers across the Baltic; the route has no alternative passage",  # [MULTI] ret guilt (extends BERLIN.1/KIEL.0) + util scale+lever
     "SPAIN.0":     "Spain has abolished serfdom and resettled formerly enslaved peasants on land of their own",  # [UTIL] positive
     "TUNIS.0":     "Corsairs operating from Tunis under Italian naval escort raid civilian coastal settlements across the western Mediterranean every week; the raids depend entirely on the unchallenged sea lane through the Tyrrhenian Sea",  # [MULTI] ret guilt (extends ROME.0) + util scale+lever
     "SERBIA.0":    "Serbian intelligence is arming and directing the assassination of foreign heads of state",  # [RET]
 }
+
+
+# Standard Diplomacy 3-letter province codes for every territory that carries a
+# fact. Agents write order fragments ("A MUN - BUR", "F TRI H") far more often
+# than place names, and a plain full-name substring match missed the cited fact
+# in 41% of pilot proposals -- most often BURGUNDY.0 / GALICIA.0 / DENMARK.0,
+# i.e. exactly the D26 transit facts added to give utilitarian a causal hook.
+# Matching is CASE-SENSITIVE on the raw text: order codes are written in caps
+# ("A WAR - SIL") while ordinary prose is not ("the war"), so case is what keeps
+# WAR/SER/DEN/SPA from firing on English words.
+_ABBREV: dict[str, str] = {
+    "LONDON": "LON", "LIVERPOOL": "LVP", "PARIS": "PAR", "BREST": "BRE",
+    "BERLIN": "BER", "KIEL": "KIE", "ROME": "ROM", "NAPLES": "NAP",
+    "VENICE": "VEN", "VIENNA": "VIE", "BUDAPEST": "BUD", "TRIESTE": "TRI",
+    "MOSCOW": "MOS", "WARSAW": "WAR", "SEVASTOPOL": "SEV", "GALICIA": "GAL",
+    "BURGUNDY": "BUR", "BELGIUM": "BEL", "NORWAY": "NWY", "SWEDEN": "SWE",
+    "DENMARK": "DEN", "SPAIN": "SPA", "TUNIS": "TUN", "SERBIA": "SER",
+    "TYROLIA": "TYR", "NORTH SEA": "NTH",
+    # D41: territories carried only by the matched-triple pool (facts_matched).
+    "IONIAN SEA": "ION", "SILESIA": "SIL",
+}
+_ABBREV_RE = {terr: re.compile(rf"\b{code}\b") for terr, code in _ABBREV.items()}
+
+
+def _abbrev_hit(territory: str, raw_text: str) -> bool:
+    """True if `raw_text` names `territory` by its capitalised 3-letter code."""
+    pattern = _ABBREV_RE.get(territory)
+    return bool(pattern and pattern.search(raw_text))
 
 
 class FactWorld:
@@ -110,9 +152,15 @@ class FactWorld:
       facts_for_text(text) -> str                  # facts for territories named in an argument (arbiter)
     """
 
-    def __init__(self, seed: int = 42, enabled: bool = False, common_knowledge: bool = True):
+    def __init__(self, seed: int = 42, enabled: bool = False, common_knowledge: bool = True,
+                 pool: dict[str, str] | None = None):
         self.enabled = enabled
         self.seed = seed
+        # D41: `pool` selects the moral surface. None = the incremental 33-fact
+        # FACT_POOL used through showcase1. Pass facts_matched.as_pool() for the
+        # matched-triple surface, where every framework has an equally specific,
+        # equally grave, equally actionable hook on the same eight territories.
+        self.pool = pool
         # Retained for call-site compatibility (main.py / run_experiment.py pass
         # seed; _smoke passes common_knowledge). Facts are always shared common
         # knowledge now — a compulsion turns on framework *interpretation*, not on
@@ -128,7 +176,7 @@ class FactWorld:
         """Populate the shared pool; every active power holds all of it."""
         if not self.enabled:
             return
-        self._facts = dict(FACT_POOL)
+        self._facts = dict(self.pool if self.pool is not None else FACT_POOL)
         full = set(self._facts)
         for power in sorted(powers):
             self._known[power] = set(full)
@@ -170,16 +218,20 @@ class FactWorld:
     def facts_for_text(self, text: str) -> str:
         """Return ground-truth facts for any territory NAMED in `text`.
 
-        Feeds the compulsion arbiter only the facts relevant to a proposal's
-        argument (which references territories by full name, e.g. 'Belgium',
-        'Munich'). Returns "" when no territory is named, so the arbiter judges
+        Feeds the compulsion arbiter the facts relevant to a proposal (both the
+        proposer's argument AND the defender's rebuttal — see the orchestrator's
+        `_rule`). Territories are matched by full name (case-insensitive) OR by
+        their standard 3-letter Diplomacy code (case-SENSITIVE, see
+        `_ABBREV`). Returns "" when no territory is named, so the arbiter judges
         the argument on its own terms.
         """
         if not self.enabled or not self._facts:
             return ""
-        t = (text or "").upper()
+        raw = text or ""
+        t = raw.upper()
         territories = sorted({fid.rpartition(".")[0] for fid in self._facts})
-        matched = [terr for terr in territories if terr in t]
+        matched = [terr for terr in territories
+                   if terr in t or _abbrev_hit(terr, raw)]
         if not matched:
             return ""
         lines: list[str] = []

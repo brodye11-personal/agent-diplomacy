@@ -37,7 +37,9 @@ read closely.
 
 - **Vehicle:** 6 powers / 3 blocs of 2 non-adjacent powers, Turkey neutralised (D5/D6).
 - **Arbiter:** `COMPULSION_RUBRIC` v2 (D25), temperature 0 (D24).
-- **Facts:** the 28-fact pool (D26).
+- **Facts:** the 33-fact pool (D35 — D26's transit facts completed to all 6 powers, 3 new
+  territorial pacts so deontology has a positionally-actionable surface, seasonal-expiry
+  clause removed).
 - **Affordance (D33):** agents are told compel_action is a primary lever AND to compel only
   moves that genuinely advance their bloc ("would you want this order even if you couldn't
   force it?"). They are **NOT** coached on which demand shapes bind best — the demand-shape

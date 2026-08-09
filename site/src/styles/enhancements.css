@@ -1,0 +1,4 @@
+.game-list{display:grid;gap:1rem;margin-top:2rem}.game-card p:last-child{margin:.5rem 0 0;color:var(--muted)}
+.download-list{display:flex;flex-wrap:wrap;gap:.65rem;margin:1.5rem 0 2.5rem}
+.framework-key{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem;font:.66rem/1.2 "Gill Sans",Arial,sans-serif;text-transform:uppercase}.framework-key span{padding:.35rem .45rem;border:1px solid rgba(17,17,17,.35);background:rgba(255,253,245,.45)}
+.compulsion details p,.message p{white-space:pre-line}.resolution-note{font:italic .78rem/1.3 "Gill Sans",Arial,sans-serif;color:var(--muted)}.ruling{margin-top:.7rem}.orders>div{display:flex;justify-content:space-between;gap:.5rem}.orders em{color:var(--red);font-size:.65rem;text-transform:uppercase}

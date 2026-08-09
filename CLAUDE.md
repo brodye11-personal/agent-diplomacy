@@ -15,6 +15,36 @@ append a dated entry to `design-choices.md` — the decision **and its rationale
 of the same change, before considering the task done. Do not make a design change without
 recording it. If a decision reverses an earlier one, note which entry it supersedes.
 
+## MANDATORY: commit every change, and check the repo before asserting a negative
+
+**Commit as you go — one commit per coherent change, in the same turn you make it.** Do not
+leave finished work sitting in the working tree waiting for a "natural" batching point.
+A commit is cheap; a five-week gap is not. Committing on a feature branch is always fine
+without asking. **Merging into `main` still requires Brodie's explicit OK on that specific
+merge** — commit freely, merge never, unless told.
+
+Two failures this rule exists to prevent, both of which have already happened here:
+
+- **The mega-commit.** `fd56a43` squashed five weeks and roughly D14–D32 into one commit.
+  When that happens the design log becomes the *only* history of the period — you cannot
+  bisect, diff a single decision, or recover an intermediate state.
+- **The stale-checkout wrong answer.** A pre-spend audit reported that decision D33 "does
+  not exist" and that the frozen experiment design was a phantom, because `grep` over the
+  working tree came back clean. D33 was real — decided, recorded and implemented in
+  `b5855eb` — but local `main` was 5 commits behind `origin/main` and had never merged it.
+  Uncommitted local edits had also been hand-copied in from those commits, which made the
+  tree look internally inconsistent for a reason that had nothing to do with the design.
+
+So, before asserting that any decision, file, fact or feature **does not exist or was never
+done**: run `git fetch`, check `git log origin/main ^main` and `git status`, and search the
+repository — not just the working tree. Grepping the checkout answers "is it in my files",
+which is not the question. A negative claim about this experiment's design is only safe once
+the checkout is known to be current.
+
+Log data (`logs/*.jsonl`) is produced by **paid** API runs and is deliberately NOT gitignored
+(see `.gitignore`). Commit new logs with the run that produced them — they are the
+experiment's results, and they exist nowhere else.
+
 ## Orientation
 
 - `design-choices.md` — decisions log + current build plan (read this first).

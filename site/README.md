@@ -1,8 +1,8 @@
 # Exploitability of Moral Frameworks in LLM Negotiation site
 
-Static Astro site deployed to Cloudflare Workers static assets. It deliberately consumes only reviewed JSON in `public/data/` and rendered maps in `public/maps/`.
+Static Astro site deployed to Cloudflare Pages. It deliberately consumes only reviewed JSON in `public/data/` and rendered maps in `public/maps/`.
 
-Live: <https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev>
+Live: <https://exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev>
 
 ## Deployment (automatic)
 
@@ -13,11 +13,11 @@ The job runs entirely from `site/`:
 1. `npm ci` against `site/package-lock.json`
 2. `npm run check` (Astro type check)
 3. `npm run build`
-4. `cloudflare/wrangler-action@v3` → `wrangler deploy`
+4. `cloudflare/wrangler-action@v3` → `wrangler pages deploy`
 
 A failing check or build stops the deploy. Pull requests touching `site/**` run the same build for validation but skip the deploy step entirely, so no credentials are used on PRs.
 
-Deployment target is `site/wrangler.jsonc`. Changing `name` there points at a **different** Worker and therefore a different `workers.dev` URL — keep it in step with `site` in `astro.config.mjs`.
+Deployment target is the Pages project named in the workflow and `site/package.json`; `site/astro.config.mjs` holds its public origin.
 
 ### Required GitHub Actions secrets
 
@@ -37,7 +37,7 @@ cd site
 npm ci
 npm run check
 npm run build
-npm run deploy:dry-run   # validates wrangler.jsonc + dist without shipping
+npm run deploy:list
 ```
 
 Node is pinned in `site/.nvmrc` (CI reads the same file). Astro requires Node >= 22.12.0.
@@ -47,7 +47,7 @@ Node is pinned in `site/.nvmrc` (CI reads the same file). Astro requires Node >=
 Run the exporter from the repository root, supplying an explicit source log and checkpoint. It allowlists public fields and writes the viewer JSON plus SVG board snapshots:
 
 ```powershell
-python scripts/export_public_game.py --source <log.jsonl> --checkpoint <checkpoint.json> --slug showcase-1 --title "Showcase 1" --out site/public/data/showcase-1.json --map-dir site/public/maps/showcase-1
+python scripts/export_public_game.py --source logs/d44a.jsonl --checkpoint logs/d44a.checkpoint.json --slug d44a --title "Run 1 · Framework rotation A" --out site/public/data/d44a.json --map-dir site/public/maps/d44a
 ```
 
 Export is deliberately **not** automated: every publish is a reviewed act. Raw logs, `.checkpoint.json` files, agent prompts, hidden reasoning and tool traces never enter `site/public/` — this repository is public.
@@ -75,5 +75,5 @@ Do not use PowerShell `Compress-Archive`: it writes Windows-style backslashes in
 Before publishing a revised article, copy the reviewed Markdown into this repository:
 
 ```powershell
-python scripts/sync_article_source.py --source <article-repo>\essay_structure.md --out site/src/content/essay_structure.md
+python scripts/sync_article_source.py --source <article-repo>\essay_final.md --out site/src/content/essay_final.md --appendix-out site/src/content/essay_appendix.md
 ```

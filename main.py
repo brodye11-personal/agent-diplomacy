@@ -17,6 +17,7 @@ import anthropic
 
 import orchestrator
 from facts import FactWorld
+from facts_matched import merged_pool as matched_as_pool
 
 # Windows consoles default to cp1252; our prompts + verbose output contain
 # unicode (en-dash, arrow, etc.). Force UTF-8 so prints don't crash mid-run.
@@ -125,6 +126,11 @@ def main():
                         help="Enable FactWorld: shared morally-loaded facts about territories "
                              "(common knowledge by default). The substrate the compulsion "
                              "arbiter reasons over — recommended ON for compulsion runs.")
+    parser.add_argument("--matched-facts", action="store_true", dest="matched_facts",
+                        help="Use the D44 merged pool (facts_matched.merged_pool): D35's "
+                             "home-sphere facts UNION the matched triples, which own the 8 "
+                             "contested territories. Restores sphere coverage on all 6 powers "
+                             "while keeping matched fairness on contested ground. Requires --facts.")
     parser.add_argument("--game-id", default=None, dest="game_id",
                         help="Stable game id for crash-safe resume (D29). If a checkpoint "
                              "exists for it, the run continues from where it crashed instead "
@@ -156,7 +162,8 @@ def main():
         # Per-run FactWorld so each run gets an independent dossier distribution.
         # Without this every run uses seed=42 and the morally-loaded intel is
         # identical across runs, confounding any framework effect on lying.
-        fact_world = FactWorld(enabled=args.facts, seed=run_index)
+        pool = matched_as_pool() if args.matched_facts else None
+        fact_world = FactWorld(enabled=args.facts, seed=run_index, pool=pool)
         if args.facts:
             fact_world.generate(active_powers)
 

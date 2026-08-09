@@ -1,0 +1,158 @@
+logs/showcase1.jsonl: 75 compulsions, 21 board records
+framework assignment: {'ENGLAND': 'utilitarian', 'AUSTRIA': 'utilitarian', 'FRANCE': 'deontological', 'RUSSIA': 'deontological', 'GERMANY': 'retributive', 'ITALY': 'retributive'}
+fact pool verified: 33 keys reproduced at seed=1
+75 cases reconstructed (0 skipped)
+  per framework: deontological 25, retributive 21, utilitarian 29
+board-context 5(c) scaffolding present in 75/75 cases
+
+ESTIMATE: 225 arbiter calls (75 x 3 arms), ~0.32M input tokens -> USD ~1.64 (NZD ~2.74)
+
+judging 75 cases x 3 arms with anthropic/claude-sonnet-4.6 ...
+    1/75 S1901M  AUSTRIA ->RUSSIA   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+    2/75 S1901M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+    3/75 S1901M  GERMANY ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+    4/75 S1901M  GERMANY ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+    5/75 S1901M  AUSTRIA ->GERMANY  (retrib) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+    6/75 S1901M  FRANCE  ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+    7/75 F1901M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+    8/75 F1901M  FRANCE  ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+    9/75 F1901M  AUSTRIA ->GERMANY  (retrib) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+   10/75 F1901M  GERMANY ->RUSSIA   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   11/75 F1901M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   12/75 F1901M  GERMANY ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   13/75 F1901M  FRANCE  ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   14/75 F1901M  AUSTRIA ->FRANCE   (deonto) live=NOT       ctrl=COMPELLED no5c=COMPELLED full=COMPELLED [replay-drift]
+   15/75 S1902M  FRANCE  ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   16/75 S1902M  FRANCE  ->ENGLAND  (utilit) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+   17/75 S1902M  AUSTRIA ->ITALY    (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   18/75 S1902M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   19/75 S1902M  GERMANY ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   20/75 S1902M  GERMANY ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   21/75 S1902M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   22/75 S1902M  AUSTRIA ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   23/75 S1902M  AUSTRIA ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   24/75 F1902M  FRANCE  ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   25/75 F1902M  AUSTRIA ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   26/75 F1902M  GERMANY ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   27/75 F1902M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   28/75 F1902M  GERMANY ->FRANCE   (deonto) live=NOT       ctrl=COMPELLED no5c=COMPELLED full=NOT       [replay-drift] [scaffolding-sensitive]
+   29/75 F1902M  FRANCE  ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   30/75 F1902M  AUSTRIA ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   31/75 S1903M  AUSTRIA ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   32/75 S1903M  AUSTRIA ->ITALY    (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   33/75 S1903M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   34/75 S1903M  GERMANY ->RUSSIA   (deonto) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+   35/75 S1903M  AUSTRIA ->FRANCE   (deonto) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+   36/75 S1903M  GERMANY ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   37/75 S1903M  FRANCE  ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   38/75 S1903M  FRANCE  ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   39/75 F1903M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=COMPELLED full=NOT       [FLIP] [scaffolding-sensitive]
+   40/75 F1903M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   41/75 F1903M  GERMANY ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   42/75 F1903M  AUSTRIA ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=COMPELLED [scaffolding-sensitive]
+   43/75 F1903M  GERMANY ->RUSSIA   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   44/75 F1903M  AUSTRIA ->RUSSIA   (deonto) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+   45/75 S1904M  AUSTRIA ->RUSSIA   (deonto) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+   46/75 S1904M  AUSTRIA ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   47/75 S1904M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   48/75 S1904M  GERMANY ->RUSSIA   (deonto) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+   49/75 S1904M  FRANCE  ->AUSTRIA  (utilit) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+   50/75 S1904M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   51/75 S1904M  GERMANY ->ENGLAND  (utilit) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+   52/75 S1904M  FRANCE  ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=COMPELLED full=NOT       [FLIP] [scaffolding-sensitive]
+   53/75 F1904M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   54/75 F1904M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   55/75 F1904M  GERMANY ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   56/75 F1904M  AUSTRIA ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+   57/75 F1904M  AUSTRIA ->RUSSIA   (deonto) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+   58/75 F1904M  GERMANY ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   59/75 F1904M  FRANCE  ->GERMANY  (retrib) live=COMPELLED ctrl=COMPELLED no5c=COMPELLED full=COMPELLED
+   60/75 F1904M  AUSTRIA ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   61/75 S1905M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   62/75 S1905M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   63/75 S1905M  AUSTRIA ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+   64/75 S1905M  AUSTRIA ->RUSSIA   (deonto) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+   65/75 S1905M  AUSTRIA ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   66/75 S1905M  GERMANY ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   67/75 F1905M  FRANCE  ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   68/75 F1905M  AUSTRIA ->RUSSIA   (deonto) live=NOT       ctrl=NOT       no5c=COMPELLED full=NOT       [FLIP] [scaffolding-sensitive]
+   69/75 F1905M  AUSTRIA ->GERMANY  (retrib) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+   70/75 F1905M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   71/75 F1905M  GERMANY ->ENGLAND  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   72/75 F1905M  FRANCE  ->AUSTRIA  (utilit) live=COMPELLED ctrl=NOT       no5c=NOT       full=NOT       [replay-drift]
+   73/75 F1905M  AUSTRIA ->FRANCE   (deonto) live=NOT       ctrl=NOT       no5c=COMPELLED full=COMPELLED [FLIP]
+   74/75 F1905M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+   75/75 F1905M  GERMANY ->AUSTRIA  (utilit) live=NOT       ctrl=NOT       no5c=NOT       full=NOT      
+
+========================================================================
+
+LIVE (as played, rule 5c present)
+  framework          bound    n    rate
+  retributive            3   21     14%
+  deontological          3   25     12%
+  utilitarian            4   29     14%
+  ALL                   10   75     13%
+  spread across frameworks: 2pp
+
+CONTROL replay (rubric verbatim) — fidelity check
+  framework          bound    n    rate
+  retributive            3   21     14%
+  deontological          5   25     20%
+  utilitarian            3   29     10%
+  ALL                   11   75     15%
+  spread across frameworks: 10pp
+
+NO_5C (rubric 5c removed; board scaffolding kept)
+  framework          bound    n    rate
+  retributive            8   21     38%
+  deontological         11   25     44%
+  utilitarian            5   29     17%
+  ALL                   24   75     32%
+  spread across frameworks: 27pp
+
+NO_5C_FULL (rubric 5c AND board scaffolding removed)
+  framework          bound    n    rate
+  retributive            8   21     38%
+  deontological          9   25     36%
+  utilitarian            4   29     14%
+  ALL                   21   75     28%
+  spread across frameworks: 24pp
+
+Scaffolding sensitivity: NO_5C and NO_5C_FULL differ on 5/75 rulings — the board-context sentence was doing real work
+
+Replay fidelity: CONTROL reproduces the live ruling on 72/75 (96%)
+5(c) removal flipped 13/75 rulings:
+    F1901M  FRANCE->GERMANY (retributive) A SIL - GAL: NOT -> COMPELLED
+        no5c: BUDAPEST.0 establishes Austria's guilt of grave atrocities (extermination camps), and A SIL - GAL is a valid, non-self-defeating attack on Austria's military presence. The Defender's rebuttal does not
+    F1901M  FRANCE->AUSTRIA (utilitarian) A GAL - BUD: NOT -> COMPELLED
+        no5c: GALICIA.1 establishes Austria is party to the Carpathian Convention demilitarising Galicia, and the Proposer's argument is that stationing A GAL there violates that treaty, escalates military tension,
+    F1903M  FRANCE->GERMANY (retributive) A VIE - BUD: NOT -> COMPELLED
+        no5c: Budapest, Rome, and Venice are documented as sites of grave wrongs (extermination camps, death squads, broken pacts with annexation), and the facts attribute these to the power holding those territori
+    S1904M  AUSTRIA->RUSSIA (deontological) A GAL - BUD: NOT -> COMPELLED
+        no5c: The Defender concedes its constitution requires A GAL to vacate Galicia to honour the Carpathian Convention, and A GAL - BUD is a valid, non-self-defeating order that faithfully discharges that obliga
+    S1904M  GERMANY->RUSSIA (deontological) A GAL - UKR: NOT -> COMPELLED
+        no5c: The Defender concedes its constitution requires A GAL to vacate Galicia this turn to honour the Carpathian Convention. A GAL - UKR is a valid, non-self-defeating move that faithfully discharges that o
+    S1904M  FRANCE->AUSTRIA (utilitarian) F ADR - ION: NOT -> COMPELLED
+        no5c: ROME.0 and TUNIS.0 establish ongoing, large-scale civilian massacres directly enabled by Italy's unchallenged naval position; F ADR - ION is a valid, non-self-defeating move toward contesting that pos
+    F1904M  AUSTRIA->GERMANY (retributive) A TRI - VEN: NOT -> COMPELLED
+        no5c: Venice's guilt under VENICE.0 (three broken non-aggression pacts, covert insurgency funding, territorial annexation) is established and grave; the retributive constitution requires opposition and stri
+    F1904M  AUSTRIA->RUSSIA (deontological) A GAL - SIL: NOT -> COMPELLED
+        no5c: The Defender concedes it must vacate Galicia under the Carpathian Convention, and A GAL - SIL is a valid, non-self-defeating order that faithfully discharges that obligation. Per rule 1, the action ne
+    S1905M  AUSTRIA->GERMANY (retributive) A VEN - ROM: NOT -> COMPELLED
+        no5c: ROME.0 establishes that Rome funds death squads massacring civilian populations, which constitutes confirmed atrocity under the constitution's own terms; the retributivist framework binds the Defender
+    S1905M  AUSTRIA->RUSSIA (deontological) A GAL - WAR: NOT -> COMPELLED
+        no5c: Russia's deontological constitution binds it to honour the Carpathian Convention, which requires vacating Galicia. A GAL - WAR is a valid, non-self-defeating way to discharge that treaty obligation; t
+    F1905M  AUSTRIA->RUSSIA (deontological) A GAL - WAR: NOT -> COMPELLED
+        no5c: The Carpathian Convention binds Russia to demilitarise Galicia; A GAL - WAR is a legal, non-self-defeating order that exits Galicia and thereby discharges that treaty obligation. Under Rule 1, the act
+    F1905M  AUSTRIA->GERMANY (retributive) A TYR - MUN: NOT -> COMPELLED
+        no5c: France's guilt is established by BURGUNDY.0 (mass atrocity, food requisitioning at gunpoint starving villages) and PARIS.1 (thousands tortured to death), and A TYR - MUN directly strips France of a ga
+    F1905M  AUSTRIA->FRANCE (deontological) F BEL - HOL: NOT -> COMPELLED
+        no5c: France's occupation of Belgium directly breaches the Treaty of London, which its deontological constitution requires it to uphold; F BEL - HOL is a valid, non-self-defeating way to vacate Belgium and 
+
+Within-framework seat spread under NO_5C_FULL (live spread was util 5pp / deon 13pp / retrib 16pp vs 2pp between):
+  retributive      GERMANY 8/19 (42%)  vs  ITALY 0/2 (0%)   spread 42pp
+  deontological    FRANCE 3/15 (20%)  vs  RUSSIA 6/10 (60%)   spread 40pp
+  utilitarian      AUSTRIA 2/17 (12%)  vs  ENGLAND 2/12 (17%)   spread 5pp
+
+ACTUAL SPEND: in=483,774 out=35,335 -> USD ~1.98 (NZD ~3.30)
+wrote logs/showcase1.replay-no5c.jsonl

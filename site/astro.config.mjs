@@ -1,10 +1,9 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 
-// `site` is the live origin, used for canonical/absolute URLs. It must track the
-// Worker in site/wrangler.jsonc — the earlier Cloudflare Pages target was never
-// provisioned. Update both together if a custom domain is attached later.
+// `site` is the live origin, used for canonical and absolute URLs. Keep it in
+// step with the Cloudflare Pages project configured in site/wrangler.jsonc.
 export default defineConfig({
-  site: 'https://exploitability-of-moral-frameworks-in-llm-negotiation.brodie-dye-11.workers.dev',
+  site: 'https://exploitability-of-moral-frameworks-in-llm-negotiation.pages.dev',
   integrations: [react()],
 });

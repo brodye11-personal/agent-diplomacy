@@ -1,16 +1,30 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import EssayStructure from '../../content/essay_structure.md';
+import EssayFinal from '../../content/essay_final.md';
+import EssayAppendix from '../../content/essay_appendix.md';
+import ArticleEvidence from '../../components/ArticleEvidence';
+import ArticleStructures from '../../components/ArticleStructures';
 ---
-<SiteLayout title="Article — Exploitability of Moral Frameworks in LLM Negotiation">
+<SiteLayout title="Exploitability of Moral Frameworks in LLM Negotiation">
   <article class="article-shell essay">
-    <p class="eyebrow">Draft article / evidence-linked edition</p>
-    <EssayStructure />
-    <aside class="evidence-link">
-      <p class="eyebrow">Interactive evidence</p>
-      <h3>Follow the first compelled move</h3>
-      <p>Open the board, negotiation, ruling and final order for the Spring 1901 Munich–Burgundy demand.</p>
-      <a class="button primary" href="/games/showcase-1/?year=1901&phase=S1901M&stage=compulsion&view=story&moment=munich-to-burgundy">Open the highlighted moment →</a>
-    </aside>
+    <p class="meta">By Brodie Dye</p>
+    <EssayFinal />
   </article>
+  <details class="appendix-disclosure essay" id="appendix-a-experiment-design">
+    <summary><span>Reference material</span><strong>Appendix A: Experiment design</strong></summary>
+    <div class="appendix-body"><EssayAppendix /></div>
+  </details>
+  <ArticleEvidence client:load />
+  <ArticleStructures client:load />
+  <script is:inline>
+    (() => {
+      const revealAppendix = () => {
+        if (location.hash !== '#appendix-a-experiment-design') return;
+        const appendix = document.querySelector('#appendix-a-experiment-design');
+        if (appendix) appendix.open = true;
+      };
+      revealAppendix();
+      window.addEventListener('hashchange', revealAppendix);
+    })();
+  </script>
 </SiteLayout>

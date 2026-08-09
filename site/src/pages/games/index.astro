@@ -1,9 +1,44 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+
+const games = [
+  {
+    slug: 'd44a',
+    number: '01',
+    title: 'Run 1 · Framework rotation A',
+    frameworks: 'Utilitarian agent controls England–Austria · Deontological agent controls France–Russia · Retributive-justice agent controls Germany–Italy',
+  },
+  {
+    slug: 'd44b',
+    number: '02',
+    title: 'Run 2 · Framework rotation B',
+    frameworks: 'Deontological agent controls England–Austria · Retributive-justice agent controls France–Russia · Utilitarian agent controls Germany–Italy',
+  },
+  {
+    slug: 'd44c',
+    number: '03',
+    title: 'Run 3 · Framework rotation C',
+    frameworks: 'Retributive-justice agent controls England–Austria · Utilitarian agent controls France–Russia · Deontological agent controls Germany–Italy',
+  },
+];
 ---
 <SiteLayout title="Explore games — Exploitability of Moral Frameworks in LLM Negotiation">
   <section class="collection-shell">
-    <p class="eyebrow">Interactive record</p><h1>Explore the games</h1><p class="deck">The latest, most legible experiment runs. Each replay is a selected public record: positions, negotiations, arbitration and orders.</p>
-    <a class="game-card" href="/games/showcase-1/"><span class="game-number">01</span><div><p class="eyebrow">Latest public showcase</p><h2>The first public compulsion</h2><p>Spring 1901 onward · seven powers · movement, negotiation and rulings.</p></div><span aria-hidden="true">→</span></a>
+    <p class="eyebrow">Interactive record</p>
+    <h1>Explore the games</h1>
+    <p class="deck">Three complete five-year rotations. Each replay contains the public board states, negotiations, constitutional arguments, rulings and resolved orders.</p>
+    <div class="game-list">
+      {games.map((game) => (
+        <a class="game-card" href={`/games/${game.slug}/`}>
+          <span class="game-number">{game.number}</span>
+          <div>
+            <p class="eyebrow">Five-year transparent run</p>
+            <h2>{game.title}</h2>
+            <p>{game.frameworks}</p>
+          </div>
+          <span aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
   </section>
 </SiteLayout>

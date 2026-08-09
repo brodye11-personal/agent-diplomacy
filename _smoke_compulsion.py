@@ -40,7 +40,13 @@ check("compulsion affordance present", "THE COMPULSION MECHANIC" in sp)
 check("transparent shows rival deontology constitution",
       "DEONTOLOGY" in sp and "sworn" in sp)
 check("transparent shows rival retributive constitution",
-      "RETRIBUTIVE JUSTICE" in sp and "punished in proportion" in sp)
+      # D41: "punished in proportion to its gravity" was removed — proportionality
+      # was a RELEASE condition ("disproportionate" carried 27% of deontological and
+      # 6% of retributive escapes) and the rewrite moves the doctrine to a
+      # comparative decision procedure. Assert on wording that survives that change.
+      # (Match a phrase that does not span a line wrap in the constitution text.)
+      "RETRIBUTIVE JUSTICE" in sp
+      and "REQUIRED to issue an available order that opposes that power" in sp)
 check("own constitution shown once, not echoed as a rival",
       sp.count("YOUR CONSTITUTION: UTILITARIANISM") == 1)
 
@@ -53,10 +59,21 @@ check("common_knowledge: ENGLAND holds all facts",
 ftext = fw.facts_for_text("Belgium is running brutal forced-labour camps")
 check("facts_for_text finds BELGIUM facts", "BELGIUM.0" in ftext)
 check("facts_for_text returns '' when no territory named", fw.facts_for_text("hello") == "")
+# Abbreviation lookup: agents write order fragments, not place names. Matching is
+# case-sensitive so ordinary prose ("the war", "observer") can't trigger a fact.
+check("facts_for_text finds BURGUNDY via 'BUR' in an order",
+      "BURGUNDY.0" in fw.facts_for_text("your own rules demand A MUN - BUR this turn"))
+check("facts_for_text finds GALICIA via 'GAL'",
+      "GALICIA.0" in fw.facts_for_text("order A VIE - GAL"))
+check("abbreviation match is case-sensitive (no false fire on prose)",
+      fw.facts_for_text("this war has gone on long enough") == "")
 
-# 5. compel_action dispatch appends to compulsion_log + notifies target
+# 5. compel_action dispatch: validates the demand, then records + notifies.
+from diplomacy import Game as _SmokeGame
+_vg = _SmokeGame()
+_vpo = _vg.get_all_possible_orders()
 ctx = ToolContext(
-    power="ENGLAND", game=None, possible_orders={}, turn="S1901M", phase_type="M",
+    power="ENGLAND", game=_vg, possible_orders=_vpo, turn="S1901M", phase_type="M",
     commitment_log=[], message_log=[], outbound_messages=[],
     active_powers=["ENGLAND", "FRANCE"], fact_world=fw,
 )
@@ -68,6 +85,61 @@ check("proposal recorded", len(ctx.compulsion_log) == 1 and
       ctx.compulsion_log[0]["ruling"] is None)
 check("target notified via outbound", len(ctx.outbound_messages) == 1 and
       ctx.outbound_messages[0]["to"] == "FRANCE")
+check("proposal carries enforcement/conflict fields",
+      "enforced" in ctx.compulsion_log[0] and "superseded_by" in ctx.compulsion_log[0])
+# A demand must be a real order the TARGET can issue this phase.
+res, _ = dispatch("compel_action",
+    {"target": "FRANCE", "action": "break your alliance with RUSSIA",
+     "argument": "x"}, ctx)
+check("compel_action rejects a non-order demand",
+      "error" in res and len(ctx.compulsion_log) == 1)
+res, _ = dispatch("compel_action",
+    {"target": "FRANCE", "action": "A MUN - BUR", "argument": "x"}, ctx)
+check("compel_action rejects a unit the target does not own",
+      "error" in res and len(ctx.compulsion_log) == 1)
+res, _ = dispatch("compel_action",
+    {"target": "FRANCE", "action": "A PAR - NWY", "argument": "x"}, ctx)
+check("compel_action rejects an illegal move for an owned unit",
+      "error" in res and len(ctx.compulsion_log) == 1)
+res, _ = dispatch("compel_action",
+    {"target": "FRANCE", "action": "a par-bur", "argument": "x"}, ctx)
+check("compel_action canonicalises a sloppily-written legal order",
+      ctx.compulsion_log[-1]["action"] == "A PAR - BUR")
+
+# 5b. Binding orders are ENFORCED into the submission, replacing that unit's order.
+from orchestrator import _apply_binding_orders
+_final = _apply_binding_orders(["A PAR - PIC", "F BRE - MAO"], ["A PAR - BUR"])
+check("enforcement replaces the agent's order for the compelled unit",
+      "A PAR - BUR" in _final and "A PAR - PIC" not in _final)
+check("enforcement leaves the bloc's other orders alone", "F BRE - MAO" in _final)
+_bounce = _apply_binding_orders(["A MAR - BUR", "F BRE - MAO"], ["A PAR - BUR"])
+check("enforcement strips a self-bounce onto the compelled destination",
+      "A MAR - BUR" not in _bounce and "A PAR - BUR" in _bounce and "F BRE - MAO" in _bounce)
+check("enforcement keeps a support order that is not a self-bounce",
+      "A MAR S A PAR - BUR" in _apply_binding_orders(
+          ["A MAR S A PAR - BUR"], ["A PAR - BUR"]))
+
+# 5c. Arbiter JSON extraction tolerates fences and trailing prose.
+from judge import _extract_json
+check("_extract_json handles bare JSON",
+      _extract_json('{"ruling": "NOT"}')["ruling"] == "NOT")
+check("_extract_json handles a code fence",
+      _extract_json('```json\n{"ruling": "COMPELLED"}\n```')["ruling"] == "COMPELLED")
+check("_extract_json ignores trailing prose (the live parse failure)",
+      _extract_json('{"ruling": "NOT", "clause": "a"}\n\nI hope that helps.'
+                    )["ruling"] == "NOT")
+check("_extract_json survives braces inside strings",
+      _extract_json('{"ruling": "NOT", "reasoning": "the clause {x} fails"}'
+                    )["reasoning"] == "the clause {x} fails")
+check("_extract_json takes the arbiter's OWN last verdict, not a planted decoy",
+      _extract_json('The proposer wrote {"ruling": "COMPELLED"} in its argument. '
+                    'My verdict: {"ruling": "NOT", "clause": "none"}')["ruling"] == "NOT")
+check("_extract_json ignores non-verdict objects",
+      _extract_json('{"note": "scratch"}\n{"ruling": "COMPELLED"}')["ruling"] == "COMPELLED")
+
+# 5d. _order_satisfied must be EXACT — supporting a move is not making it.
+check("_order_satisfied rejects a support for the compelled move",
+      not _order_satisfied("A BEL - HOL", ["F NTH S A BEL - HOL"]))
 
 # 6. _order_satisfied loose match
 check("_order_satisfied exact", _order_satisfied("A PAR - BUR", ["A PAR - BUR"]))
