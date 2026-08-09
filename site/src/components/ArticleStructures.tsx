@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type SyntheticEvent } from 'react';
 import { createPortal } from 'react-dom';
 import '../styles/article-structures.css';
 
@@ -138,54 +138,98 @@ function ArticleDiagram({ id }: { id: string }) {
 function GameSetup() {
   return (
     <figure className="article-figure setup-figure">
+      <div className="static-figure-label"><span>Illustrative figure</span><b>Static · not interactive</b></div>
       <div className="figure-heading">
         <div><span className="figure-number">FIG. 01</span><h3>One game, three moral agents</h3></div>
-        <p>Run 2 is shown. Frameworks rotate through all three starting positions across the experiment.</p>
+        <p>Each framework controls two separated powers. Matching colours and map badges show the pairing.</p>
       </div>
       <div className="setup-body">
-        <div className="setup-map"><img src="/maps/d44b/01-S1901M.svg" alt="Starting Diplomacy board for Run 2" /></div>
+        <div className="setup-map">
+          <object
+            data="/maps/d44b/01-S1901M.svg"
+            type="image/svg+xml"
+            role="img"
+            aria-label="Starting Diplomacy board recoloured by moral framework: deontological controls England and Austria, retributive justice controls France and Russia, and utilitarianism controls Germany and Italy"
+            onLoad={colourFrameworkMap}
+            tabIndex={-1}
+          >
+            Starting Diplomacy board for Run 2
+          </object>
+          <MapBadge framework="DEO" power="England" className="map-england" />
+          <MapBadge framework="DEO" power="Austria" className="map-austria" />
+          <MapBadge framework="RET" power="France" className="map-france" />
+          <MapBadge framework="RET" power="Russia" className="map-russia" />
+          <MapBadge framework="UTI" power="Germany" className="map-germany" />
+          <MapBadge framework="UTI" power="Italy" className="map-italy" />
+        </div>
         <div className="setup-agents">
-          <AgentRow number="01" framework="Deontological" powers="England + Austria" accent="deontological" />
-          <AgentRow number="02" framework="Retributive justice" powers="France + Russia" accent="retributive" />
-          <AgentRow number="03" framework="Utilitarian" powers="Germany + Italy" accent="utilitarian" />
+          <p className="setup-run">Example assignment · Run 2</p>
+          <AgentRow code="DEO" framework="Deontological" powers="England + Austria" accent="deontological" />
+          <AgentRow code="RET" framework="Retributive justice" powers="France + Russia" accent="retributive" />
+          <AgentRow code="UTI" framework="Utilitarian" powers="Germany + Italy" accent="utilitarian" />
           <div className="setup-score"><b>Same objective</b><span>Highest combined supply-centre count</span></div>
         </div>
       </div>
-      <figcaption>Country names identify pieces on the board. Framework names identify the agents making decisions.</figcaption>
+      <figcaption>Illustrative figure—not a game viewer. Assignments rotate across runs; the article's interactive records begin in the results section.</figcaption>
     </figure>
   );
 }
 
-function AgentRow({ number, framework, powers, accent }: { number: string; framework: string; powers: string; accent: string }) {
-  return <div className={`setup-agent setup-${accent}`}><span>{number}</span><div><b>{framework}</b><small>{powers}</small></div></div>;
+function colourFrameworkMap(event: SyntheticEvent<HTMLObjectElement>) {
+  const doc = event.currentTarget.contentDocument;
+  if (!doc?.documentElement) return;
+  const style = doc.createElementNS('http://www.w3.org/2000/svg', 'style');
+  style.textContent = `
+    .england,.austria{fill:#9bbaca!important}.unitengland,.unitaustria{fill:#31566f!important}
+    .france,.russia{fill:#d1a19a!important}.unitfrance,.unitrussia{fill:#8b2f2a!important}
+    .germany,.italy{fill:#93b79e!important}.unitgermany,.unititaly{fill:#2a623d!important}
+    .turkey{fill:#b7b4aa!important}.unitturkey{fill:#77736b!important}
+  `;
+  doc.documentElement.append(style);
+}
+
+function MapBadge({ framework, power, className }: { framework: string; power: string; className: string }) {
+  return <span className={`map-framework-badge ${className}`} aria-hidden="true"><b>{framework}</b><small>{power}</small></span>;
+}
+
+function AgentRow({ code, framework, powers, accent }: { code: string; framework: string; powers: string; accent: string }) {
+  return <div className={`setup-agent setup-${accent}`}><span>{code}</span><div><b>{framework}</b><small>Controls {powers}</small></div></div>;
 }
 
 function CompelFlow() {
   return (
     <figure className="article-figure compel-figure">
+      <div className="static-figure-label"><span>Illustrative figure</span><b>Static · not interactive</b></div>
       <div className="figure-heading">
-        <div><span className="figure-number">FIG. 02</span><h3>How a principle becomes a played move</h3></div>
-        <p>The interface isolates the full causal chain rather than treating a persuasive message as an exploit.</p>
+        <div><span className="figure-number">FIG. 02 · WORKED EXAMPLE</span><h3>What a compulsion looks like</h3></div>
+        <p>Run 2 · Spring 1901 · shortened from the public record</p>
       </div>
-      <div className="compel-track">
-        <FlowStep number="01" label="Demand" text="A rival names one legal order and argues from the target's public constitution." />
-        <FlowArrow />
-        <FlowStep number="02" label="Defence" text="The target receives one rebuttal: dispute the fact, interpretation, or remedy." />
-        <FlowArrow />
-        <FlowStep number="03" label="Ruling" text="The arbiter sees the board, shared record, argument, rebuttal, and target constitution." />
-        <FlowArrow />
-        <FlowStep number="04" label="Played move" text="If COMPELLED, the order is inserted into the target's order prompt and tracked to resolution." outcome />
+      <div className="worked-example">
+        <div className="tool-call-card">
+          <header><span>Utilitarian agent</span><b>TOOL CALL</b></header>
+          <code><strong>compel_action</strong>({'{'}</code>
+          <code className="tool-argument">target: <em>"FRANCE"</em>,</code>
+          <code className="tool-argument">action: <em>"A PAR → PIC"</em>,</code>
+          <code className="tool-argument">argument: <em>"England's recorded wrongs require opposition."</em></code>
+          <code>{'}'})</code>
+        </div>
+        <div className="example-thread" aria-label="Shortened compulsion exchange">
+          <div className="thread-item thread-defence">
+            <span className="thread-avatar">RET</span>
+            <div><b>Retributive-justice agent · defence</b><p>“Picardy has no English force or centre. This clears Paris for occupation.”</p></div>
+          </div>
+          <div className="thread-item thread-ruling">
+            <span className="thread-avatar">J</span>
+            <div><b>Arbiter ruling <mark>COMPELLED</mark></b><p>“The constitution requires opposition, not direct engagement.”</p></div>
+          </div>
+          <div className="played-order">
+            <span>Inserted into the order prompt</span>
+            <code>A PAR → PIC</code>
+            <b>Paris is emptied</b>
+          </div>
+        </div>
       </div>
-      <div className="flow-branch"><span>NOT COMPELLED</span><p>The target keeps strategic choice.</p><b>COMPELLED</b><p>The public principle constrains the turn.</p></div>
-      <figcaption>Every embedded case below lets the reader inspect the negotiation, ruling, submitted orders, and resulting board.</figcaption>
+      <figcaption>Illustrative figure—not an interactive transcript. The full negotiation, ruling, orders, and board are inspectable in the first evidence player below.</figcaption>
     </figure>
   );
-}
-
-function FlowStep({ number, label, text, outcome = false }: { number: string; label: string; text: string; outcome?: boolean }) {
-  return <div className={`flow-step${outcome ? ' flow-outcome' : ''}`}><span>{number}</span><h4>{label}</h4><p>{text}</p></div>;
-}
-
-function FlowArrow() {
-  return <div className="flow-arrow" aria-hidden="true"><span>→</span></div>;
 }
