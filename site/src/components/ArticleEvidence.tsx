@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { articleCase, type ArticleCase, type EvidenceStep } from '../data/articleCases';
+import { articleCase, type EvidenceStep } from '../data/articleCases';
 import '../styles/article-evidence.css';
 
 type Message = { id: string; pair: string[]; from: string; content: string; round?: number };
@@ -55,13 +55,6 @@ const phaseLabel = (phase: string) =>
 
 const eventFor = (payload: Payload, phase: string, kind: string) =>
   payload.events.find((event) => event.phase === phase && event.kind === kind);
-
-const stepUrl = (config: ArticleCase, step: EvidenceStep) => {
-  if (step.kind === 'compulsion') return config.fullGameUrl;
-  const stage = step.kind === 'result' || step.kind === 'board' ? 'board' : step.kind === 'messages' ? 'negotiation' : 'orders';
-  const view = step.kind === 'messages' ? 'negotiation' : step.kind === 'orders' ? 'orders' : 'story';
-  return `/games/${config.slug}/?year=${step.phase.slice(1, 5)}&phase=${step.phase}&stage=${stage}&view=${view}`;
-};
 
 export default function ArticleEvidence() {
   const [targets, setTargets] = useState<PortalTarget[]>([]);
@@ -120,7 +113,7 @@ function EvidencePlayer({ caseId }: { caseId: string }) {
           </button>
         ))}
       </nav>
-      <EvidenceStepView config={config} payload={payload} step={step} />
+      <EvidenceStepView payload={payload} step={step} />
       <footer className="evidence-foot">
         <span>{phaseLabel(step.phase)}</span>
         <span>Source: {config.slug} public event record</span>
@@ -129,7 +122,7 @@ function EvidencePlayer({ caseId }: { caseId: string }) {
   );
 }
 
-function EvidenceStepView({ config, payload, step }: { config: ArticleCase; payload: Payload; step: EvidenceStep }) {
+function EvidenceStepView({ payload, step }: { payload: Payload; step: EvidenceStep }) {
   const sourceKind = step.kind === 'result' || step.kind === 'board' ? 'board' : step.kind === 'messages' ? 'negotiation' : step.kind;
   const event = eventFor(payload, step.phase, sourceKind);
   const messages = useMemo(
@@ -156,7 +149,6 @@ function EvidenceStepView({ config, payload, step }: { config: ArticleCase; payl
         {step.kind === 'orders' && (
           <OrderRecord event={event} powers={step.powers} highlightedOrders={step.highlightedOrders} assignment={assignment} />
         )}
-        <a className="evidence-deep-link" href={stepUrl(config, step)}>Inspect this moment in context →</a>
       </div>
     </div>
   );
